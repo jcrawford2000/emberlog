@@ -1,0 +1,29 @@
+[project]
+name = "emberlog"
+version = "0.1.0"
+description = "Watcher → Queue → Transcribe → Parse → Ledger for Phoenix Fire dispatch audio."
+authors = [
+    {name = "Justin Crawford",email = "jcrawford2000@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12,<4.0"
+dependencies = [
+    "watchdog (>=6.0.0,<7.0.0)",
+    "pydantic (>=2.11.7,<3.0.0)",
+    "pydantic-settings (>=2.10.1,<3.0.0)",
+    "rich (>=14.1.0,<15.0.0)",
+    "dotenv (>=0.9.9,<0.10.0)",
+    "loguru (>=0.7.3,<0.8.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.1"
+pytest-cov = "^6.2.1"
+ruff = "^0.12.8"
+mypy = "^1.17.1"
+
