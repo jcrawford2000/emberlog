@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from functools import lru_cache
 from pathlib import Path
 from typing import Iterable
 
@@ -63,3 +64,8 @@ settings = Settings()
 settings.inbox_dir.mkdir(parents=True, exist_ok=True)
 settings.outbox_dir.mkdir(parents=True, exist_ok=True)
 settings.ledger_path.parent.mkdir(parents=True, exist_ok=True)
+
+
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()

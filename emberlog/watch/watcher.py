@@ -16,11 +16,12 @@ from typing import Any, Optional
 from watchdog.events import FileCreatedEvent, FileMovedEvent, FileSystemEventHandler
 from watchdog.observers import Observer as WatchdogObserver
 
-from emberlog.config import settings
+from emberlog.config.config import get_settings
 from emberlog.models.job import Job
 from emberlog.queue.types import JobQueue
 from emberlog.utils.logger import get_logger
 
+settings = get_settings()
 log = get_logger(settings.log_level)
 
 STABILITY_CHECK_SECS = 1.0
@@ -127,7 +128,7 @@ class DirectoryWatcher:
     async def start(self) -> None:
         """Start the watcher (and optionally enqueue existing files)."""
         if self.cfg.scan_existing:
-            log.info("Scanning existing files in %s", self.cfg.inbox)
+            log.info(f"Scanning existing files in {self.cfg.inbox}")
             await scan_existing(self.cfg.inbox, self.cfg.exts, self.q)
 
         loop = asyncio.get_running_loop()
@@ -138,7 +139,7 @@ class DirectoryWatcher:
         self.observer = obs
         obs.schedule(handler, str(self.cfg.inbox), recursive=True)
         obs.start()
-        log.info("Watching %s for %s", self.cfg.inbox, sorted(self.cfg.exts))
+        log.info(f"Watching {self.cfg.inbox} for {sorted(self.cfg.exts)}")
 
     async def stop(self) -> None:
         """Stop the watcher and join the observer thread."""

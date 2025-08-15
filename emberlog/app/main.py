@@ -12,13 +12,13 @@ import signal
 from collections.abc import Iterable
 from pathlib import Path
 
-from emberlog.config import config
+from emberlog.config.config import get_settings
 from emberlog.queue.memory import InMemoryJobQueue
 from emberlog.utils.logger import get_logger
 from emberlog.watch.watcher import DirectoryWatcher, WatchConfig
 from emberlog.worker.consumer import Worker
 
-settings = config.Settings()
+settings = get_settings()
 log = get_logger(settings.log_level)
 
 
@@ -37,7 +37,7 @@ async def _run() -> None:
     """Main async supervisor: watcher + workers + graceful shutdown."""
     q = InMemoryJobQueue(maxsize=settings.queue_maxsize)
     watch_cfg = WatchConfig(
-        inbox=Path(settings.inbox_dir),
+        inbox=settings.inbox_dir,
         exts=_exts_from_settings(settings.audio_extensions),
         scan_existing=settings.scan_existing_on_start,
     )

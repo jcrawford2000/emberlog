@@ -9,12 +9,13 @@ from __future__ import annotations
 import asyncio
 from pathlib import Path
 
-from emberlog.config import settings
+from emberlog.config.config import get_settings
 
 # Import your real Transcript model (works whether it's models.py or models package)
 from emberlog.models import Transcript  # noqa: F401  (used in type hints)
 from emberlog.utils.logger import get_logger
 
+settings = get_settings()
 log = get_logger(settings.log_level)
 
 
@@ -41,6 +42,8 @@ class DummyTranscriber:
         # Example stub below—replace with your existing fields/shape.
         # NOTE: This assumes a pydantic model with fields `source` and `text`.
         return Transcript(
+            duration_s=10,
+            language="en",
             audio_path=path,
-            text="Dummy transcript for testing the pipeline.",
+            text="Engine 703 K-Deck 10 Test Call 700 North Watson Engine 703 K-Deck 10",
         )

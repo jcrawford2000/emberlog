@@ -9,12 +9,13 @@ from __future__ import annotations
 import asyncio
 from pathlib import Path
 
-from emberlog.config import settings
+from emberlog.config.config import get_settings
 from emberlog.models.job import Job
 from emberlog.queue.types import JobQueue
 from emberlog.transcriber import factory
 from emberlog.utils.logger import get_logger
 
+settings = get_settings()
 log = get_logger(settings.log_level)
 
 
@@ -57,9 +58,9 @@ class Worker:
     async def process(self, job: Job) -> None:
         """Run the transcriber and write output to the outbox."""
         p: Path = job.path
-        log.info("[%s] Transcribing: %s", self.name, p)
+        log.info(f"[{self.name}] Transcribing: {p}")
         transcript = await self.transcriber.transcribe(p)
-
+        log.debug(f"Transcript:{transcript}")
         out = Path(settings.outbox_dir)
         out.mkdir(parents=True, exist_ok=True)
         out_file = out / (p.stem + ".json")
@@ -79,4 +80,4 @@ class Worker:
             ),
             encoding="utf-8",
         )
-        log.info("[%s] Wrote %s", self.name, out_file)
+        log.info(f"[{self.name}] Wrote {out_file}")
