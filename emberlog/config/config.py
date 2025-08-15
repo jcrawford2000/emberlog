@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Iterable
 
-from pydantic import field_validator
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -23,7 +23,14 @@ class Settings(BaseSettings):
     audio_extensions: tuple[str, ...] = (".wav", ".mp3")
 
     # Concurrency
+    concurrency: int = 2
     max_workers: int = 2
+
+    # Queueing
+    queue_maxsize: int = 0  # 0 = unbounded
+
+    # Scanning
+    scan_existing_on_start: bool = True
 
     # Transcriber backend: "dummy" or future options
     transcriber_backend: str = "dummy"
@@ -40,16 +47,6 @@ class Settings(BaseSettings):
     def expand_path(cls, v):
         """Field Validator for Paths"""
         return Path(v).expanduser().resolve()
-
-    # @field_validator("audio_extensions", mode="before")
-    # @classmethod
-    # def parse_exts(cls, v: Iterable[str] | str):
-    #    """Field Validator for audio extensions"""
-    #    if isinstance(v, str):
-    #        # normalize CSV string, ignore spaces
-    #        items = [s.strip().lower() for s in v.split(",") if s.strip()]
-    #        return tuple(items) if items else (".wav", ".mp3")
-    #    return tuple(v) if v else (".wav", ".mp3")
 
     @field_validator("audio_extensions", mode="before")
     @classmethod

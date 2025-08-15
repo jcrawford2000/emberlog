@@ -24,8 +24,8 @@ dependencies = [
 # Keep package include rules here (Poetry-specific)
 packages = [{ include = "emberlog" }]
 
-
-
+[tool.poetry.scripts]
+emberlog = "emberlog.app.main:main"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0.0"
