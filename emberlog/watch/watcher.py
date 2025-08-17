@@ -8,9 +8,9 @@ with configured audio extensions are enqueued only after they appear "stable"
 from __future__ import annotations
 
 import asyncio
+import logging
 import os
 import re
-import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable, Optional
@@ -22,10 +22,9 @@ from emberlog.config.config import get_settings
 from emberlog.models.job import Job
 from emberlog.queue.types import JobQueue
 from emberlog.state.processed_index import ProcessedIndex
-from emberlog.utils.logger import get_logger
 
 settings = get_settings()
-log = get_logger("DirectoryWatcher", settings.log_level)
+logger = logging.getLogger("emberlog.watch.watcher")
 
 STABILITY_CHECK_SECS = 1.0
 STABILITY_ITERATIONS = 3
@@ -115,6 +114,7 @@ class _Handler(FileSystemEventHandler):
         self.loop = loop
         self.inbox = inbox
         self.idx = idx
+        self.logger = logging.getLogger("emberlog.watch._Handler")
 
     def _matches(self, p: Path) -> bool:
         return (
@@ -125,7 +125,7 @@ class _Handler(FileSystemEventHandler):
 
     def on_created(self, event) -> None:
         if isinstance(event, FileCreatedEvent):
-            log.debug(f"Detected FileCreatedEvent: {event.src_path}")
+            self.logger.debug(f"Detected FileCreatedEvent: {event.src_path}")
             p = _coerce_path(event.src_path)
             if self._matches(p):
                 asyncio.run_coroutine_threadsafe(
@@ -134,7 +134,7 @@ class _Handler(FileSystemEventHandler):
 
     def on_moved(self, event) -> None:
         if isinstance(event, FileMovedEvent):
-            log.debug(f"Detected FileMovedEvent: {event.dest_path}")
+            self.logger.debug(f"Detected FileMovedEvent: {event.dest_path}")
             p = _coerce_path(event.dest_path)
             if self._matches(p):
                 asyncio.run_coroutine_threadsafe(
@@ -146,10 +146,10 @@ async def _maybe_enqueue(idx: "ProcessedIndex", q: JobQueue, path: Path) -> None
     # Runs on the asyncio loop thread — same thread where idx was created.
     try:
         if idx.is_processed(path):
-            log.debug(f"Already processed (skip): {path}")
+            logger.debug(f"Already processed (skip): {path}")
             return
     except Exception:
-        log.exception("ProcessedIndex check failed", stacklevel=2)
+        logger.exception("ProcessedIndex check failed", stacklevel=2)
         return
     await _enqueue_when_stable(q, path)
 
@@ -164,7 +164,7 @@ async def _enqueue_when_stable(q: JobQueue, path: Path) -> None:
             stable_count = stable_count + 1 if size == last else 0
             last = size
             await asyncio.sleep(STABILITY_CHECK_SECS)
-        log.debug(f"File is stable, adding to queue ({path})")
+        logger.debug(f"File is stable, adding to queue ({path})")
         await q.put(Job(path=path))
     except FileNotFoundError:
         # File disappeared before we could queue it—ignore.
@@ -184,7 +184,7 @@ async def scan_existing(
                 continue
             await _enqueue_when_stable(q, p)
             enq += 1
-    log.info(
+    logger.info(
         f"Initial scan summary: scanned={scanned} enqueued={enq} skipped={skipped}"
     )
 
@@ -194,7 +194,8 @@ class DirectoryWatcher:
 
     def __init__(self, cfg: WatchConfig, q: JobQueue):
         """Initialize the watcher with configuration and a queue target."""
-        log.debug("Initializing DirectoryWatcher")
+        self.logger = logging.getLogger("emberlog.watch.DirectoryWatcher")
+        self.logger.debug("Initializing DirectoryWatcher")
         self.cfg = cfg
         self.q = q
         # Keep state outside the inbox; outbox/.state is a simple, durable spot
@@ -205,7 +206,7 @@ class DirectoryWatcher:
     async def start(self) -> None:
         """Start the watcher (and optionally enqueue existing files)."""
         if self.cfg.scan_existing:
-            log.info(f"Scanning existing files in {self.cfg.inbox}")
+            self.logger.info(f"Scanning existing files in {self.cfg.inbox}")
             await scan_existing(self.cfg.inbox, self.cfg.exts, self.q, self.idx)
 
         loop = asyncio.get_running_loop()
@@ -216,7 +217,9 @@ class DirectoryWatcher:
         self.observer = obs
         obs.schedule(handler, str(self.cfg.inbox), recursive=True)
         obs.start()
-        log.info(f"Watching {self.cfg.inbox} (recursive) for {sorted(self.cfg.exts)}")
+        self.logger.info(
+            f"Watching {self.cfg.inbox} (recursive) for {sorted(self.cfg.exts)}"
+        )
 
     async def stop(self) -> None:
         """Stop the watcher and join the observer thread."""
@@ -224,5 +227,5 @@ class DirectoryWatcher:
         if obs is not None:
             obs.stop()
             obs.join(timeout=5)
-            log.info("Watcher stopped.")
+            self.logger.info("Watcher stopped.")
             self.observer = None
