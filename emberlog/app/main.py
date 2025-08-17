@@ -8,18 +8,23 @@ SIGINT/SIGTERM and drains the queue before exiting.
 from __future__ import annotations
 
 import asyncio
+import logging
 import signal
 from collections.abc import Iterable
 
 from emberlog.config.config import get_settings
 from emberlog.queue.memory import InMemoryJobQueue
-from emberlog.utils.logger import get_logger
+
+# from emberlog.utils.logger import get_logger
+from emberlog.utils.loggersetup import configure_logging
 from emberlog.versioning import get_app_version
 from emberlog.watch.watcher import DirectoryWatcher, WatchConfig
 from emberlog.worker.consumer import Worker
 
 settings = get_settings()
-log = get_logger("Main", settings.log_level)
+# log = get_logger("Main", settings.log_level)
+configure_logging()
+log = logging.getLogger("emberlog.app.Main")
 ver = get_app_version()
 
 

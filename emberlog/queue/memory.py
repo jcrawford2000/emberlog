@@ -5,14 +5,13 @@ deployments. It wraps `asyncio.Queue` behind the `JobQueue` interface.
 """
 
 import asyncio
+import logging
 
 from emberlog.config.config import get_settings
 from emberlog.models.job import Job
-from emberlog.utils.logger import get_logger
+
 
 from .types import JobQueue
-
-logger = get_logger("InMemoryJobQueue", get_settings().log_level)
 
 
 class InMemoryJobQueue(JobQueue):
@@ -24,22 +23,23 @@ class InMemoryJobQueue(JobQueue):
         Args:
             maxsize: Maximum number of items allowed in the queue. 0 = unbounded.
         """
-        logger.debug(f"Creating Queue (maxsize={maxsize})")
+        self.logger = logging.getLogger("emberlog.queue.InMemoryJobQueue")
+        self.logger.debug(f"Creating Queue (maxsize={maxsize})")
         self._q: asyncio.Queue[Job] = asyncio.Queue(maxsize=maxsize)
 
     async def put(self, job: Job) -> None:
         """Enqueue a job (awaits if full)."""
-        logger.debug(f"Adding job to queue")
+        self.logger.debug(f"Adding job to queue")
         await self._q.put(job)
 
     async def get(self) -> Job:
         """Dequeue a job (awaits if empty)."""
-        logger.debug("Dequeuing Job")
+        self.logger.debug("Dequeuing Job")
         return await self._q.get()
 
     def task_done(self) -> None:
         """Mark the last gotten job as processed."""
-        logger.debug("Marking Task Done")
+        self.logger.debug("Marking Task Done")
         self._q.task_done()
 
     def qsize(self) -> int:
@@ -48,5 +48,5 @@ class InMemoryJobQueue(JobQueue):
 
     async def join(self) -> None:
         """Block until all items have been processed."""
-        logger.debug("Queue Joined")
+        self.logger.debug("Queue Joined")
         await self._q.join()

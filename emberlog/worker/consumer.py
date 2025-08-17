@@ -7,6 +7,7 @@ Each worker pulls Jobs from the queue, runs the configured transcriber
 from __future__ import annotations
 
 import asyncio
+import logging
 from pathlib import Path
 
 from emberlog.config.config import get_settings
@@ -14,10 +15,8 @@ from emberlog.models.job import Job
 from emberlog.queue.types import JobQueue
 from emberlog.state.processed_index import ProcessedIndex
 from emberlog.transcriber import factory
-from emberlog.utils.logger import get_logger
 
 settings = get_settings()
-log = get_logger("Worker", settings.log_level)
 
 
 class Worker:
@@ -30,23 +29,24 @@ class Worker:
             q: The shared job queue.
             name: A human-friendly worker name for logging.
         """
+        self.logger = logging.getLogger("emberlog.worker.Worker")
         self.q = q
         self.name = name
         self.transcriber = factory.from_settings(settings)
-        log.debug(f"Worker[{self.name}] Initializing")
+        self.logger.debug(f"Worker[{self.name}] Initializing")
         self.idx = ProcessedIndex(Path(settings.outbox_dir) / ".state")
 
     async def run(self) -> None:
         """Continuously consume jobs and process them until cancelled."""
-        log.debug(f"Worker[{self.name}] Started")
+        self.logger.debug(f"Worker[{self.name}] Started")
         while True:
             job: Job = await self.q.get()
             try:
-                log.debug(f"Worker[{self.name}] Processing Job")
+                self.logger.debug(f"Worker[{self.name}] Processing Job")
                 await self.process(job)
             except Exception as e:  # pylint: disable=broad-except
                 job.attempts += 1
-                log.exception(
+                self.logger.exception(
                     "[%s] Job %s failed (%s/%s): %s",
                     self.name,
                     job.id,
@@ -55,9 +55,9 @@ class Worker:
                     e,
                 )
                 if job.attempts < job.max_attempts:
-                    log.warning(f"Worker[{self.name}] Sleeping")
+                    self.logger.warning(f"Worker[{self.name}] Sleeping")
                     await asyncio.sleep(job.attempts**2)  # simple backoff
-                    log.warning(
+                    self.logger.warning(
                         f"Worker[{self.name}] Retrying [{job.attempts}/{job.max_attempts}]"
                     )
                     await self.q.put(job)
@@ -67,9 +67,9 @@ class Worker:
     async def process(self, job: Job) -> None:
         """Run the transcriber and write output to the outbox."""
         p: Path = job.path
-        log.info(f"[{self.name}] Transcribing: {p}")
+        self.logger.info(f"[{self.name}] Transcribing: {p}")
         transcript = await self.transcriber.transcribe(p)
-        log.debug(f"Transcript:{transcript}")
+        self.logger.debug(f"Transcript:{transcript}")
         out = Path(settings.outbox_dir)
         out.mkdir(parents=True, exist_ok=True)
         out_file = out / (p.stem + ".json")
@@ -90,4 +90,4 @@ class Worker:
             encoding="utf-8",
         )
         self.idx.mark_processed(p)
-        log.info(f"[{self.name}] Wrote {out_file}")
+        self.logger.info(f"[{self.name}] Wrote {out_file}")
