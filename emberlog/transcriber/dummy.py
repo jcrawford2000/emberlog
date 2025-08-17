@@ -1,20 +1,50 @@
-"""Dummy Transcription For Testing Purposes"""
+"""Dummy transcriber backend for wiring and tests.
+
+Returns a deterministic transcript without touching any audio. Useful for
+plumbing the watcher/queue/worker flow end-to-end.
+"""
 
 from __future__ import annotations
 
+import asyncio
 from pathlib import Path
 
-from emberlog.models import Transcript
+from emberlog.config.config import get_settings
+
+# Import your real Transcript model (works whether it's models.py or models package)
+from emberlog.models import Transcript  # noqa: F401  (used in type hints)
+from emberlog.utils.logger import get_logger
+
+settings = get_settings()
+log = get_logger("DummyTranscriber", settings.log_level)
 
 
 class DummyTranscriber:
-    """Dummy Class"""
+    """A no-op transcriber that fabricates a transcript for a given file."""
 
-    def transcribe(self, audio_path: Path) -> Transcript:
-        """Dummy Transcriptions for Testing Purposes"""
-        text = (
-            f"Dispatch received for file: {audio_path.name}. "
-            "Units: Engine 1, Ladder 1. Type: Test Call. "
-            "Address: 123 Example St."
+    async def transcribe(self, path: Path) -> Transcript:
+        """Async shim that delegates to the sync implementation.
+
+        Args:
+            path: Path to the audio file (ignored in dummy).
+
+        Returns:
+            Transcript: A fabricated transcript object.
+        """
+        # Yield control so this behaves nicely alongside real async backends.
+        await asyncio.sleep(0)
+        return self._transcribe_impl(path)
+
+    # --- your existing sync logic can live here, unchanged ---
+    def _transcribe_impl(self, path: Path) -> Transcript:
+        """Synchronous implementation that builds a fake transcript."""
+        # If you already had code building a Transcript, keep it here.
+        # Example stub below—replace with your existing fields/shape.
+        # NOTE: This assumes a pydantic model with fields `source` and `text`.
+        log.debug(f"Dummy Transcriber returning transcription")
+        return Transcript(
+            duration_s=10,
+            language="en",
+            audio_path=path,
+            text="Engine 703 K-Deck 10 Test Call 700 North Watson Engine 703 K-Deck 10",
         )
-        return Transcript(audio_path=audio_path, text=text, duration_s=None)

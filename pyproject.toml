@@ -1,6 +1,6 @@
 [project]
 name = "emberlog"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Watcher → Queue → Transcribe → Parse → Ledger for Phoenix Fire dispatch audio."
 readme = "README.md"
 requires-python = ">=3.10,<3.13"
@@ -17,15 +17,28 @@ dependencies = [
     "watchdog (>=6.0.0,<7.0.0)",
     "pydantic (>=2.11.7,<3.0.0)",
     "pydantic-settings (>=2.10.1,<3.0.0)",
-    "loguru (>=0.7.3,<0.8.0)"
+    "loguru (>=0.7.3,<0.8.0)",
+    "pytest (>=8.4.1,<9.0.0)",
+    "pytest-asyncio (>=1.1.0,<2.0.0)"
 ]
+
+[tool.poetry-dynamic-versioning]
+enable = true
+vcs = "git"
+style = "pep440"
+latest-tag = true
+
+
+[pytest]
+addopts = "-q"
 
 [tool.poetry]
 # Keep package include rules here (Poetry-specific)
 packages = [{ include = "emberlog" }]
+version = "0.0.0"
 
-
-
+[tool.poetry.scripts]
+emberlog = "emberlog.app.main:main"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0.0"
@@ -45,5 +58,5 @@ strict = false
 addopts = "-q"
 
 [build-system]
-requires = ["poetry-core>=1.9.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
