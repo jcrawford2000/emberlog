@@ -12,11 +12,12 @@ from pathlib import Path
 from emberlog.config.config import get_settings
 from emberlog.models.job import Job
 from emberlog.queue.types import JobQueue
+from emberlog.state.processed_index import ProcessedIndex
 from emberlog.transcriber import factory
 from emberlog.utils.logger import get_logger
 
 settings = get_settings()
-log = get_logger(settings.log_level)
+log = get_logger("Worker", settings.log_level)
 
 
 class Worker:
@@ -32,12 +33,16 @@ class Worker:
         self.q = q
         self.name = name
         self.transcriber = factory.from_settings(settings)
+        log.debug(f"Worker[{self.name}] Initializing")
+        self.idx = ProcessedIndex(Path(settings.outbox_dir) / ".state")
 
     async def run(self) -> None:
         """Continuously consume jobs and process them until cancelled."""
+        log.debug(f"Worker[{self.name}] Started")
         while True:
             job: Job = await self.q.get()
             try:
+                log.debug(f"Worker[{self.name}] Processing Job")
                 await self.process(job)
             except Exception as e:  # pylint: disable=broad-except
                 job.attempts += 1
@@ -50,7 +55,11 @@ class Worker:
                     e,
                 )
                 if job.attempts < job.max_attempts:
+                    log.warning(f"Worker[{self.name}] Sleeping")
                     await asyncio.sleep(job.attempts**2)  # simple backoff
+                    log.warning(
+                        f"Worker[{self.name}] Retrying [{job.attempts}/{job.max_attempts}]"
+                    )
                     await self.q.put(job)
             finally:
                 self.q.task_done()
@@ -80,4 +89,5 @@ class Worker:
             ),
             encoding="utf-8",
         )
+        self.idx.mark_processed(p)
         log.info(f"[{self.name}] Wrote {out_file}")

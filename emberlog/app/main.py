@@ -10,7 +10,6 @@ from __future__ import annotations
 import asyncio
 import signal
 from collections.abc import Iterable
-from pathlib import Path
 
 from emberlog.config.config import get_settings
 from emberlog.queue.memory import InMemoryJobQueue
@@ -20,7 +19,7 @@ from emberlog.watch.watcher import DirectoryWatcher, WatchConfig
 from emberlog.worker.consumer import Worker
 
 settings = get_settings()
-log = get_logger(settings.log_level)
+log = get_logger("Main", settings.log_level)
 ver = get_app_version()
 
 
@@ -37,6 +36,7 @@ def _exts_from_settings(raw: str | tuple[str, ...]) -> set[str]:
 
 async def _run() -> None:
     """Main async supervisor: watcher + workers + graceful shutdown."""
+    log.info("Starting main thread")
     q = InMemoryJobQueue(maxsize=settings.queue_maxsize)
     watch_cfg = WatchConfig(
         inbox=settings.inbox_dir,
@@ -77,7 +77,6 @@ async def _run() -> None:
 def main() -> None:
     """Synchronous entry point for `poetry run emberlog`."""
     log.info(f"Ember Log {ver} Starting")
-    log.info("Starting main thread")
     asyncio.run(_run())
 
 

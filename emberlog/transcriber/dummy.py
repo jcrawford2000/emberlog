@@ -16,7 +16,7 @@ from emberlog.models import Transcript  # noqa: F401  (used in type hints)
 from emberlog.utils.logger import get_logger
 
 settings = get_settings()
-log = get_logger(settings.log_level)
+log = get_logger("DummyTranscriber", settings.log_level)
 
 
 class DummyTranscriber:
@@ -41,6 +41,7 @@ class DummyTranscriber:
         # If you already had code building a Transcript, keep it here.
         # Example stub below—replace with your existing fields/shape.
         # NOTE: This assumes a pydantic model with fields `source` and `text`.
+        log.debug(f"Dummy Transcriber returning transcription")
         return Transcript(
             duration_s=10,
             language="en",
