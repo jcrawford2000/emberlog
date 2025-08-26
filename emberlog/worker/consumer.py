@@ -13,6 +13,8 @@ from pathlib import Path
 from emberlog.config.config import get_settings
 from emberlog.models.job import Job
 from emberlog.queue.types import JobQueue
+from emberlog.segmentation.splitter import Segment as Seg
+from emberlog.segmentation.splitter import split_transcript
 from emberlog.state.processed_index import ProcessedIndex
 from emberlog.transcriber import factory
 
@@ -70,24 +72,57 @@ class Worker:
         self.logger.info(f"[{self.name}] Transcribing: {p}")
         transcript = await self.transcriber.transcribe(p)
         self.logger.debug(f"Transcript:{transcript}")
-        out = Path(settings.outbox_dir)
-        out.mkdir(parents=True, exist_ok=True)
-        out_file = out / (p.stem + ".json")
-
-        # Pydantic v2 model_dump; support plain dicts as well.
-        data = (
-            transcript.model_dump(mode="json")
-            if hasattr(transcript, "model_dump")
-            else transcript
+        if hasattr(transcript, "segments"):
+            # STT returned a list/generator of segments
+            segments = [
+                Seg(start=s.start, end=s.end, text=s.text) for s in transcript.segments
+            ]
+        else:
+            # Single blob (your dummy Transcript)
+            segments = [
+                Seg(
+                    start=float(getattr(transcript, "start", 0.0)),
+                    end=float(
+                        getattr(
+                            transcript, "end", getattr(transcript, "duration_s", 0.0)
+                        )
+                    ),
+                    text=str(transcript.text or ""),
+                )
+            ]
+        dispatches = split_transcript(segments, str(p))
+        self.logger.info(
+            "Split audio into dispatches",
+            extra={
+                "source": str(p),
+                "dispatch_count": len(dispatches),
+                "channels": [d.channel for d in dispatches],
+                "avg_len_s": round(
+                    sum(d.end_s - d.start_s for d in dispatches)
+                    / max(1, len(dispatches)),
+                    2,
+                ),
+            },
         )
+        for i, d in enumerate(dispatches, start=1):
+            out = Path(settings.outbox_dir)
+            out.mkdir(parents=True, exist_ok=True)
+            out_file = out / (p.stem + ".json")
 
-        out_file.write_text(
-            (
-                data
-                if isinstance(data, str)
-                else __import__("json").dumps(data, indent=2)
-            ),
-            encoding="utf-8",
-        )
-        self.idx.mark_processed(p)
-        self.logger.info(f"[{self.name}] Wrote {out_file}")
+            # Pydantic v2 model_dump; support plain dicts as well.
+            data = (
+                transcript.model_dump(mode="json")
+                if hasattr(transcript, "model_dump")
+                else transcript
+            )
+
+            out_file.write_text(
+                (
+                    data
+                    if isinstance(data, str)
+                    else __import__("json").dumps(data, indent=2)
+                ),
+                encoding="utf-8",
+            )
+            self.idx.mark_processed(p)
+            self.logger.info(f"[{self.name}] Wrote {out_file}")

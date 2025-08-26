@@ -46,6 +46,8 @@ class DummyTranscriber:
         self.logger.debug(f"Dummy Transcriber returning transcription")
         return Transcript(
             duration_s=10,
+            start=0,
+            end=10,
             language="en",
             audio_path=path,
             text="Engine 703 K-Deck 10 Test Call 700 North Watson Engine 703 K-Deck 10",
