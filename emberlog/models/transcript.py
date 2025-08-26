@@ -13,6 +13,8 @@ class Transcript(BaseModel):
 
     audio_path: Path
     text: str
+    start: float | None = None
+    end: float | None = None
     duration_s: float | None = None
     language: str = "en"
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
