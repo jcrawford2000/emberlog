@@ -8,15 +8,23 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from datetime import datetime, timezone
 from pathlib import Path
 
+from emberlog.cleaning.cleaner import clean_transcript
 from emberlog.config.config import get_settings
+from emberlog.io.composite import CompositeSink
+from emberlog.io.json_sink import JsonFileSink
+from emberlog.io.ledger_sink import LedgerSink
+from emberlog.io.local_sink import LocalSink
 from emberlog.models.job import Job
+from emberlog.models.transcript import Transcript
 from emberlog.queue.types import JobQueue
 from emberlog.segmentation.splitter import Segment as Seg
 from emberlog.segmentation.splitter import split_transcript
 from emberlog.state.processed_index import ProcessedIndex
 from emberlog.transcriber import factory
+from emberlog.versioning import get_app_version
 
 settings = get_settings()
 
@@ -32,6 +40,11 @@ class Worker:
             name: A human-friendly worker name for logging.
         """
         self.logger = logging.getLogger("emberlog.worker.Worker")
+        self.local_sink = LocalSink(settings.outbox_dir)
+        self.json_sink = JsonFileSink(self.local_sink, naming="{stem}.json")
+        self.ledger_sink = LedgerSink()
+        self.sink = CompositeSink([self.json_sink, self.ledger_sink])
+
         self.q = q
         self.name = name
         self.transcriber = factory.from_settings(settings)
@@ -104,25 +117,60 @@ class Worker:
                 ),
             },
         )
+        created_at = getattr(transcript, "created_at", None) or datetime.now(
+            timezone.utc
+        )
+        written_paths = []
+
         for i, d in enumerate(dispatches, start=1):
-            out = Path(settings.outbox_dir)
-            out.mkdir(parents=True, exist_ok=True)
-            out_file = out / (p.stem + ".json")
-
-            # Pydantic v2 model_dump; support plain dicts as well.
-            data = (
-                transcript.model_dump(mode="json")
-                if hasattr(transcript, "model_dump")
-                else transcript
+            # clean = clean_transcript - TODO: Implement clean_transcript
+            self.logger.debug("Cleaning Transcript")
+            t = Transcript(
+                audio_path=p,
+                text=d.text,
+                duration_s=d.end_s - d.start_s,
+                language=transcript.language,
+                created_at=transcript.created_at,
             )
-
-            out_file.write_text(
-                (
-                    data
-                    if isinstance(data, str)
-                    else __import__("json").dumps(data, indent=2)
+            clean = clean_transcript(t)
+            self.logger.debug(f"Cleaner Results:{clean}")
+            rel_dir = Path(f"{created_at.year}/{created_at.month}/{created_at.day}")
+            base_name = p.stem
+            name = (
+                f"{base_name}-dispatch{i:02d}.json"
+                if len(dispatches) > 1
+                else f"{base_name}.json"
+            )
+            relpath = rel_dir / name
+            # 4) payload
+            doc = {
+                "source_audio": str(p),
+                "dispatch_index": i,
+                "dispatch_count": len(dispatches),
+                "dispatch_start_s": d.start_s,
+                "dispatch_end_s": d.end_s,
+                "channel": d.channel,
+                "original_text": d.text,
+                "cleaned_text": clean.text,
+                "units": clean.units,
+                "address": clean.address,
+                "clean_stats": vars(clean.stats),
+                "segments": [
+                    {"start": s.start, "end": s.end, "text": s.text} for s in d.segments
+                ],
+                "created_at": created_at,  # serialized via default=str in sink
+                "language": getattr(transcript, "language", "en"),
+                "version": (
+                    get_app_version() if "get_app_version" in globals() else None
                 ),
-                encoding="utf-8",
-            )
+            }
+            # 5) write via sink
+            out_path = await self.sink.process(
+                transcript=doc["cleaned_text"],
+                incident=doc["cleaned_text"],
+                audio_path=doc["source_audio"],
+                out_dir=relpath,
+            )  # write_json(relpath, doc)
+            written_paths.append(out_path)
             self.idx.mark_processed(p)
-            self.logger.info(f"[{self.name}] Wrote {out_file}")
+            self.logger.info(f"[{self.name}] Wrote {relpath}")
