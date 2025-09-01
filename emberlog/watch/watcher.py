@@ -70,9 +70,12 @@ def _coerce_path(p: Any) -> Path:
     with 'surrogateescape' to preserve undecodable bytes on POSIX.
     """
     if isinstance(p, Path):
+        logger.debug("Already a Path Object, returning.")
         return p
     if isinstance(p, bytes):
+        logger.debug("Path was a Byte Array, coercing to a Path Object")
         return Path(p.decode("utf-8", errors="surrogateescape"))
+    logger.debug("Path is a String or PathLike, coercing to a Path Object")
     return Path(os.fspath(p))
 
 
@@ -117,29 +120,46 @@ class _Handler(FileSystemEventHandler):
         self.logger = logging.getLogger("emberlog.watch._Handler")
 
     def _matches(self, p: Path) -> bool:
-        return (
-            p.is_file()
-            and p.suffix.lower() in self.exts
-            and is_in_dated_tree(self.inbox, p)
-        )
+        logger.debug("Checking file for processing.")
+        matches = False
+        if p.is_file():
+            logger.debug(f"{p} is a file")
+            if p.suffix.lower() in self.exts:
+                logger.debug(f"{p.suffix.lower()} is a valid extension")
+                if is_in_dated_tree(self.inbox, p):
+                    logger.debug(f"{p} is in a dated tree.")
+                    matches = True
+                else:
+                    logger.debug(f"{p} is not in a dated tree")
+            else:
+                logger.debug(f"{p.suffix.lower()} is not a valid extension")
+        else:
+            logger.debug(f"{p} is not a file, no match")
+        return matches
 
     def on_created(self, event) -> None:
         if isinstance(event, FileCreatedEvent):
             self.logger.debug(f"Detected FileCreatedEvent: {event.src_path}")
             p = _coerce_path(event.src_path)
             if self._matches(p):
+                logger.debug("File is valid, enqueueing.")
                 asyncio.run_coroutine_threadsafe(
                     _maybe_enqueue(self.idx, self.q, p), self.loop
                 )
+            else:
+                logger.debug("File was not valid, skipping.")
 
     def on_moved(self, event) -> None:
         if isinstance(event, FileMovedEvent):
             self.logger.debug(f"Detected FileMovedEvent: {event.dest_path}")
             p = _coerce_path(event.dest_path)
             if self._matches(p):
+                logger.debug("File is valid, enqueueing.")
                 asyncio.run_coroutine_threadsafe(
                     _maybe_enqueue(self.idx, self.q, p), self.loop
                 )
+            else:
+                logger.debug("File was not valid, skipping.")
 
 
 async def _maybe_enqueue(idx: "ProcessedIndex", q: JobQueue, path: Path) -> None:
