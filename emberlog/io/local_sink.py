@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Union
+
+logger = logging.getLogger("emberlog.io.local_sink")
 
 
 @dataclass
@@ -15,6 +18,7 @@ class LocalSink:
     def write_json(self, relpath: Union[str, Path], obj: dict) -> Path:
         base = Path(self.base_dir)
         out = base / Path(relpath)
+        logger.debug("Local Sink:\n\tbase:%s\n\tout:%s", base, out)
         out.parent.mkdir(parents=True, exist_ok=True)
 
         # atomic write

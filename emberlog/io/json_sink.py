@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -27,9 +28,11 @@ class JsonFileSink(Sink):
         self.local = local
         self.naming = naming
         self.subdir = Path(subdir) if subdir else None
+        self.logger = logging.getLogger("emberlog.io.json_sink")
 
     def _relpath_for(self, audio_path: Path) -> Path:
-        name = self.naming.format(stem=audio_path.stem)
+        ap = audio_path if isinstance(audio_path, Path) else Path(audio_path)
+        name = self.naming.format(stem=ap.stem)
         return (self.subdir / name) if self.subdir else Path(name)
 
     async def process(
@@ -42,6 +45,14 @@ class JsonFileSink(Sink):
         context: dict[str, Any] | None = None,
     ) -> SinkResult:
         # Build the payload exactly once
+        self.logger.debug(
+            "Processing:\n\ttranscript:%s\n\tincident:%s\n\taudio_path:%s\n\tout_dir:%s\n\tcontext:%s",
+            transcript,
+            incident,
+            audio_path,
+            out_dir,
+            context,
+        )
         payload = {
             "created_at": datetime.now(timezone.utc).isoformat(),
             "audio_path": str(audio_path),

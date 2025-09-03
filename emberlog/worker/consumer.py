@@ -103,6 +103,7 @@ class Worker:
                     text=str(transcript.text or ""),
                 )
             ]
+        self.logger.debug("Transcript Segments:\n\t%s", segments)
         dispatches = split_transcript(segments, str(p))
         self.logger.info(
             "Split audio into dispatches",
@@ -134,6 +135,9 @@ class Worker:
             )
             clean = clean_transcript(t)
             self.logger.debug(f"Cleaner Results:{clean}")
+            # rel_dir = Path(
+            #    f"{settings.outbox_dir}/{created_at.year}/{created_at.month}/{created_at.day}"
+            # )
             rel_dir = Path(f"{created_at.year}/{created_at.month}/{created_at.day}")
             base_name = p.stem
             name = (
@@ -149,11 +153,12 @@ class Worker:
                 "dispatch_count": len(dispatches),
                 "dispatch_start_s": d.start_s,
                 "dispatch_end_s": d.end_s,
-                "channel": d.channel,
                 "original_text": d.text,
-                "cleaned_text": clean.text,
+                "channel": d.channel,
+                "incident_type": clean.incident_type,
                 "units": clean.units,
                 "address": clean.address,
+                "cleaned_text": clean.text,
                 "clean_stats": vars(clean.stats),
                 "segments": [
                     {"start": s.start, "end": s.end, "text": s.text} for s in d.segments
@@ -164,10 +169,12 @@ class Worker:
                     get_app_version() if "get_app_version" in globals() else None
                 ),
             }
+            self.logger.debug("Payload:\n%s", doc)
             # 5) write via sink
+            self.logger.debug("Writing to Sink")
             out_path = await self.sink.process(
                 transcript=doc["cleaned_text"],
-                incident=doc["cleaned_text"],
+                incident=doc,
                 audio_path=doc["source_audio"],
                 out_dir=relpath,
             )  # write_json(relpath, doc)

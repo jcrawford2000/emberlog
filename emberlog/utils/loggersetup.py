@@ -66,6 +66,16 @@ LOGGING = {
             "handlers": ["console", "file_app"],
             "propagate": False,
         },
+        "emberlog.cleaning": {
+            "level": "DEBUG",
+            "handlers": ["console", "file_app"],
+            "propagate": False,
+        },
+        "emberlog.io": {
+            "level": "DEBUG",
+            "handlers": ["console", "file_app"],
+            "propagate": False,
+        },
         # Fallback
         "": {"level": "WARNING", "handlers": ["console"]},
     },

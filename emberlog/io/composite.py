@@ -1,6 +1,7 @@
 # emberlog/sinks/composite.py
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 from typing import Iterable
 
@@ -8,15 +9,24 @@ from .base import Sink, SinkResult
 
 
 class CompositeSink(Sink):
+
     def __init__(self, sinks: Iterable[Sink]):
         self.sinks = list(sinks)
+        self.logger = logging.getLogger("emberlog.io.composite")
 
     async def process(
         self, *, transcript, incident, audio_path: Path, out_dir: Path, context=None
     ) -> SinkResult:
         ctx: dict = dict(context or {})
         last_res: SinkResult | None = None
-
+        self.logger.debug(
+            "Processing:\n\ttranscript:%s\n\tincident:%s\n\taudio_path:%s\n\tout_dir:%s\n\tcontext:%s",
+            transcript,
+            incident,
+            audio_path,
+            out_dir,
+            context,
+        )
         for s in self.sinks:
             res = await s.process(
                 transcript=transcript,

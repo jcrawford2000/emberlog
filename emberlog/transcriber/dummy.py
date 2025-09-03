@@ -43,12 +43,12 @@ class DummyTranscriber:
         # If you already had code building a Transcript, keep it here.
         # Example stub below—replace with your existing fields/shape.
         # NOTE: This assumes a pydantic model with fields `source` and `text`.
-        self.logger.debug(f"Dummy Transcriber returning transcription")
+        self.logger.debug("Dummy Transcriber returning transcription")
         return Transcript(
             duration_s=10,
             start=0,
             end=10,
             language="en",
             audio_path=path,
-            text="Engine 703 K-Deck 10 Test Call 700 North Watson Engine 703 K-Deck 10",
+            text="Engine 703 Ladder 701 Medic 321 K-Deck 10 Test EMS Call 700 North Watson Road Engine 703 Ladder 701 Medic 321 K-Deck 10",
         )
