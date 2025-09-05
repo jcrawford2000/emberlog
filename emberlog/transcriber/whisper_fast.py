@@ -5,7 +5,8 @@ import asyncio
 import json
 import logging
 import os
-from dataclasses import dataclass
+import ast
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Optional
@@ -24,6 +25,22 @@ def _bool_env(name: str, default: bool = False) -> bool:
     return v.lower() in ("1", "true", "yes", "y", "on")
 
 
+def _load_vad_params() -> dict[str, object]:
+    raw = os.getenv("WHISPER_VAD_PARAMETERS")
+    if raw:
+        # Prefer JSON; fall back to literal_eval for legacy single-quoted dicts
+        try:
+            return json.loads(raw)
+        except json.JSONDecodeError:
+            try:
+                val = ast.literal_eval(raw)
+                if isinstance(val, dict):
+                    return val
+            except Exception:
+                pass
+    return {"min_silence_duration_ms": 250}  # sane default
+
+
 @dataclass
 class WhisperConfig:
     model_name: str = os.getenv("WHISPER_MODEL", "medium.en")
@@ -32,9 +49,7 @@ class WhisperConfig:
         "WHISPER_COMPUTE_TYPE", "float16"
     )  # "float16" on GPU, "int8" or "float32" as needed
     vad_filter: bool = _bool_env("WHISPER_VAD_FILTER", True)
-    vad_parameters: dict[str, object] = json.loads(
-        os.getenv("WHISPER_VAD_PARAMETERS", "{'min_silence_duration_ms': 250}")
-    )
+    vad_parameters: dict[str, object] = field(default_factory=_load_vad_params)
     beam_size: int = int(os.getenv("WHISPER_BEAM_SIZE", "5"))
     language: Optional[str] = os.getenv("WHISPER_LANGUAGE")  # e.g., "en"
     best_of: int = int(os.getenv("WHISPER_BEST_OF", "8"))
