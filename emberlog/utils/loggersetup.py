@@ -29,7 +29,7 @@ LOGGING = {
         "file_app": {
             "class": "logging.FileHandler",
             "level": "INFO",
-            "filename": "logs/app.log",
+            "filename": "/var/log/emberlog/emberlog.log",
             "formatter": "json",
             "filters": ["class_method", "logger_id"],
         },

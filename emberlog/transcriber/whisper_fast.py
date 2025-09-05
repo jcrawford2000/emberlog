@@ -1,11 +1,11 @@
 # emberlog/transcriber/faster_whisper.py
 from __future__ import annotations
 
+import ast
 import asyncio
 import json
 import logging
 import os
-import ast
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -46,7 +46,7 @@ class WhisperConfig:
     model_name: str = os.getenv("WHISPER_MODEL", "medium.en")
     device: str = os.getenv("WHISPER_DEVICE", "cuda")  # "cuda" | "cpu"
     compute_type: str = os.getenv(
-        "WHISPER_COMPUTE_TYPE", "float16"
+        "WHISPER_COMPUTE_TYPE", "float32"
     )  # "float16" on GPU, "int8" or "float32" as needed
     vad_filter: bool = _bool_env("WHISPER_VAD_FILTER", True)
     vad_parameters: dict[str, object] = field(default_factory=_load_vad_params)
