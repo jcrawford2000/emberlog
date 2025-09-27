@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     # File handling
     # Allow CSV via env like EMBERLOG_AUDIO_EXTENSIONS=.wav,.mp3
     audio_extensions: tuple[str, ...] = (".wav", ".mp3")
-    api_base_url = "http://localhost:8080/api/v1"
+    api_base_url: str = "http://localhost:8080/api/v1"
 
     # Concurrency
     concurrency: int = 2
