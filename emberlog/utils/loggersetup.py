@@ -76,6 +76,11 @@ LOGGING = {
             "handlers": ["console", "file_app"],
             "propagate": False,
         },
+        "emberlog.segmentation": {
+            "level": "DEBUG",
+            "handlers": ["console", "file_app"],
+            "propagate": False,
+        },
         # Fallback
         "": {"level": "WARNING", "handlers": ["console"]},
     },

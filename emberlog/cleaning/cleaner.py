@@ -176,6 +176,7 @@ class CleanStats:
 @dataclass
 class CleanResult:
     text: str
+    special_call: bool
     units: List[str]
     channel: Optional[str]
     incident_type: Optional[str]
@@ -207,6 +208,10 @@ def clean_transcript(t: Transcript) -> CleanResult:
     logger.info("Removing extra whitespace characters")
     fixed = re.sub(r"\s+", " ", fixed).strip()
     incident = fixed
+
+    # Determine Special Call
+    sc_re = re.compile(r"^special call", re.I)
+    special_call = bool(sc_re.search(fixed))
 
     # Extract units
     logger.info("Extracting Units")
@@ -272,6 +277,7 @@ def clean_transcript(t: Transcript) -> CleanResult:
 
     return CleanResult(
         text=fixed,
+        special_call=special_call,
         units=units_found,
         channel=chan,
         incident_type=incident,

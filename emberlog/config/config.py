@@ -9,6 +9,8 @@ from typing import Iterable
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
+
 
 class Settings(BaseSettings):
     """Settings Class for centralized configuration"""
@@ -22,6 +24,7 @@ class Settings(BaseSettings):
     # File handling
     # Allow CSV via env like EMBERLOG_AUDIO_EXTENSIONS=.wav,.mp3
     audio_extensions: tuple[str, ...] = (".wav", ".mp3")
+    api_base_url = "http://localhost:8080/api/v1"
 
     # Concurrency
     concurrency: int = 2
@@ -40,7 +43,7 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
 
     model_config = SettingsConfigDict(
-        env_file=".env", env_prefix="EMBERLOG_", extra="ignore"
+        env_file=BASE_DIR / ".env", env_prefix="EMBERLOG_", extra="ignore"
     )
 
     @field_validator("inbox_dir", "outbox_dir", "ledger_path", mode="before")

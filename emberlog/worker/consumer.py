@@ -8,11 +8,13 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
 from emberlog.cleaning.cleaner import clean_transcript
 from emberlog.config.config import get_settings
+from emberlog.io.api_sink import ApiSink
 from emberlog.io.composite import CompositeSink
 from emberlog.io.json_sink import JsonFileSink
 from emberlog.io.ledger_sink import LedgerSink
@@ -43,7 +45,8 @@ class Worker:
         self.local_sink = LocalSink(settings.outbox_dir)
         self.json_sink = JsonFileSink(self.local_sink, naming="{stem}.json")
         self.ledger_sink = LedgerSink()
-        self.sink = CompositeSink([self.json_sink, self.ledger_sink])
+        self.api_sink = ApiSink()
+        self.sink = CompositeSink([self.json_sink, self.ledger_sink, self.api_sink])
 
         self.q = q
         self.name = name
@@ -105,22 +108,19 @@ class Worker:
             ]
         self.logger.debug("Transcript Segments:\n\t%s", segments)
         dispatches = split_transcript(segments, str(p))
-        self.logger.info(
-            "Split audio into dispatches",
-            extra={
-                "source": str(p),
-                "dispatch_count": len(dispatches),
-                "channels": [d.channel for d in dispatches],
-                "avg_len_s": round(
-                    sum(d.end_s - d.start_s for d in dispatches)
-                    / max(1, len(dispatches)),
-                    2,
-                ),
-            },
-        )
+
         created_at = getattr(transcript, "created_at", None) or datetime.now(
             timezone.utc
         )
+        # Determine Dispatched time from filename
+        ts_rs = re.compile(r"\/1795-(\d+)", re.I)
+        audio_path = str(p)
+        dispatch_ts = ts_rs.search(audio_path)
+        dispatched_at = None
+        if dispatch_ts and dispatch_ts.group(1):
+            ts = int(dispatch_ts.group(1))
+            dispatched_at = datetime.fromtimestamp(ts)
+
         written_paths = []
 
         for i, d in enumerate(dispatches, start=1):
@@ -129,15 +129,12 @@ class Worker:
             t = Transcript(
                 audio_path=p,
                 text=d.text,
-                duration_s=d.end_s - d.start_s,
                 language=transcript.language,
                 created_at=transcript.created_at,
             )
             clean = clean_transcript(t)
             self.logger.debug(f"Cleaner Results:{clean}")
-            # rel_dir = Path(
-            #    f"{settings.outbox_dir}/{created_at.year}/{created_at.month}/{created_at.day}"
-            # )
+
             rel_dir = Path(f"{created_at.year}/{created_at.month}/{created_at.day}")
             base_name = p.stem
             name = (
@@ -151,18 +148,15 @@ class Worker:
                 "source_audio": str(p),
                 "dispatch_index": i,
                 "dispatch_count": len(dispatches),
-                "dispatch_start_s": d.start_s,
-                "dispatch_end_s": d.end_s,
                 "original_text": d.text,
-                "channel": d.channel,
-                "incident_type": clean.incident_type,
+                "dispatched_at": dispatched_at,
+                "special_call": clean.special_call,
                 "units": clean.units,
+                "channel": clean.channel,
+                "incident_type": clean.incident_type,
                 "address": clean.address,
                 "cleaned_text": clean.text,
                 "clean_stats": vars(clean.stats),
-                "segments": [
-                    {"start": s.start, "end": s.end, "text": s.text} for s in d.segments
-                ],
                 "created_at": created_at,  # serialized via default=str in sink
                 "language": getattr(transcript, "language", "en"),
                 "version": (

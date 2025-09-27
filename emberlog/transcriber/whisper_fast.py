@@ -43,7 +43,7 @@ def _load_vad_params() -> dict[str, object]:
 
 @dataclass
 class WhisperConfig:
-    model_name: str = os.getenv("WHISPER_MODEL", "medium.en")
+    model_name: str = os.getenv("WHISPER_MODEL", "large-v3")
     device: str = os.getenv("WHISPER_DEVICE", "cuda")  # "cuda" | "cpu"
     compute_type: str = os.getenv(
         "WHISPER_COMPUTE_TYPE", "float32"
