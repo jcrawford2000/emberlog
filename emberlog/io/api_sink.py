@@ -21,12 +21,14 @@ class ApiSink(Sink):
     async def process(
         self, *, transcript, incident, audio_path: Path, out_dir: Path, context=None
     ) -> SinkResult:
+        logger.debug("API Sink Processing Incident")
         result = await self.write_api(incident)
         return SinkResult(
             ok=True, extra={"inserted": "true", "rowid": "xx", "sha": "xx"}
         )
 
     async def write_api(self, obj: dict[str, Any]) -> dict[str, Any]:
+        logger.debug("Initializing API")
         api = EmberlogAPIClient(base_url=self.api_base_url, api_key="")
         incident = IncidentIn(
             dispatched_at=obj["dispatched_at"],
@@ -40,6 +42,8 @@ class ApiSink(Sink):
             transcript=obj["cleaned_text"],
             parsed={},
         )
+        logger.debug("Submitting to API")
         result = await api.create_incident(payload=incident)
         await api.close()
+        logger.debug(f"Result:{result.model_dump_json(indent=2)}")
         return result.model_dump()
