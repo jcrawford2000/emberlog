@@ -70,11 +70,14 @@ class EmberlogAPIClient:
             return False
 
     async def create_incident(self, payload: IncidentIn) -> NewIncident:
+        log.debug("API Client Creating Incident")
         try:
+            log.debug("Posting to API")
             r = await self._client.post(
                 "/incidents", json=payload.model_dump(mode="json")
             )
             r.raise_for_status()
+            log.debug(f"Status: {r.status_code}")
         except httpx.HTTPStatusError as e:
             detail = e.response.text
             log.error("API Error %s: %s", e.response.status_code, detail)
@@ -84,4 +87,5 @@ class EmberlogAPIClient:
             data["created_at"] = datetime.fromisoformat(
                 data["created_at"].replace("Z", "+00:00")
             )
+        log.debug(f"Resuult:{data}")
         return NewIncident.model_validate(data)

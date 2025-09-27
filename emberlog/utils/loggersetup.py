@@ -41,6 +41,11 @@ LOGGING = {
             "handlers": ["console", "file_app"],
             "propagate": False,
         },
+        "emberlog.api": {
+            "level": "DEBUG",
+            "handlers": ["console", "file_app"],
+            "propagate": False,
+        },
         "emberlog.queue": {
             "level": "DEBUG",
             "handlers": ["console", "file_app"],
