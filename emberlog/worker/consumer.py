@@ -46,7 +46,7 @@ class Worker:
         self.json_sink = JsonFileSink(self.local_sink, naming="{stem}.json")
         self.ledger_sink = LedgerSink()
         self.api_sink = ApiSink()
-        self.sink = CompositeSink([self.json_sink, self.ledger_sink, self.api_sink])
+        self.sink = CompositeSink([self.api_sink, self.json_sink, self.ledger_sink])
 
         self.q = q
         self.name = name

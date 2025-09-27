@@ -6,14 +6,15 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 import httpx
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, ConfigDict, Field
 
 log = logging.getLogger("emberlog.api")
 
 
 # Models
 class LinkTarget(BaseModel):
-    url: HttpUrl
+    url: str = Field(alias="_url")
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class Links(BaseModel):
@@ -74,7 +75,7 @@ class EmberlogAPIClient:
         try:
             log.debug("Posting to API")
             r = await self._client.post(
-                "/incidents", json=payload.model_dump(mode="json")
+                "/incidents/", json=payload.model_dump(mode="json")
             )
             r.raise_for_status()
             log.debug(f"Status: {r.status_code}")
