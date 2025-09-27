@@ -17,10 +17,9 @@ REPLACEMENTS = [
     (re.compile(r"\bBattalion\s+Chief\s+(\d{1,3})\b", re.I), r"Battalion \1"),
     # K deck variants → K-Deck N
     (re.compile(r"\bK\s*[-]?\s*dec?k\s*(\d{1,2})\b", re.I), r"K-Deck \1"),
-    # Lifepak spelling
-    (re.compile(r"\bLife\s*Pack\b", re.I), "Lifepak"),
     # Crisis Response shorthand
     (re.compile(r"\bC R\s*?(\d+)\b", re.I), r"Crisis Response \1"),
+    (re.compile(r"\bStage 4 PD\b", re.I), r"Stage For PD"),
 ]
 
 UNIT_PATTERNS = [
@@ -204,9 +203,14 @@ def clean_transcript(t: Transcript) -> CleanResult:
     else:
         logger.debug("No replacements made")
 
-    # Collapse whitespace
+    # Collapse whitespace, special characters, 'and'
+    fixed = re.sub(r",+", "", fixed)
+    fixed = re.sub(r"\band\b", "", fixed)
+    logger.info("Removing periods")
+    fixed = re.sub(r"\.+", "", fixed)
     logger.info("Removing extra whitespace characters")
     fixed = re.sub(r"\s+", " ", fixed).strip()
+
     incident = fixed
 
     # Determine Special Call
