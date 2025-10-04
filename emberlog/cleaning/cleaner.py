@@ -326,7 +326,7 @@ def clean_transcript(t: Transcript) -> CleanResult:
     # Determine Special Call
     sc_re = re.compile(r"^special call", re.I)
     special_call = bool(sc_re.search(fixed))
-    fixed = sc_re.sub("", fixed)
+    incident = sc_re.sub("", fixed)
 
     # Extract units
     logger.info("Extracting Units")
@@ -364,7 +364,7 @@ def clean_transcript(t: Transcript) -> CleanResult:
         stats.channel_found = True
         logger.debug("Found channel: %s", chan)
         # Remove Channel from string
-        incident = incident.replace(chan, "")
+        incident = CHAN_RE.sub("", incident)
     else:
         logger.info("Unable to determine channel.")
     # Remove any 'and' leftover
