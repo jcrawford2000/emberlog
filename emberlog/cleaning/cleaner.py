@@ -106,16 +106,17 @@ ST_TYPE_MAP = {
 #    r"(?:\s+(?P<type>Avenue|Ave|Street|St|Road|Rd|Drive|Dr|Lane|Ln|Way|Boulevard|Blvd|Place|Pl|Court|Ct|Terrace|Ter|Trail|Trl|Parkway|Pkwy))?\b",
 #    re.I,
 # )
+ORD = r"\d{1,4}(?:st|nd|rd|th)\b"  # 1st..9999th
 ADDR_RE = re.compile(
-    r"""
+    rf"""
     \b
-    (?P<num>\d{3,5})
+    (?P<num>\d{{3,5}})
     \s+
     (?P<compass>N|S|E|W|North|South|East|West)
     \s+
-    # Street name tokens: Capitalized words, but NOT street types or unit/channel words
+    # Street name tokens: allow Capitalized words OR ordinals like 146th
     (?P<name>
-        [A-Z][A-Za-z0-9\-']*
+        (?:{ORD}|[A-Z][A-Za-z0-9\-']*)
         (?:\s+
             (?! # stop tokens the name must NOT absorb
                 (?:Avenue|Ave|Street|St|Road|Rd|Drive|Dr|Lane|Ln|Way|
@@ -124,7 +125,7 @@ ADDR_RE = re.compile(
                 |Crisis\s+Response\b
                 |K-?Deck\b
             )
-            [A-Z][A-Za-z0-9\-']*
+            (?:{ORD}|[A-Z][A-Za-z09\-']*)
         )*
     )
     # Optional street type (kept separate from name)
@@ -134,7 +135,7 @@ ADDR_RE = re.compile(
     ))?
     # After the address, allow end, a number, a unit, or K-Deck — but don't consume it
     (?=
-        (?:\s+(?:\d{1,5}\b
+        (?:\s+(?:\d{{1,5}}\b
                |Engine\b|Rescue\b|Ladder\b|Batt(?:alion)?\b
                |Crisis\s+Response\b|K-?Deck\b))?
         |$
