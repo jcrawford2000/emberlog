@@ -26,9 +26,11 @@ MISHEARD_INCIDENTS = [
     # Tech Welfare -> Check Welfare
     (re.compile(r"\bTech Welfare\b", re.I), r"Check Welfare"),
     # Hill/Bill Person -> Ill Person
-    (re.compile(r"\b[A-Z]ill\s*Person\b", re.I), r"Ill Person"),
+    (re.compile(r"\b[A-Z]ill\s*Person\b|\bIlkerson\b", re.I), r"Ill Person"),
     # Park Problem -> Heart Problem
     (re.compile(r"\bPark Problem\b", re.I), r"Heart Problem"),
+    # Just Payne -> Check Pain
+    (re.compile(r"\bJust Payne\b", re.I), r"Chest Pain"),
 ]
 
 UNIT_PATTERNS = [
@@ -232,7 +234,7 @@ def _normalize_address(text: str) -> Optional[dict[str, str]]:
             }
             return f"{num} {comp} {name} {stype}"
         return {
-            "raw": f"{m.group("num")} {m.group("compass")} {m.group("name")}",
+            "raw": f"{m}",
             "normalized": f"{num} {comp} {name}",
         }
     logger.info("Unable to extract address, trying intersection types")
@@ -245,7 +247,7 @@ def _normalize_address(text: str) -> Optional[dict[str, str]]:
             m.group("notes"),
         )
         return {
-            "raw": f"{m.group("street1")} and {m.group("street2")}",
+            "raw": f"{m}",
             "normalized": f"{m.group("street1")} and {m.group("street2")}",
         }
     logger.info("Unable to extract intersection, trying freeway types")
@@ -258,7 +260,7 @@ def _normalize_address(text: str) -> Optional[dict[str, str]]:
             m.group("notes"),
         )
         return {
-            "raw": f"{m.group("freeway")} at {m.group("cross_street")} {m.group("notes")}",
+            "raw": f"{m}",
             "normalized": f"{m.group("freeway")} at {m.group("cross_street")} {m.group("notes")}",
         }
     logger.warning("Unable to parse address")
@@ -324,7 +326,7 @@ def clean_transcript(t: Transcript) -> CleanResult:
     # Determine Special Call
     sc_re = re.compile(r"^special call", re.I)
     special_call = bool(sc_re.search(fixed))
-    sc_re.sub("", fixed)
+    fixed = sc_re.sub("", fixed)
 
     # Extract units
     logger.info("Extracting Units")
@@ -389,7 +391,7 @@ def clean_transcript(t: Transcript) -> CleanResult:
         stats.replacements_applied += n
 
     # Remove any remaining stray and's
-    incident = re.sub(r"^(?:and\s+)+", "", incident)
+    incident = re.sub(r"(?:\band\s*)+", "", incident)
 
     stats.chars_after = len(fixed)
     logger.info(
