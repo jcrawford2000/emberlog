@@ -26,7 +26,7 @@ MISHEARD_INCIDENTS = [
     # Tech Welfare -> Check Welfare
     (re.compile(r"\bTech Welfare\b", re.I), r"Check Welfare"),
     # Hill/Bill Person -> Ill Person
-    (re.compile(r"\b[A-Z]ill Person\b", re.I), r"Ill Person"),
+    (re.compile(r"\b[A-Z]ill\s*Person\b", re.I), r"Ill Person"),
     # Park Problem -> Heart Problem
     (re.compile(r"\bPark Problem\b", re.I), r"Heart Problem"),
 ]
@@ -351,7 +351,7 @@ def clean_transcript(t: Transcript) -> CleanResult:
     for unit in units_found:
         incident = incident.replace(unit, "")
     # Remove any 'and' leftover
-    incident = re.sub(r"^and\b", "", incident)
+    incident = re.sub(r"^(?:and\s+)+", "", incident)
 
     # Extract channel
     logger.info("Extracting Channel")
@@ -365,6 +365,8 @@ def clean_transcript(t: Transcript) -> CleanResult:
         incident = incident.replace(chan, "")
     else:
         logger.info("Unable to determine channel.")
+    # Remove any 'and' leftover
+    incident = re.sub(r"^(?:and\s+)+", "", incident)
 
     # Extract address
     logger.info("Extracting Address")
@@ -380,6 +382,15 @@ def clean_transcript(t: Transcript) -> CleanResult:
     # Now What we should be left with is the Incident Type
     # Strip extra spaced from the incident
     incident = re.sub(r"\s+", " ", incident).strip()
+
+    # Fix commonly misheard incidents
+    for pat, repl in MISHEARD_INCIDENTS:
+        incident, n = pat.subn(repl, incident)
+        stats.replacements_applied += n
+
+    # Remove any remaining stray and's
+    incident = re.sub(r"^(?:and\s+)+", "", incident)
+
     stats.chars_after = len(fixed)
     logger.info(
         "Cleaner finished.  Result:\n\ttext=%s\n\tunits=%s\n\tchannel=%s\n\tincident=%s\n\taddress=%s\n\tstats=%s",
