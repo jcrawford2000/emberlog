@@ -48,7 +48,7 @@ UNIT_PATTERNS = [
 CHAN_RE = re.compile(
     r"""
     (?:                # non-capturing group for the two families
-        K[- ]?De(?:ck|c)\s*\(d+)    # matches "K-Deck 8" or "K-Dec 8"
+        K[- ]?De(?:ck|c)\s*(\d+)    # matches "K-Deck 8" or "K-Dec 8"
         |                        # OR
         (?:Fire\s*Channel\s*)?   # optional "Fire Channel"
         A(\d+)                     # matches "A5" or "Fire Channel A5"
