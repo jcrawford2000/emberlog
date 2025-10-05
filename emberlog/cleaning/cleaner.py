@@ -110,9 +110,9 @@ ORD = r"\d{1,4}(?:st|nd|rd|th)\b"  # 1st..9999th
 ADDR_RE = re.compile(
     rf"""
     \b
-    (?P<num>\d{3,5})
+    (?P<num>\d{{3,5}})
     \s+
-    (?P<compass>North|South|East|West|N|S|E|W|)
+    (?P<compass>North|South|East|West|N|S|E|W)
     \s+
     # Street name tokens: allow Capitalized words OR ordinals like 146th
     (?P<name>
@@ -120,12 +120,12 @@ ADDR_RE = re.compile(
         (?:\s+
             (?! # stop tokens the name must NOT absorb
                 (?:Avenue|Ave|Street|St|Road|Rd|Drive|Dr|Lane|Ln|Way|
-                 Boulevard|Blvd|Place|Pl|Court|Ct|Terrace|Ter|Trail|Trl|Parkway|Pkwy)\b
+                 Boulevard|Blvd|Place|Pl|Court|Ct|Terrace|Ter|Trail|Trl|Parkway|Pkwy|Mall)\b
                 |Engine\b|Rescue\b|Ladder\b|Batt(?:alion)?\b
                 |Crisis\s+Response\b
                 |K-?Deck\b
             )
-            (?:{ORD}|[A-Z][A-Za-z09\-']*)
+            (?:{ORD}|[A-Z][A-Za-z0-9\-']*)
         )*
     )
     # Optional street type (kept separate from name)
@@ -143,6 +143,7 @@ ADDR_RE = re.compile(
     """,
     re.I | re.X,
 )
+
 
 STREET_TYPE = r"(?:Avenue|Ave|Street|St|Road|Rd|Drive|Dr|Lane|Ln|Way|Boulevard|Blvd|Place|Pl|Court|Ct|Terrace|Ter|Trail|Trl|Parkway|Pkwy|Freeway|Fwy|Highway|Hwy)"
 DIR = r"(?:N|S|E|W|North|South|East|West)"
