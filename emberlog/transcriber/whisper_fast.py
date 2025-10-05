@@ -90,7 +90,7 @@ class FasterWhisperTranscriber:
 
     def _do_transcribe(self, path: Path) -> Transcript:
         audio_path = str(path)
-        logger.info(f"Transcribing audio: {audio_path}")
+        logger.info("[%s] Transcribing audio: %s", path.stem, audio_path)
 
         segments_iter, info = self.model.transcribe(
             audio_path,

@@ -120,17 +120,17 @@ class _Handler(FileSystemEventHandler):
         self.logger = logging.getLogger("emberlog.watch._Handler")
 
     def _matches(self, p: Path) -> bool:
-        logger.debug("Checking file for processing.")
+        logger.debug("[%s] Checking file for processing.", p.stem)
         matches = False
         if p.is_file():
-            logger.debug(f"{p} is a file")
+            logger.debug("[%s] %s is a file", p.stem, p)
             if p.suffix.lower() in self.exts:
-                logger.debug(f"{p.suffix.lower()} is a valid extension")
+                logger.debug("[%s] %s is a valid extension", p.stem, p.suffix.lower())
                 if is_in_dated_tree(self.inbox, p):
-                    logger.debug(f"{p} is in a dated tree.")
+                    logger.debug("[%s] %s is in a dated tree.", p.stem, p)
                     matches = True
                 else:
-                    logger.debug(f"{p} is not in a dated tree")
+                    logger.debug("[%s] %s is not in a dated tree", p.stem, p)
             else:
                 logger.debug(f"{p.suffix.lower()} is not a valid extension")
         else:
@@ -139,15 +139,16 @@ class _Handler(FileSystemEventHandler):
 
     def on_created(self, event) -> None:
         if isinstance(event, FileCreatedEvent):
-            self.logger.debug(f"Detected FileCreatedEvent: {event.src_path}")
             p = _coerce_path(event.src_path)
+            self.logger.debug("[%s] Detected FileCreatedEvent: %s", p.stem, p)
+
             if self._matches(p):
-                logger.debug("File is valid, enqueueing.")
+                logger.debug("[%s] File is valid, enqueueing.", p.stem)
                 asyncio.run_coroutine_threadsafe(
                     _maybe_enqueue(self.idx, self.q, p), self.loop
                 )
             else:
-                logger.debug("File was not valid, skipping.")
+                logger.debug("[%s] File was not valid, skipping.", p.stem)
 
     def on_moved(self, event) -> None:
         if isinstance(event, FileMovedEvent):
@@ -184,7 +185,7 @@ async def _enqueue_when_stable(q: JobQueue, path: Path) -> None:
             stable_count = stable_count + 1 if size == last else 0
             last = size
             await asyncio.sleep(STABILITY_CHECK_SECS)
-        logger.debug(f"File is stable, adding to queue ({path})")
+        logger.debug("[%s] File is stable, adding to queue (%s)", path.stem, path)
         await q.put(Job(path=path))
     except FileNotFoundError:
         # File disappeared before we could queue it—ignore.

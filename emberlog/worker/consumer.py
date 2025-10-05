@@ -85,9 +85,9 @@ class Worker:
     async def process(self, job: Job) -> None:
         """Run the transcriber and write output to the outbox."""
         p: Path = job.path
-        self.logger.info(f"[{self.name}] Transcribing: {p}")
+        self.logger.info("[%s] [%s] Transcribing: %s", self.name, p.stem, p)
         transcript = await self.transcriber.transcribe(p)
-        self.logger.debug(f"Transcript:{transcript}")
+        self.logger.debug("[%s] Transcript:%s", p.stem, transcript)
         if hasattr(transcript, "segments"):
             # STT returned a list/generator of segments
             segments = [
@@ -106,9 +106,9 @@ class Worker:
                     text=str(transcript.text or ""),
                 )
             ]
-        self.logger.debug("Transcript Segments:\n\t%s", segments)
-        dispatches = split_transcript(segments, str(p))
-        self.logger.debug("Transcript has %s dispatches", len(dispatches))
+        self.logger.debug("[%s] Transcript Segments:\n\t%s", p.stem, segments)
+        dispatches = split_transcript(segments, p)
+        self.logger.debug("[%s] Transcript has %s dispatches", p.stem, len(dispatches))
 
         created_at = getattr(transcript, "created_at", None) or datetime.now(
             timezone.utc
@@ -121,13 +121,13 @@ class Worker:
         if dispatch_ts and dispatch_ts.group(1):
             ts = int(dispatch_ts.group(1))
             dispatched_at = datetime.fromtimestamp(ts)
-            self.logger.debug("Call Dispatched at %s", dispatched_at)
+            self.logger.debug("[%s] Call Dispatched at %s", p.stem, dispatched_at)
 
         written_paths = []
 
         for i, d in enumerate(dispatches, start=1):
             # clean = clean_transcript - TODO: Implement clean_transcript
-            self.logger.debug("Cleaning Transcript")
+            self.logger.debug("[%s] Cleaning Transcript", p.stem)
             t = Transcript(
                 audio_path=p,
                 text=d.text,
@@ -135,7 +135,7 @@ class Worker:
                 created_at=transcript.created_at,
             )
             clean = clean_transcript(t)
-            self.logger.debug(f"Cleaner Results:{clean}")
+            self.logger.debug("[%s] Cleaner Results:%s", p.stem, clean)
 
             rel_dir = Path(f"{created_at.year}/{created_at.month}/{created_at.day}")
             base_name = p.stem
@@ -165,9 +165,9 @@ class Worker:
                     get_app_version() if "get_app_version" in globals() else None
                 ),
             }
-            self.logger.debug("Payload:\n%s", doc)
+            self.logger.debug("[%s] Payload:\n%s", p.stem, doc)
             # 5) write via sink
-            self.logger.debug("Writing to Sink")
+            self.logger.debug("[%s] Writing to Sink", p.stem)
             out_path = await self.sink.process(
                 transcript=doc["cleaned_text"],
                 incident=doc,
@@ -176,4 +176,4 @@ class Worker:
             )  # write_json(relpath, doc)
             written_paths.append(out_path)
             self.idx.mark_processed(p)
-            self.logger.info(f"[{self.name}] Wrote {relpath}")
+            self.logger.info("[%s] [%s] Wrote %s", self.name, p.stem, relpath)

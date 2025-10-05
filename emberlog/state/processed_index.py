@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import logging
+import shutil
 import sqlite3
 from pathlib import Path
 from typing import Iterable
@@ -37,25 +38,36 @@ class ProcessedIndex:
         return h[:16]
 
     def is_processed(self, path: Path) -> bool:
-        self.logger.debug(f"Getting Fingerprint for {path}")
+        self.logger.debug("[%s] Getting Fingerprint for %s", path.stem, path)
         fp = self.fingerprint(path)
-        self.logger.debug(f"Checking if already processed")
+        self.logger.debug("[%s] Checking if already processed", path.stem)
         cur = self.db.execute("SELECT 1 FROM processed WHERE fingerprint=?", (fp,))
         result = cur.fetchone() is not None
-        self.logger.debug(f"Result:{result}")
+        self.logger.debug("[%s] Result:%s", path.stem, result)
+        if result:
+            PROCESSED_PATH = Path("/data/emberlog/processed")
+            PROCESSED_PATH.mkdir(parents=True, exist_ok=True)
+            dest = PROCESSED_PATH / path.name
+            shutil.move(str(path), str(dest))
+            self.logger.debug("[%s] Moved %s to processed folder", path.stem, path.name)
         return result
 
     def mark_processed(self, path: Path) -> None:
-        self.logger.debug(f"Marking {path} as processed")
+        self.logger.debug("[%s] Marking %s as processed", path.stem, path)
         st = path.stat()
-        self.logger.debug("Generating fingerprint")
+        self.logger.debug("[%s] Generating fingerprint", path.stem)
         fp = self.fingerprint(path)
-        self.logger.debug("Adding to db")
+        self.logger.debug("[%s] Adding to db", path.stem)
         self.db.execute(
             "INSERT OR REPLACE INTO processed(fingerprint, path, size, mtime_ns, processed_at) VALUES (?,?,?,?,strftime('%s','now'))",
             (fp, str(path), st.st_size, st.st_mtime_ns),
         )
         self.db.commit()
+        PROCESSED_PATH = Path("/data/emberlog/processed")
+        PROCESSED_PATH.mkdir(parents=True, exist_ok=True)
+        dest = PROCESSED_PATH / path.name
+        shutil.move(str(path), str(dest))
+        self.logger.debug("[%s] Moved %s to processed folder", path.stem, path.name)
 
     def bulk_mark_processed(self, paths: Iterable[Path]) -> None:
         rows = []

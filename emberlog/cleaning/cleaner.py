@@ -149,7 +149,7 @@ DIR = r"(?:N|S|E|W|North|South|East|West)"
 ORD = r"(?:\d{1,3}(?:st|nd|rd|th))"  # 5th, 7th, etc.
 WORD = r"(?:[A-Z][A-Za-z0-9'’\-]*)"  # Port-au-Prince, Cinnabar, McDowell, etc.
 
-# --- 1) General intersection: "79th Avenue and Thunderbird Road", "5th Street & McDowell Road", "Reseda Parkway at Waddell Road"
+# --- 1) General intersection: "79th Avenue and Thunderbird Road", "5th Street & McDowell Road", "Prasada Parkway at Waddell Road"
 INTERSECTION_RE = re.compile(
     rf"""
     \b
@@ -298,39 +298,41 @@ class CleanResult:
 
 
 def clean_transcript(t: Transcript) -> CleanResult:
+    ps = t.audio_path.stem
     raw = t.text or ""
-    logger.info("Cleaning Transcript: %s", raw)
+    logger.info("[%s] Cleaning Transcript: %s", ps, raw)
     stats = CleanStats(chars_before=len(raw))
 
     # Apply regex replacements
-    logger.info("Cleaning standard mis-heard words.")
+    logger.info("[%s] Cleaning standard mis-heard words.", ps)
     fixed = raw
     for pat, repl in REPLACEMENTS:
         fixed, n = pat.subn(repl, fixed)
         stats.replacements_applied += n
     if stats.replacements_applied > 0:
-        logger.debug("Made %d replacements.", stats.replacements_applied)
-        logger.debug("Updated Transcript: %s", fixed)
+        logger.debug("[%s] Made %d replacements.", ps, stats.replacements_applied)
+        logger.debug("[%s] Updated Transcript: %s", ps, fixed)
     else:
-        logger.debug("No replacements made")
+        logger.debug("[%s] No replacements made", ps)
 
     # Collapse whitespace, special characters, 'and'
     fixed = re.sub(r",+", "", fixed)
     # fixed = re.sub(r"\band\b", "", fixed)
-    logger.info("Removing periods")
+    logger.info("[%s] Removing periods", ps)
     fixed = re.sub(r"\.+", "", fixed)
-    logger.info("Removing extra whitespace characters")
+    logger.info("[%s] Removing extra whitespace characters", ps)
     fixed = re.sub(r"\s+", " ", fixed).strip()
 
     incident = fixed
+    logger.debug("[%s] Incident: %s", ps, incident)
 
     # Determine Special Call
     sc_re = re.compile(r"^special call", re.I)
     special_call = bool(sc_re.search(fixed))
     incident = sc_re.sub("", fixed)
-
+    logger.debug("[%s] Special call? %s, Incident: %s", ps, special_call, incident)
     # Extract units
-    logger.info("Extracting Units")
+    logger.info("[%s] Extracting Units", ps)
     units_found = []
     seen = set()
     for pat in UNIT_PATTERNS:
@@ -339,7 +341,7 @@ def clean_transcript(t: Transcript) -> CleanResult:
             if u not in seen:
                 seen.add(u)
                 units_found.append(u)
-    logger.debug("Units found: %s", units_found)
+    logger.debug("[%s] Units found: %s", ps, units_found)
     stats.units_before = len(
         re.findall(
             r"\b(Engine|Rescue|Ladder|Batt(?:alion)?|Crisis\s+Response)\s*\d{1,3}\b",
@@ -349,61 +351,68 @@ def clean_transcript(t: Transcript) -> CleanResult:
     )
     stats.units_after = len(units_found)
     stats.deduped_units = stats.units_before - stats.units_after
-    logger.debug("Removed %d duplicates", stats.deduped_units)
+    logger.debug("[%s] Removed %d duplicates", ps, stats.deduped_units)
     # Remove Units from string
     for unit in units_found:
         incident = incident.replace(unit, "")
     # Remove any 'and' leftover
     incident = re.sub(r"^(?:and\s+)+", "", incident)
+    logger.debug("[%s] Incident: %s", ps, incident)
 
     # Extract channel
-    logger.info("Extracting Channel")
+    logger.info("[%s] Extracting Channel", ps)
     chan = None
     m = CHAN_RE.search(fixed)
-    logger.debug("Channel Regex Returned %s", m)
+    logger.debug("[%s] Channel Regex Returned %s", ps, m)
     if m and m.group(1):
         chan = f"K-Deck {int(m.group(1))}"
         stats.channel_found = True
-        logger.debug("Found channel: %s", chan)
+        logger.debug("[%s] Found channel: %s", ps, chan)
         # Remove Channel from string
         incident = CHAN_RE.sub("", incident)
     elif m and m.group(2):
         chan = f"A{int(m.group(2))}"
         stats.channel_found = True
-        logger.debug("Found channel: %s", chan)
+        logger.debug("[%s] Found channel: %s", ps, chan)
         # Remove Channel from string
         incident = CHAN_RE.sub("", incident)
     else:
-        logger.info("Unable to determine channel.")
+        logger.warning("[%s] Unable to determine channel.", ps)
     # Remove any 'and' leftover
     incident = re.sub(r"^(?:and\s+)+", "", incident)
+    logger.debug("[%s] Incident: %s", ps, incident)
 
     # Extract address
-    logger.info("Extracting Address")
+    logger.info("[%s] Extracting Address", ps)
     addr = _normalize_address(fixed)
     if addr is not None:
         stats.address_found = True
-        logger.debug("Address%s", addr)
+        logger.debug("[%s] Address%s", ps, addr)
         # Remove Channel from string
         incident = incident.replace(addr["raw"], "")
     else:
+        logger.warning("[%s] Unable to determine address", ps)
         addr = {"raw": "", "normalized": ""}
 
     # Now What we should be left with is the Incident Type
     # Strip extra spaced from the incident
     incident = re.sub(r"\s+", " ", incident).strip()
+    logger.debug("[%s] Incident: %s", ps, incident)
 
     # Fix commonly misheard incidents
+    logger.debug("[%s], Fixing common mis-heard incident types", ps)
     for pat, repl in MISHEARD_INCIDENTS:
         incident, n = pat.subn(repl, incident)
         stats.replacements_applied += n
 
     # Remove any remaining stray and's
     incident = re.sub(r"(?:\band\s*)+", "", incident)
+    logger.debug("[%s] Incident: %s", ps, incident)
 
     stats.chars_after = len(fixed)
     logger.info(
-        "Cleaner finished.  Result:\n\ttext=%s\n\tunits=%s\n\tchannel=%s\n\tincident=%s\n\taddress=%s\n\tstats=%s",
+        "[%s] Cleaner finished.  Result:\n\ttext=%s\n\tunits=%s\n\tchannel=%s\n\tincident=%s\n\taddress=%s\n\tstats=%s",
+        ps,
         fixed,
         units_found,
         chan,
