@@ -368,7 +368,7 @@ def clean_transcript(t: Transcript) -> CleanResult:
         # Remove Channel from string
         incident = CHAN_RE.sub("", incident)
     elif m and m.group(2):
-        chan = f"A{int(m.group(1))}"
+        chan = f"A{int(m.group(2))}"
         stats.channel_found = True
         logger.debug("Found channel: %s", chan)
         # Remove Channel from string
