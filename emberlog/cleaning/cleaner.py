@@ -360,8 +360,15 @@ def clean_transcript(t: Transcript) -> CleanResult:
     logger.info("Extracting Channel")
     chan = None
     m = CHAN_RE.search(fixed)
-    if m:
+    logger.debug("Channel Regex Returned %s", m)
+    if m and m.group(1):
         chan = f"K-Deck {int(m.group(1))}"
+        stats.channel_found = True
+        logger.debug("Found channel: %s", chan)
+        # Remove Channel from string
+        incident = CHAN_RE.sub("", incident)
+    elif m and m.group(2):
+        chan = f"A{int(m.group(1))}"
         stats.channel_found = True
         logger.debug("Found channel: %s", chan)
         # Remove Channel from string
