@@ -44,12 +44,12 @@ class ProcessedIndex:
         cur = self.db.execute("SELECT 1 FROM processed WHERE fingerprint=?", (fp,))
         result = cur.fetchone() is not None
         self.logger.debug("[%s] Result:%s", path.stem, result)
-        if result:
-            PROCESSED_PATH = Path("/data/emberlog/processed")
-            PROCESSED_PATH.mkdir(parents=True, exist_ok=True)
-            dest = PROCESSED_PATH / path.name
-            shutil.move(str(path), str(dest))
-            self.logger.debug("[%s] Moved %s to processed folder", path.stem, path.name)
+        # if result:
+        #    PROCESSED_PATH = Path("/data/emberlog/processed")
+        #    PROCESSED_PATH.mkdir(parents=True, exist_ok=True)
+        #    dest = PROCESSED_PATH / path.name
+        #    shutil.move(str(path), str(dest))
+        #    self.logger.debug("[%s] Moved %s to processed folder", path.stem, path.name)
         return result
 
     def mark_processed(self, path: Path) -> None:
@@ -63,11 +63,11 @@ class ProcessedIndex:
             (fp, str(path), st.st_size, st.st_mtime_ns),
         )
         self.db.commit()
-        PROCESSED_PATH = Path("/data/emberlog/processed")
-        PROCESSED_PATH.mkdir(parents=True, exist_ok=True)
-        dest = PROCESSED_PATH / path.name
-        shutil.move(str(path), str(dest))
-        self.logger.debug("[%s] Moved %s to processed folder", path.stem, path.name)
+        # PROCESSED_PATH = Path("/data/emberlog/processed")
+        # PROCESSED_PATH.mkdir(parents=True, exist_ok=True)
+        # dest = PROCESSED_PATH / path.name
+        # shutil.move(str(path), str(dest))
+        # self.logger.debug("[%s] Moved %s to processed folder", path.stem, path.name)
 
     def bulk_mark_processed(self, paths: Iterable[Path]) -> None:
         rows = []
