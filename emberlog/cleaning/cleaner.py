@@ -110,9 +110,9 @@ ORD = r"\d{1,4}(?:st|nd|rd|th)\b"  # 1st..9999th
 ADDR_RE = re.compile(
     rf"""
     \b
-    (?P<num>\d{{3,5}})
+    (?P<num>\d{3,5})
     \s+
-    (?P<compass>N|S|E|W|North|South|East|West)
+    (?P<compass>North|South|East|West|N|S|E|W|)
     \s+
     # Street name tokens: allow Capitalized words OR ordinals like 146th
     (?P<name>
@@ -131,7 +131,7 @@ ADDR_RE = re.compile(
     # Optional street type (kept separate from name)
     (?:\s+(?P<type>
         Avenue|Ave|Street|St|Road|Rd|Drive|Dr|Lane|Ln|Way|
-        Boulevard|Blvd|Place|Pl|Court|Ct|Terrace|Ter|Trail|Trl|Parkway|Pkwy
+        Boulevard|Blvd|Place|Pl|Court|Ct|Terrace|Ter|Trail|Trl|Parkway|Pkwy|Mall
     ))?
     # After the address, allow end, a number, a unit, or K-Deck — but don't consume it
     (?=

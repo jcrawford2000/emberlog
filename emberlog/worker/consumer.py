@@ -108,6 +108,7 @@ class Worker:
             ]
         self.logger.debug("Transcript Segments:\n\t%s", segments)
         dispatches = split_transcript(segments, str(p))
+        self.logger.debug("Transcript has %s dispatches", len(dispatches))
 
         created_at = getattr(transcript, "created_at", None) or datetime.now(
             timezone.utc
@@ -120,6 +121,7 @@ class Worker:
         if dispatch_ts and dispatch_ts.group(1):
             ts = int(dispatch_ts.group(1))
             dispatched_at = datetime.fromtimestamp(ts)
+            self.logger.debug("Call Dispatched at %s", dispatched_at)
 
         written_paths = []
 

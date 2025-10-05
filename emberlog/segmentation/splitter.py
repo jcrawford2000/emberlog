@@ -24,7 +24,19 @@ class Dispatch:
 # --- Patterns ---------------------------------------------------------------
 
 # KDEC variants: "KDEC 9", "K-Deck 10", "K deck8"
-KDEC_RE = re.compile(r"\bK\s*[-]?\s*D(?:ec|EC|eck|ECK)?\s*(\d{1,2})\b", re.I)
+# KDEC_RE = re.compile(r"\bK\s*[-]?\s*D(?:ec|EC|eck|ECK)?\s*(\d{1,2})\b", re.I)
+
+KDEC_RE = re.compile(
+    r"""
+    (?:                # non-capturing group for the two families
+        K[- ]?De(?:ck|c)\s*(\d+)    # matches "K-Deck 8" or "K-Dec 8"
+        |                        # OR
+        (?:Fire\s*Channel\s*)?   # optional "Fire Channel"
+        A(\d+)                     # matches "A5" or "Fire Channel A5"
+    )
+    """,
+    re.I | re.VERBOSE,
+)
 
 # Half-hour timestamp IDs to ignore entirely:
 #   "1530 hours, Phoenix Fire Regional Dispatch."
@@ -47,12 +59,15 @@ def split_transcript(segments: Iterable[Segment], audio_path: str) -> List[Dispa
     # 1) filter out timestamp announcements and empty text
     segs = [s for s in segments if s.text]
     if not segs:
+        log.warning("No Segments, skipping")
         return []
     out: List[Dispatch] = []
     for seg in segs:
+        log.debug("Splitting Segment ")
         # Check if this segment is a timestamp
         text = _strip_announce(seg.text)
         if not text:
+            log.debug("Stripped Timestamp Announcement, no remaining text.")
             continue
         # This segment could still contain multiple dispatches if whisper didn't detect
         # We use the Channel as the boundry since it's voiced twice
