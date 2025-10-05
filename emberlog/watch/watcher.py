@@ -27,7 +27,7 @@ settings = get_settings()
 logger = logging.getLogger("emberlog.watch.watcher")
 
 STABILITY_CHECK_SECS = 0.25
-STABILITY_ITERATIONS = 3
+STABILITY_ITERATIONS = 2
 
 # Accept YYYY/M/D with NO zero padding for M/D, anywhere under inbox
 DATE_DIR_RE = re.compile(
