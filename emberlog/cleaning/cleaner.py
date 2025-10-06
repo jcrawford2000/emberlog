@@ -25,26 +25,40 @@ REPLACEMENTS = [
 MISHEARD_INCIDENTS = [
     # Tech Welfare -> Check Welfare
     (re.compile(r"\bTech Welfare\b", re.I), r"Check Welfare"),
-    # Hill/Bill Person -> Ill Person
-    (re.compile(r"\b[A-Z]ill\s*Person\b|\bIlkerson\b", re.I), r"Ill Person"),
+    # Ill Person variations
+    (
+        re.compile(r"\b[A-Z]ill\s*Person\b|\bIlkerson\b|\bIlverson\b", re.I),
+        r"Ill Person",
+    ),
     # Park Problem -> Heart Problem
     (re.compile(r"\bPark Problem\b", re.I), r"Heart Problem"),
     # Just Payne -> Check Pain
     (re.compile(r"\bJust Payne\b", re.I), r"Chest Pain"),
+    # Rush Fire -> Brush Fire
+    (re.compile(r"\brush fire\b", re.I), r"Brush Fire"),
+    # And no medical -> Unknown Medical
+    (re.compile(r"\and no medical\b", re.I), r"Unknown Medical"),
 ]
 
 UNIT_PATTERNS = [
-    re.compile(r"\b(Batt(?:alion)?\s*\d{1,3})\b", re.I),
-    re.compile(r"\b(Engine\s*\d{1,3})\b", re.I),
+    re.compile(r"\b(Batt(?:alion)?\s*\d{1,4})\b", re.I),
+    re.compile(r"\b(Engine\s*\d{1,4})\b", re.I),
     re.compile(
-        r"\b(Ladder\s+Tender\s*\d{1,3}|Ladder\s*\d{1,3}|Truck\s*\d{1,3}|TR\s*\d{1,3})\b",
+        r"\b(Ladder\s+Tender\s*\d{1,4}|\bLA-\d{1,4}|Ladder\s*\d{1,4}|Truck\s*\d{1,4}|TR\s*\d{1,4})\b",
         re.I,
     ),
     re.compile(
-        r"\b(Rescue\s*\d{1,3}|Medic\s*\d{1,3}|Maricopa\s*\d{1,3}|Medical Response\s*\d{1,3})\b",
+        r"\b(Rescue\s*\d{1,4}|Medic\s*\d{1,4}|Maricopa\s*\d{1,4}|Medical Response\s*\d{1,4})\b",
         re.I,
     ),
-    re.compile(r"\b(Crisis\s+Response\s*\d{1,3})\b", re.I),
+    re.compile(r"\b(Crisis\s+Response\s*\d{1,4})\b", re.I),
+    re.compile(r"\bWest Deputy\b", re.I),
+    re.compile(r"\bCar\s+\d{1,4}\s+(?:North|South)\b", re.I),
+    re.compile(r"\bHeavy Rescue Tender\s*\d{1,4}\b", re.I),
+    re.compile(r"\bHazmat\s*\d{1,4}\b", re.I),
+    re.compile(r"\bBrush\s*\d{1,4}", re.I),
+    re.compile(r"\bCar\s*\d{1,4}", re.I),
+    re.compile(r"\bMedical Response\s*\d{1,4}", re.I),
 ]
 
 CHAN_RE = re.compile(
