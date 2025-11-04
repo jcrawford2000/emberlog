@@ -6,6 +6,8 @@ import asyncio
 import json
 import logging
 import os
+import subprocess
+import tempfile
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -13,9 +15,11 @@ from typing import List, Optional
 
 from faster_whisper import WhisperModel
 
+from emberlog.config.config import get_settings
 from emberlog.models import Transcript
 
 logger = logging.getLogger("emberlog.transcriber.FasterWhisperTranscriber")
+settings = get_settings()
 
 
 def _bool_env(name: str, default: bool = False) -> bool:
@@ -26,7 +30,7 @@ def _bool_env(name: str, default: bool = False) -> bool:
 
 
 def _load_vad_params() -> dict[str, object]:
-    raw = os.getenv("WHISPER_VAD_PARAMETERS")
+    raw = settings.whisper_vad_parameters
     if raw:
         # Prefer JSON; fall back to literal_eval for legacy single-quoted dicts
         try:
@@ -43,26 +47,45 @@ def _load_vad_params() -> dict[str, object]:
 
 @dataclass
 class WhisperConfig:
-    model_name: str = os.getenv("WHISPER_MODEL", "large-v3")
-    device: str = os.getenv("WHISPER_DEVICE", "cuda")  # "cuda" | "cpu"
-    compute_type: str = os.getenv(
-        "WHISPER_COMPUTE_TYPE", "float16"
-    )  # "float16" on GPU, "int8" or "float32" as needed
-    vad_filter: bool = _bool_env("WHISPER_VAD_FILTER", True)
+    model_name: str = (
+        settings.whisper_model
+    )  # str = os.getenv("WHISPER_MODEL", "large-v3")
+    device: str = (
+        settings.whisper_device
+    )  # os.getenv("WHISPER_DEVICE", "cuda")  # "cuda" | "cpu"
+    compute_type: str = (
+        settings.whisper_compute_type
+    )  # os.getenv("WHISPER_COMPUTE_TYPE", "float16")  # "float16" on GPU, "int8" or "float32" as needed
+    vad_filter: bool = (
+        settings.whisper_vad_filter
+    )  # _bool_env("WHISPER_VAD_FILTER", True)
     vad_parameters: dict[str, object] = field(default_factory=_load_vad_params)
-    beam_size: int = int(os.getenv("WHISPER_BEAM_SIZE", "5"))
-    language: Optional[str] = os.getenv("WHISPER_LANGUAGE")  # e.g., "en"
-    best_of: int = int(os.getenv("WHISPER_BEST_OF", "8"))
-    temperature: float = float(os.getenv("WHISPER_TEMPERATURE", "0.0"))
-    initial_prompt: str = os.getenv(
-        "WHISPER_INITIAL_PROMPT",
-        "Phoenix metro fire dispatch. Terms: K-Deck, Battalion, Engine, Ladder, Ladder Tender, Rescue, Medic, HazMat. Street names: Civic Center Plaza, Watson, Yuma, Buckeye. Spell out channels like 'K-Deck 10'.",
-    )
-    no_speech_threshold: float = float(os.getenv("WHISPER_NO_SPEECH_THRESHOLD", "0.3"))
-    log_prob_threshold: float = float(os.getenv("WHISPER_LOG_PROB_THRESHOLD", "-1.2"))
-    compression_ratio_threshold: float = float(
-        os.getenv("WHISPER_COMPRESSION_RATIO_THRESHOLD", "2.8")
-    )
+    beam_size: int = (
+        settings.whisper_beam_size
+    )  # int(os.getenv("WHISPER_BEAM_SIZE", "5"))
+    language: Optional[str] = (
+        settings.whisper_language
+    )  # os.getenv("WHISPER_LANGUAGE")  # e.g., "en"
+    best_of: int = settings.whisper_best_of  # int(os.getenv("WHISPER_BEST_OF", "8"))
+    temperature: float = (
+        settings.whisper_temperature
+    )  # float(os.getenv("WHISPER_TEMPERATURE", "0.0"))
+    initial_prompt: str = settings.whisper_initial_prompt  # os.getenv(
+    #    "WHISPER_INITIAL_PROMPT",
+    #    "Phoenix metro fire dispatch. Terms: K-Deck, Battalion, Engine, Ladder, Ladder Tender, Rescue, Medic, HazMat. Street names: Civic Center Plaza, Watson, Yuma, Buckeye. Spell out channels like 'K-Deck 10'.",
+    # )
+    no_speech_threshold: float = (
+        settings.whisper_no_speech_threshold
+    )  # float(os.getenv("WHISPER_NO_SPEECH_THRESHOLD", "0.3"))
+    log_prob_threshold: float = (
+        settings.whisper_log_prob_threshold
+    )  # float(os.getenv("WHISPER_LOG_PROB_THRESHOLD", "-1.2"))
+    compression_ratio_threshold: float = (
+        settings.whisper_compression_ratio_threshold
+    )  # float(
+    #    os.getenv("WHISPER_COMPRESSION_RATIO_THRESHOLD", "2.8")
+    # )
+    word_timestamps: bool = settings.whisper_word_timestamps
 
 
 class FasterWhisperTranscriber:
@@ -84,13 +107,41 @@ class FasterWhisperTranscriber:
             compute_type=self.cfg.compute_type,
         )
 
+    def _trim_dispatch_tones(self, src: Path, ms: int = 600) -> str:
+        tmp = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
+        tmp_path = tmp.name
+        tmp.close()
+        logger.debug("Trimming Dispatch Tones from %s into %s", str(src), str(tmp_path))
+        subprocess.run(
+            [
+                "ffmpeg",
+                "-y",
+                "-i",
+                str(src),
+                "-ss",
+                f"0.{ms}",
+                "-ac",
+                "1",
+                "-ar",
+                "16000",
+                tmp_path,
+            ],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=True,
+        )
+
+        return tmp_path
+
     async def transcribe(self, path: Path) -> Transcript:
         # Offload CPU/GPU-bound work to a thread to avoid blocking the event loop.
         return await asyncio.to_thread(self._do_transcribe, Path(path))
 
     def _do_transcribe(self, path: Path) -> Transcript:
-        audio_path = str(path)
-        logger.info("[%s] Transcribing audio: %s", path.stem, audio_path)
+        logger.info("[%s] Transcribing audio: %s", path.stem, path)
+
+        trimmed_path = self._trim_dispatch_tones(path, ms=600)
+        audio_path = str(trimmed_path)
 
         segments_iter, info = self.model.transcribe(
             audio_path,

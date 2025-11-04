@@ -3,7 +3,7 @@ name = "emberlog"
 dynamic = ["version"]
 description = "Watcher → Queue → Transcribe → Parse → Ledger for Phoenix Fire dispatch audio."
 readme = "README.md"
-requires-python = ">=3.10,<3.13"
+requires-python = ">=3.11,<3.13"
 authors = [{ name = "Justin Crawford", email = "jcrawford2000@gmail.com" }]
 
 # Optional, but nice for tooling:
@@ -25,7 +25,8 @@ dependencies = [
     "ctranslate2 (>=4.4.0,<5.0.0)",
     "numpy (>=1.26)",
     "soundfile (>=0.12.1)",
-    "httpx (>=0.28.1,<0.29.0)"
+    "httpx (>=0.28.1,<0.29.0)",
+    "scipy (>=1.16.3,<2.0.0)"
 ]
 
 [tool.poetry-dynamic-versioning]
