@@ -434,8 +434,14 @@ def clean_transcript(t: Transcript) -> CleanResult:
     else:
         m = STREET_ANCHOR_RE.search(incident)
         if m:
-            incident_type = incident[: m.start()].strip()
-            address_text = incident[m.start() :].strip()
+            prefix = incident[: m.start()].rstrip()
+            address_text = incident[m.start() :].lstrip()
+            num_match = re.search(r"\b(\d{3,5})\s*$", prefix)
+            if num_match:
+                house_num = num_match.group(1)
+                prefix = prefix[: num_match.start()].rstrip()
+                address_text = f"{house_num} {address_text}"
+            incident_type = prefix
             addr_candidate = _normalize_address(address_text)
             if addr_candidate is not None:
                 addr = addr_candidate
