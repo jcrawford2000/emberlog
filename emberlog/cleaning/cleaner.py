@@ -37,7 +37,7 @@ MISHEARD_INCIDENTS = [
     # Rush Fire -> Brush Fire
     (re.compile(r"\brush fire\b", re.I), r"Brush Fire"),
     # And no medical -> Unknown Medical
-    (re.compile(r"\and no medical\b", re.I), r"Unknown Medical"),
+    (re.compile(r"\band no medical\b", re.I), r"Unknown Medical"),
 ]
 
 UNIT_PATTERNS = [
@@ -59,6 +59,7 @@ UNIT_PATTERNS = [
     re.compile(r"\bBrush\s*\d{1,4}", re.I),
     re.compile(r"\bCar\s*\d{1,4}", re.I),
     re.compile(r"\bMedical Response\s*\d{1,4}", re.I),
+    re.compile(r"\bBH\s*\d{1,2}", re.I),
 ]
 
 CHAN_RE = re.compile(
@@ -199,9 +200,9 @@ FREEWAY_INTERSECTION_RE = re.compile(
     rf"""
     \b
     (?P<freeway>
-        I-?\d+|Loop\s+\d+|US\s*\d+|SR\s*\d+    # I-10, I17, Loop 101, US 60, SR 51
+        I-?\d+|Loop\s+\d+|US\s*\d+|SR\s*\d+|A(\s*|-)\d{2,3}    # I-10, I17, Loop 101, US 60, SR 51
     )
-    \s+at\s+
+    \s+(at|and)\s+
     (?P<cross_street>
         (?:(?P<pre>{DIR})\s+)?                 # optional pre-direction
         (?P<name>
@@ -250,7 +251,7 @@ def _normalize_address(text: str) -> Optional[dict[str, str]]:
             }
             return f"{num} {comp} {name} {stype}"
         return {
-            "raw": f"{m}",
+            "raw": f"{m.group(0)}",
             "normalized": f"{num} {comp} {name}",
         }
     logger.info("Unable to extract address, trying intersection types")
@@ -263,7 +264,7 @@ def _normalize_address(text: str) -> Optional[dict[str, str]]:
             m.group("notes"),
         )
         return {
-            "raw": f"{m}",
+            "raw": f"{m.group(0)}",
             "normalized": f"{m.group("street1")} and {m.group("street2")}",
         }
     logger.info("Unable to extract intersection, trying freeway types")
@@ -276,7 +277,7 @@ def _normalize_address(text: str) -> Optional[dict[str, str]]:
             m.group("notes"),
         )
         return {
-            "raw": f"{m}",
+            "raw": f"{m.group(0)}",
             "normalized": f"{m.group("freeway")} at {m.group("cross_street")} {m.group("notes")}",
         }
     logger.warning("Unable to parse address")
@@ -399,7 +400,7 @@ def clean_transcript(t: Transcript) -> CleanResult:
 
     # Extract address
     logger.info("[%s] Extracting Address", ps)
-    addr = _normalize_address(fixed)
+    addr = _normalize_address(incident)
     if addr is not None:
         stats.address_found = True
         logger.debug("[%s] Address%s", ps, addr)
