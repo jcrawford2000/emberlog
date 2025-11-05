@@ -44,21 +44,23 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
 
     # Whisper Settings
-    whisper_mode = "fast"
-    whisper_model = "large-v3"
-    whisper_device = "cuda"
-    whisper_compute_type = "float16"
-    whisper_vad_filter = True
-    whisper_vad_parameters = "{'min_silence_duration_ms': 250}"
-    whisper_beam_size = 5
-    whisper_language = "en"
-    whisper_best_of = 8
-    whisper_temperature = 0.0
-    whisper_initial_prompt = "Phoenix metro fire dispatch. Terms: K-Deck, Battalion, Engine, Ladder, Ladder Tender, Rescue, Medic, HazMat. Street names: Civic Center Plaza, Watson, Yuma, Buckeye. Spell out channels like 'K-Deck 10'."
-    whisper_no_speech_threshold = 0.3
-    whisper_log_prob_threshold = -1.2
-    whisper_compression_ratio_threshold = 2.8
-    whisper_word_timestamps = False
+    whisper_mode: str = "fast"
+    whisper_model: str = "large-v3"
+    whisper_device: str = "cuda"
+    whisper_compute_type: str = "float16"
+    whisper_vad_filter: bool = True
+    whisper_vad_parameters: str = "{'min_silence_duration_ms': 250}"
+    whisper_beam_size: int = 5
+    whisper_language: str = "en"
+    whisper_best_of: int = 8
+    whisper_temperature: float = 0.0
+    whisper_initial_prompt: str = (
+        "Phoenix metro fire dispatch. Terms: K-Deck, Battalion, Engine, Ladder, Ladder Tender, Rescue, Medic, HazMat. Street names: Civic Center Plaza, Watson, Yuma, Buckeye. Spell out channels like 'K-Deck 10'."
+    )
+    whisper_no_speech_threshold: float = 0.3
+    whisper_log_prob_threshold: float = -1.2
+    whisper_compression_ratio_threshold: float = 2.8
+    whisper_word_timestamps: bool = False
 
     model_config = SettingsConfigDict(
         env_file=BASE_DIR / ".env", env_prefix="EMBERLOG_", extra="ignore"
