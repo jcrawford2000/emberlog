@@ -58,8 +58,12 @@ UNIT_PATTERNS = [
     re.compile(r"\b(Hazmat\s*\d{1,4})\b", re.I),
     re.compile(r"\b(Brush\s*\d{1,4})\b", re.I),
     re.compile(r"\b(Car\s*\d{1,4})\b", re.I),
+    re.compile(r"\b(South Deputy)\b", re.I),
     re.compile(r"\b(Medical Response\s*\d{1,4})\b", re.I),
     re.compile(r"\b(BH\s*\d{1,2})\b", re.I),
+    re.compile(r"\b(Foam\s*\d{1,3})\b", re.I),
+    re.compile(r"\b(Air Stair\s*\d{1,3})\b", re.I),
+    re.compile(r"\b(Attack\s*\d{1,3})\b", re.I),
 ]
 
 CHAN_RE = re.compile(
@@ -75,6 +79,8 @@ CHAN_RE = re.compile(
 )
 
 # ------------------- Address extraction -------------------
+
+
 # Compass normalization
 COMPASS_WORDS = {
     "north": "N",
@@ -164,6 +170,18 @@ STREET_TYPE = r"(?:Avenue|Ave|Street|St|Road|Rd|Drive|Dr|Lane|Ln|Way|Boulevard|B
 DIR = r"(?:N|S|E|W|North|South|East|West)"
 ORD = r"(?:\d{1,3}(?:st|nd|rd|th))"  # 5th, 7th, etc.
 WORD = r"(?:[A-Z][A-Za-z0-9'’\-]*)"  # Port-au-Prince, Cinnabar, McDowell, etc.
+
+# Street Anchors
+STREET_ANCHOR_RE = re.compile(
+    rf"""
+    \b(
+        {DIR}\s+{WORD}              # N Scottsdale, North 7th
+        |{ORD}                      # 59th, 7th, 35th
+        |{WORD}\s+{STREET_TYPE}     # Scottsdale Road, Roosevelt Street
+    )
+    """,
+    re.I | re.X,
+)
 
 # --- 1) General intersection: "79th Avenue and Thunderbird Road", "5th Street & McDowell Road", "Prasada Parkway at Waddell Road"
 INTERSECTION_RE = re.compile(
@@ -400,15 +418,51 @@ def clean_transcript(t: Transcript) -> CleanResult:
 
     # Extract address
     logger.info("[%s] Extracting Address", ps)
-    addr = _normalize_address(incident)
-    if addr is not None:
+
+    incident_type = incident
+    addr = {"raw": "", "normalized": ""}
+
+    m = re.match(r"^(?P<code>\d{3})\b\s+(?P<rest>.+)", incident)
+    if m:
+        incident_type = m.group("code").strip()
+        address_text = m.group("rest").strip()
+        addr_candidate = _normalize_address(address_text)
+        if addr_candidate is not None:
+            addr = addr_candidate
+        else:
+            addr = {"raw": address_text, "normalized": address_text}
+    else:
+        m = STREET_ANCHOR_RE.search(incident)
+        if m:
+            incident_type = incident[: m.start()].strip()
+            address_text = incident[m.start() :].strip()
+            addr_candidate = _normalize_address(address_text)
+            if addr_candidate is not None:
+                addr = addr_candidate
+            else:
+                addr = {"raw": address_text, "normalized": address_text}
+        else:
+            addr_candidate = _normalize_address(incident)
+            if addr_candidate is not None:
+                addr = addr_candidate
+                incident_type = incident.replace(addr["raw"], "").strip()
+
+    if addr["normalized"]:
         stats.address_found = True
         logger.debug("[%s] Address%s", ps, addr)
-        # Remove Channel from string
-        incident = incident.replace(addr["raw"], "")
+        incident = incident_type
+        logger.debug("[%s] Incident after address split %s", ps, incident)
     else:
         logger.warning("[%s] Unable to determine address", ps)
-        addr = {"raw": "", "normalized": ""}
+    # addr = _normalize_address(incident)
+    # if addr is not None:
+    #    stats.address_found = True
+    #    logger.debug("[%s] Address%s", ps, addr)
+    #    # Remove Channel from string
+    #    incident = incident.replace(addr["raw"], "")
+    # else:
+    #    logger.warning("[%s] Unable to determine address", ps)
+    #    addr = {"raw": "", "normalized": ""}
 
     # Now What we should be left with is the Incident Type
     # Strip extra spaced from the incident
