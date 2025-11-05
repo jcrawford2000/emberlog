@@ -419,10 +419,11 @@ def clean_transcript(t: Transcript) -> CleanResult:
     # Extract address
     logger.info("[%s] Extracting Address", ps)
 
-    incident_type = incident
-    addr = {"raw": "", "normalized": ""}
+    incident_type = incident.strip()
+    addr: dict[str, str] = {"raw": "", "normalized": ""}
 
-    m = re.match(r"^(?P<code>\d{3})\b\s+(?P<rest>.+)", incident)
+    # 1) 9xx-style incident codes at the front: "962 A-74 in Castle Hot Springs Road"
+    m = re.match(r"^(?P<code>\d{3})\b\s+(?P<rest>.+)", incident_type)
     if m:
         incident_type = m.group("code").strip()
         address_text = m.group("rest").strip()
@@ -431,28 +432,53 @@ def clean_transcript(t: Transcript) -> CleanResult:
             addr = addr_candidate
         else:
             addr = {"raw": address_text, "normalized": address_text}
+
     else:
-        m = STREET_ANCHOR_RE.search(incident)
-        if m:
-            prefix = incident[: m.start()].rstrip()
-            address_text = incident[m.start() :].lstrip()
-            num_match = re.search(r"\b(\d{3,5})\s*$", prefix)
-            if num_match:
-                house_num = num_match.group(1)
-                prefix = prefix[: num_match.start()].rstrip()
-                address_text = f"{house_num} {address_text}"
+        # 2) Numeric address anywhere in the string: "Difficulty breathing 4210 North 154th Drive"
+        m_addr = ADDR_RE.search(incident_type)
+        if m_addr:
+            prefix = incident_type[: m_addr.start()].strip()
+            # you can either slice to the end, or just the matched span;
+            # using the exact span is safest:
+            address_text = incident_type[m_addr.start() : m_addr.end()].strip()
             incident_type = prefix
             addr_candidate = _normalize_address(address_text)
             if addr_candidate is not None:
                 addr = addr_candidate
             else:
                 addr = {"raw": address_text, "normalized": address_text}
-        else:
-            addr_candidate = _normalize_address(incident)
-            if addr_candidate is not None:
-                addr = addr_candidate
-                incident_type = incident.replace(addr["raw"], "").strip()
 
+        else:
+            # 3) No house number: maybe a pure intersection/freeway
+            m_anchor = STREET_ANCHOR_RE.search(incident_type)
+            if m_anchor:
+                prefix = incident_type[: m_anchor.start()].rstrip()
+                address_text = incident_type[m_anchor.start() :].lstrip()
+
+                # Handle the "Overdose 8617 North Black Canyon Access" style:
+                num_match = re.search(r"\b(\d{3,5})\s*$", prefix)
+                if num_match:
+                    house_num = num_match.group(1)
+                    prefix = prefix[: num_match.start()].rstrip()
+                    address_text = f"{house_num} {address_text}"
+
+                incident_type = prefix
+                addr_candidate = _normalize_address(address_text)
+                if addr_candidate is not None:
+                    addr = addr_candidate
+                else:
+                    addr = {"raw": address_text, "normalized": address_text}
+
+            else:
+                # 4) Last resort: let _normalize_address try the entire string
+                addr_candidate = _normalize_address(incident_type)
+                if addr_candidate is not None:
+                    addr = addr_candidate
+                    raw = addr.get("raw", "")
+                    if raw and raw in incident_type:
+                        incident_type = incident_type.replace(raw, "").strip()
+
+    # Flag address_found + store final incident
     if addr["normalized"]:
         stats.address_found = True
         logger.debug("[%s] Address%s", ps, addr)
@@ -460,6 +486,7 @@ def clean_transcript(t: Transcript) -> CleanResult:
         logger.debug("[%s] Incident after address split %s", ps, incident)
     else:
         logger.warning("[%s] Unable to determine address", ps)
+
     # addr = _normalize_address(incident)
     # if addr is not None:
     #    stats.address_found = True
