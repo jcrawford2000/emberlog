@@ -52,14 +52,14 @@ UNIT_PATTERNS = [
         re.I,
     ),
     re.compile(r"\b(Crisis\s+Response\s*\d{1,4})\b", re.I),
-    re.compile(r"\bWest Deputy\b", re.I),
-    re.compile(r"\bCar\s+\d{1,4}\s+(?:North|South)\b", re.I),
-    re.compile(r"\bHeavy Rescue Tender\s*\d{1,4}\b", re.I),
-    re.compile(r"\bHazmat\s*\d{1,4}\b", re.I),
-    re.compile(r"\bBrush\s*\d{1,4}", re.I),
-    re.compile(r"\bCar\s*\d{1,4}", re.I),
-    re.compile(r"\bMedical Response\s*\d{1,4}", re.I),
-    re.compile(r"\bBH\s*\d{1,2}", re.I),
+    re.compile(r"\b(West Deputy)\b", re.I),
+    re.compile(r"\b(Car\s+\d{1,4}\s+(?:North|South))\b", re.I),
+    re.compile(r"\b(Heavy Rescue Tender\s*\d{1,4})\b", re.I),
+    re.compile(r"\b(Hazmat\s*\d{1,4})\b", re.I),
+    re.compile(r"\b(Brush\s*\d{1,4})\b", re.I),
+    re.compile(r"\b(Car\s*\d{1,4})\b", re.I),
+    re.compile(r"\b(Medical Response\s*\d{1,4})\b", re.I),
+    re.compile(r"\b(BH\s*\d{1,2})\b", re.I),
 ]
 
 CHAN_RE = re.compile(
