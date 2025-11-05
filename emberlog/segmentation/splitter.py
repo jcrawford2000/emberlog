@@ -29,15 +29,16 @@ class Dispatch:
 
 KDEC_RE = re.compile(
     r"""
-    (?:                # non-capturing group for the two families
-        K[- ]?De(?:ck|c)\s*(\d+)    # matches "K-Deck 8" or "K-Dec 8"
-        |                        # OR
-        (?:Fire\s*Channel\s*)?   # optional "Fire Channel"
-        A(\d+)                     # matches "A5" or "Fire Channel A5"
+    (?:                                # non-capturing group for the two families
+        K[- ]?De(?:ck|c)\s*(\d+)       # matches "K-Deck 8" or "K-Dec 8"
+        |                              # OR
+        (?:Fire\s*Channel\s*)?         # optional "Fire Channel"
+        \bA(\d{1,2})\b                 # matches "A5" or "Fire Channel A5"
     )
     """,
     re.I | re.VERBOSE,
 )
+
 
 # Half-hour timestamp IDs to ignore entirely:
 #   "1530 hours, Phoenix Fire Regional Dispatch."
