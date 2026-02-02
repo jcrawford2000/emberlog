@@ -11,10 +11,11 @@ import logging
 import re
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Optional
 
 from emberlog.cleaning.cleaner import clean_transcript
 from emberlog.config.config import get_settings
-from emberlog.io.api_sink import ApiSink
+from emberlog.io.base import Sink
 from emberlog.io.composite import CompositeSink
 from emberlog.io.json_sink import JsonFileSink
 from emberlog.io.ledger_sink import LedgerSink
@@ -26,33 +27,53 @@ from emberlog.segmentation.splitter import Segment as Seg
 from emberlog.segmentation.splitter import split_transcript
 from emberlog.state.processed_index import ProcessedIndex
 from emberlog.transcriber import factory
+from emberlog.transcriber.base import Transcriber
 from emberlog.versioning import get_app_version
-
-settings = get_settings()
 
 
 class Worker:
     """Asynchronous queue consumer that processes audio jobs."""
 
-    def __init__(self, q: JobQueue, name: str):
+    def __init__(
+        self,
+        q: JobQueue,
+        name: str,
+        *,
+        transcriber: Optional[Transcriber] = None,
+        sink: Optional[Sink] = None,
+        idx: Optional[ProcessedIndex] = None,
+        include_api_sink: bool = True,
+    ):
         """Create a worker bound to a queue.
 
         Args:
             q: The shared job queue.
             name: A human-friendly worker name for logging.
         """
+        settings = get_settings()
         self.logger = logging.getLogger("emberlog.worker.Worker")
-        self.local_sink = LocalSink(settings.outbox_dir)
-        self.json_sink = JsonFileSink(self.local_sink, naming="{stem}.json")
-        self.ledger_sink = LedgerSink()
-        self.api_sink = ApiSink()
-        self.sink = CompositeSink([self.api_sink, self.json_sink, self.ledger_sink])
+        if sink is None:
+            local_sink = LocalSink(settings.outbox_dir)
+            json_sink = JsonFileSink(local_sink, naming="{stem}.json")
+            ledger_sink = LedgerSink()
+            sinks = [json_sink, ledger_sink]
+            if include_api_sink:
+                from emberlog.io.api_sink import ApiSink
+
+                sinks.insert(0, ApiSink())
+            self.sink = CompositeSink(sinks)
+        else:
+            self.sink = sink
 
         self.q = q
         self.name = name
-        self.transcriber = factory.from_settings(settings)
+        self.transcriber = transcriber or factory.from_settings(settings)
         self.logger.debug(f"Worker[{self.name}] Initializing")
-        self.idx = ProcessedIndex(Path(settings.outbox_dir) / ".state")
+        self.idx = idx or ProcessedIndex(
+            Path(settings.outbox_dir) / ".state",
+            inbox_root=Path(settings.inbox_dir),
+            processed_root=Path("/data/emberlog/processed"),
+        )
 
     async def run(self) -> None:
         """Continuously consume jobs and process them until cancelled."""

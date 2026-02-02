@@ -213,14 +213,23 @@ async def scan_existing(
 class DirectoryWatcher:
     """High-level controller for starting/stopping a watchdog observer."""
 
-    def __init__(self, cfg: WatchConfig, q: JobQueue):
+    def __init__(
+        self, cfg: WatchConfig, q: JobQueue, idx: Optional["ProcessedIndex"] = None
+    ):
         """Initialize the watcher with configuration and a queue target."""
         self.logger = logging.getLogger("emberlog.watch.DirectoryWatcher")
         self.logger.debug("Initializing DirectoryWatcher")
         self.cfg = cfg
         self.q = q
-        # Keep state outside the inbox; outbox/.state is a simple, durable spot
-        self.idx = ProcessedIndex(Path(get_settings().outbox_dir) / ".state")
+        if idx is None:
+            settings = get_settings()
+            self.idx = ProcessedIndex(
+                Path(settings.outbox_dir) / ".state",
+                inbox_root=Path(settings.inbox_dir),
+                processed_root=Path("/data/emberlog/processed"),
+            )
+        else:
+            self.idx = idx
         # Annotate as Optional[Observer] — Pylance thinks Observer is a variable, so we ignore the error.
         self.observer: Optional[WatchdogObserver] = None  # type: ignore
 

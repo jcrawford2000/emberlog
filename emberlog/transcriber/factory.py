@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Protocol
 
 from emberlog.transcriber.dummy import DummyTranscriber
-from emberlog.transcriber.whisper_fast import FasterWhisperTranscriber
+from emberlog.transcriber.stub import StubFixtureTranscriber
 
 # Importing Transcript only for type hints; avoid cycles at runtime if needed.
 try:
@@ -33,7 +33,11 @@ def create(name: str = "dummy") -> Transcriber:
     name = (name or "dummy").lower()
     if name == "dummy":
         return DummyTranscriber()
+    if name == "stub":
+        return StubFixtureTranscriber(Path("samples/transcripts"))
     if name == "faster_whisper":
+        from emberlog.transcriber.whisper_fast import FasterWhisperTranscriber
+
         return FasterWhisperTranscriber()
     raise ValueError(f"Unknown transcriber backend: {name}")
 
