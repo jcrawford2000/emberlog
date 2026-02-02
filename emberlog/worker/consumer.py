@@ -187,13 +187,22 @@ class Worker:
                 ),
             }
             self.logger.debug("[%s] Payload:\n%s", p.stem, doc)
+            sink_transcript = Transcript(
+                audio_path=p,
+                text=doc["cleaned_text"],
+                language=getattr(transcript, "language", "en"),
+                created_at=created_at,
+                start=getattr(t, "start", None),
+                end=getattr(t, "end", None),
+            )
             # 5) write via sink
             self.logger.debug("[%s] Writing to Sink", p.stem)
             out_path = await self.sink.process(
-                transcript=doc["cleaned_text"],
+                transcript=sink_transcript,
                 incident=doc,
-                audio_path=doc["source_audio"],
+                audio_path=p,
                 out_dir=relpath,
+                context={"cleaned_text": doc["cleaned_text"]},
             )  # write_json(relpath, doc)
             written_paths.append(out_path)
             self.idx.mark_processed(p)
