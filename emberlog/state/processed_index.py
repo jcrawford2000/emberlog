@@ -9,14 +9,28 @@ from typing import Iterable
 
 
 class ProcessedIndex:
-    def __init__(self, state_dir: Path):
+    def __init__(
+        self,
+        state_path: Path,
+        *,
+        inbox_root: Path | None = None,
+        processed_root: Path | None = None,
+    ):
         self.logger = logging.getLogger("emberlog.state.ProcessedIndex")
         self.logger.info("ProcessedIndex Initializing")
-        self.state_dir = Path(state_dir)
+        self.state_dir = Path(state_path)
         self.logger.debug(f"State Dir:{self.state_dir}")
-        self.state_dir.mkdir(parents=True, exist_ok=True)
+        if self.state_dir.suffix == ".sqlite":
+            self.db_path = self.state_dir
+        else:
+            self.db_path = self.state_dir / "processed.sqlite"
+        self.db_path.parent.mkdir(parents=True, exist_ok=True)
+        self.inbox_root = Path(inbox_root) if inbox_root else Path("/data/emberlog/inbox")
+        self.processed_root = (
+            Path(processed_root) if processed_root else Path("/data/emberlog/processed")
+        )
         self.logger.debug("Connecting to sqlite db")
-        self.db = sqlite3.connect(self.state_dir / "processed.sqlite")
+        self.db = sqlite3.connect(self.db_path)
         self.db.execute(
             """
       CREATE TABLE IF NOT EXISTS processed (
@@ -45,13 +59,11 @@ class ProcessedIndex:
         result = cur.fetchone() is not None
         self.logger.debug("[%s] Result:%s", path.stem, result)
         if result:
-            inbox_root = Path("/data/emberlog/inbox")
-            processed_root = Path("/data/emberlog/processed")
             try:
-                relative_path = path.relative_to(inbox_root)
+                relative_path = path.relative_to(self.inbox_root)
             except ValueError:
                 relative_path = path.name
-            dest = processed_root / relative_path
+            dest = self.processed_root / relative_path
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.move(str(path), str(dest))
             self.logger.debug("[%s] Moved %s to processed folder", path.stem, path.name)
@@ -68,13 +80,11 @@ class ProcessedIndex:
             (fp, str(path), st.st_size, st.st_mtime_ns),
         )
         self.db.commit()
-        inbox_root = Path("/data/emberlog/inbox")
-        processed_root = Path("/data/emberlog/processed")
         try:
-            relative_path = path.relative_to(inbox_root)
+            relative_path = path.relative_to(self.inbox_root)
         except ValueError:
             relative_path = path.name
-        dest = processed_root / relative_path
+        dest = self.processed_root / relative_path
         dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.move(str(path), str(dest))
         self.logger.debug("[%s] Moved %s to processed folder", path.stem, path.name)

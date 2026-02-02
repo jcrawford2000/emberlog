@@ -53,10 +53,15 @@ class JsonFileSink(Sink):
             out_dir,
             context,
         )
+        transcript_text = (
+            getattr(transcript, "text", None) if transcript is not None else None
+        )
+        if transcript_text is None and isinstance(transcript, str):
+            transcript_text = transcript
         payload = {
             "created_at": datetime.now(timezone.utc).isoformat(),
             "audio_path": str(audio_path),
-            "transcript": getattr(transcript, "text", None),
+            "transcript": transcript_text,
             "start": getattr(transcript, "start", None),
             "end": getattr(transcript, "end", None),
             "incident": (
