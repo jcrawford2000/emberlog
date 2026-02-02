@@ -6,7 +6,7 @@ Seeded from code TODOs and `docs/CURRENT_STATE.md`, `docs/REQUIREMENTS.md`, `doc
 - Summary: Normalize payload types between `worker.consumer` and sink interfaces to avoid missing/incorrect fields.
 - Acceptance criteria: `JsonFileSink` and `LedgerSink` receive consistent typed payloads; integration test verifies non-null transcript + expected ledger fields.
 - Components touched: `emberlog/worker/consumer.py`, `emberlog/io/json_sink.py`, `emberlog/io/ledger_sink.py`, `emberlog/io/base.py`.
-- Notes / risks: Backward compatibility with existing output JSON shape may break.
+- Notes / risks: Partial progress complete (`JsonFileSink` now handles string transcripts); remaining sink contract cleanup still needed.
 
 ## [Planned] Reorder sink execution for local-first durability
 - Summary: Persist locally before external API call so API outages do not drop local records.
@@ -20,11 +20,11 @@ Seeded from code TODOs and `docs/CURRENT_STATE.md`, `docs/REQUIREMENTS.md`, `doc
 - Components touched: `emberlog/io/json_sink.py`, `emberlog/worker/consumer.py`.
 - Notes / risks: Migration/lookup for previously flat output filenames.
 
-## [Planned] Replace hardcoded processed paths with settings
+## [In Progress] Replace hardcoded processed paths with settings
 - Summary: Remove `/data/emberlog/*` path coupling in processed file move logic.
-- Acceptance criteria: Processed moves use configured inbox/processed paths in all environments.
+- Acceptance criteria: Processed moves use configurable inbox/processed paths in all environments.
 - Components touched: `emberlog/state/processed_index.py`, `emberlog/config/config.py`.
-- Notes / risks: Existing deployments may rely on current hardcoded path behavior.
+- Notes / risks: In progress - demo uses injected paths, but standard defaults still point at `/data/...`.
 
 ## [Planned] Resolve Whisper env naming inconsistency
 - Summary: Align `.env.example` (`WHISPER_*`) and settings loader (`EMBERLOG_WHISPER_*`).
@@ -49,3 +49,9 @@ Seeded from code TODOs and `docs/CURRENT_STATE.md`, `docs/REQUIREMENTS.md`, `doc
 - Acceptance criteria: Existing smoke test passes for dummy backend path.
 - Components touched: `emberlog/watch/*`, `emberlog/queue/*`, `emberlog/worker/*`, `emberlog/transcriber/*`, `tests/test_smoke_pipeline.py`.
 - Notes / risks: Smoke coverage is narrow; real backend/API paths still need broader integration tests.
+
+## [Done] Deterministic demo mode (no GPU/API by default)
+- Summary: Added `poetry run emberlog demo` using fixture WAVs + stub transcript backend with local-only outputs.
+- Acceptance criteria: Demo creates JSON + ledger outputs locally, is idempotent across runs, and does not construct API sink by default.
+- Components touched: `emberlog/app/main.py`, `emberlog/transcriber/stub.py`, `emberlog/transcriber/factory.py`, `emberlog/state/processed_index.py`, `tests/test_demo_mode.py`, `samples/*`, `docs/DEV_QUICKSTART.md`.
+- Notes / risks: API integration in demo is opt-in (`--with-api`) and still depends on external service availability.

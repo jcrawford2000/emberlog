@@ -5,6 +5,8 @@ This document describes the integration contract observable from this repo (`emb
 ## Scope
 
 - In scope: outbound REST integration used by `ApiSink`.
+- Applies to standard worker flow and demo flow only when `--with-api` is enabled.
+- Default demo flow does not invoke REST/API calls.
 - Out of scope: API server implementation details (owned by `emberlog-api`).
 - SSE note: SSE is owned and implemented by `emberlog-api`; this repo does not implement SSE.
 
