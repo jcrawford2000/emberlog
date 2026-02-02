@@ -32,7 +32,7 @@ Key subfolders under `emberlog/`:
 - `emberlog/watch/` - watchdog-based inbox filesystem watcher
 - `emberlog/queue/` - in-memory async queue interface + implementation
 - `emberlog/worker/` - async consumer that transcribes/processes jobs
-- `emberlog/transcriber/` - transcriber backends (`dummy`, `faster_whisper`) + factory
+- `emberlog/transcriber/` - transcriber backends (`dummy`, `stub`, `faster_whisper`) + factory
 - `emberlog/segmentation/` - transcript splitting into dispatch chunks
 - `emberlog/cleaning/` - transcript cleanup/parsing heuristics
 - `emberlog/io/` - output sinks (API, JSON file, ledger, composite)
@@ -60,6 +60,7 @@ Runtime pipeline component (single Python service):
 - Worker: `emberlog/worker/consumer.py`
 - Transcription backends:
   - `emberlog/transcriber/dummy.py`
+  - `emberlog/transcriber/stub.py` (fixture-backed deterministic transcripts)
   - `emberlog/transcriber/whisper_fast.py`
 - Transcript splitting: `emberlog/segmentation/splitter.py`
 - Cleaning/parsing: `emberlog/cleaning/cleaner.py`
@@ -112,13 +113,17 @@ Runtime side effects at import time:
 
 ## 4) Local Development Constraints
 
-Why this does not run end-to-end on a typical workstation today:
+Why the full production-like path does not run end-to-end on a typical workstation today:
 
 1. Missing downstream pipeline in this repo (API/service side)
 
 - Worker sink chain includes API posting (`ApiSink`) to `settings.api_base_url` (default `http://localhost:8080/api/v1`).
 - This repo contains an API client (`emberlog/api/client.py`) and SQL schema (`emberlog/db/schema.sql`) but no API server runtime (this split is intentional; API server lives in `emberlog-api`).
 - So the full ingestion -> API persistence path depends on external services not provided here.
+
+Note:
+
+- A deterministic local demo path is now available via `poetry run emberlog demo` and does not require GPU or API by default.
 
 2. GPU Whisper dependency in default configuration
 
@@ -129,7 +134,7 @@ Why this does not run end-to-end on a typical workstation today:
 Additional local friction observed in current code:
 
 - `transcriber_backend` default in settings is `dummy`, but `.env.example` sets `EMBERLOG_TRANSCRIBER_BACKEND="faster_whisper"`.
-- Watcher/state logic uses hardcoded processed destination `/data/emberlog/processed` when moving files.
+- Standard watcher/worker defaults still use `/data/emberlog/processed`; demo injects repo-local processed paths.
 - Logging config writes to `/var/log/emberlog/...`, which may require permissions not present on a normal user workstation.
 - `whisper_fast.py` shells out to `ffmpeg` for pre-trim; `ffmpeg` must be installed on PATH.
 
@@ -139,6 +144,7 @@ CLI / process entry:
 
 - Poetry script entry: `pyproject.toml` -> `emberlog = "emberlog.app.main:main"`
 - Main module: `emberlog/app/main.py` (`main()` and async `_run()`).
+- Demo command: `poetry run emberlog demo` (one-shot fixture run, local outputs).
 - Alternate utility CLI: `emberlog/utils/transcribe.py` (`main()` standalone tool).
 
 FastAPI app object:
@@ -192,7 +198,9 @@ Implemented flow in `emberlog/app/main.py` + dependent modules:
 6. State update and file movement:
 
 - Worker marks source file as processed in `ProcessedIndex` SQLite.
-- `ProcessedIndex.mark_processed(...)` moves processed audio from inbox to `/data/emberlog/processed/...`.
+- `ProcessedIndex.mark_processed(...)` moves processed audio to the configured/index-provided processed root.
+  - Standard flow currently defaults to `/data/emberlog/processed/...`.
+  - Demo flow writes to `out/demo/processed/...`.
 
 Behavioral notes (current implementation details):
 

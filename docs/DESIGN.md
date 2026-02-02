@@ -29,7 +29,7 @@ This document describes the current/target design for the `emberlog` worker serv
 1. `emberlog.app.main` loads settings, starts `DirectoryWatcher`, creates `InMemoryJobQueue`, and starts worker tasks.
 2. Watcher accepts audio files matching extension + dated path (`YYYY/M/D/...`), performs stability check, and enqueues `Job`.
 3. `ProcessedIndex` is checked before enqueue to avoid re-processing known files.
-4. Worker dequeues job and transcribes via configured backend (`dummy` or `faster_whisper`).
+4. Worker dequeues job and transcribes via configured backend (`dummy`, `stub`, or `faster_whisper`).
 5. Transcript is split into dispatches (`segmentation.splitter`).
 6. Each dispatch is cleaned/parsed (`cleaning.cleaner`) into normalized fields.
 7. `CompositeSink` runs sinks in order:
@@ -38,6 +38,13 @@ This document describes the current/target design for the `emberlog` worker serv
    - `LedgerSink`: write local SQLite ledger row (idempotent hash).
 8. Worker marks source as processed and source audio is moved to processed storage.
 9. Notification/UI path is external: downstream API (`emberlog-api`) provides SSE/REST to `emberlog-web`.
+
+Demo mode variant (`poetry run emberlog demo`):
+
+- Stages fixture WAVs into a local run inbox under `out/demo/inbox/...`.
+- Uses `StubFixtureTranscriber` to read deterministic transcript fixtures.
+- Runs JSON + ledger sinks by default (API sink only with `--with-api`).
+- Writes only repo-local outputs under `out/demo/`.
 
 ## 3) Module/Service Responsibilities
 
@@ -87,7 +94,7 @@ Current implementation mismatches or design risks relative to intended behavior:
 
 1. Sink contract/data mismatch
 - `worker` passes `transcript` as a string into sinks.
-- `JsonFileSink` expects transcript-like attributes (`text/start/end`) and may emit `null` transcript content.
+- `JsonFileSink` now handles string transcripts; this reduces `null` transcript risk.
 - `LedgerSink` expects context `cleaned_text` and object-like `incident`; with current payload shapes this can degrade inserted fields.
 
 2. Sink ordering side effects
@@ -98,7 +105,8 @@ Current implementation mismatches or design risks relative to intended behavior:
 - Worker computes dated `out_dir` path, but `JsonFileSink` currently ignores `out_dir` and writes by audio stem naming.
 
 4. Processed file path coupling
-- `ProcessedIndex` moves files using hardcoded `/data/emberlog/inbox` and `/data/emberlog/processed`, not settings-driven paths.
+- `ProcessedIndex` now supports injected inbox/processed roots (used by demo).
+- Standard flow still defaults to `/data/emberlog/inbox` and `/data/emberlog/processed`.
 
 5. Config inconsistency
 - `.env.example` documents `WHISPER_*`, while main settings loader uses `EMBERLOG_` prefix for settings fields.
@@ -110,4 +118,3 @@ Current implementation mismatches or design risks relative to intended behavior:
 
 7. Schema/documentation drift
 - `emberlog/db/schema.sql` appears draft/in-progress and may not match actual external API schema.
-

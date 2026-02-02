@@ -18,7 +18,7 @@ These requirements describe Emberlog based on current implementation in this rep
 
 ### 2) Transcribe
 
-- **FR-TRANSCRIBE-1 (Current):** System shall transcribe queued audio using a configured backend (`dummy` or `faster_whisper`).
+- **FR-TRANSCRIBE-1 (Current):** System shall transcribe queued audio using a configured backend (`dummy`, `stub`, or `faster_whisper`).
 - **FR-TRANSCRIBE-2 (Current):** System shall support Whisper-related runtime settings via environment-backed configuration.
 - **FR-TRANSCRIBE-3 (Current):** System shall allow concurrent worker execution based on configured concurrency.
 
@@ -33,7 +33,13 @@ These requirements describe Emberlog based on current implementation in this rep
 - **FR-STORE-1 (Current):** System shall write per-dispatch JSON output files to local outbox storage.
 - **FR-STORE-2 (Current):** System shall append/insert dispatch metadata into local SQLite ledger storage with hash-based idempotency.
 - **FR-STORE-3 (Current):** System shall move processed source audio to processed storage path after marking processed.
-- **FR-STORE-4 (Current):** System shall attempt to post incident payloads to configured external API endpoint via API sink.
+- **FR-STORE-4 (Current):** Standard worker flow shall attempt to post incident payloads to configured external API endpoint via API sink.
+- **FR-STORE-5 (Current):** Demo flow shall run without API sink by default; API sink is optional (`demo --with-api`).
+
+### 4a) Deterministic Demo Mode
+
+- **FR-DEMO-1 (Current):** System shall provide `poetry run emberlog demo` that runs once and exits with local-only outputs.
+- **FR-DEMO-2 (Current):** Demo mode shall not require CUDA/GPU, `ffmpeg`, or external API by default.
 
 ### 5) Notify
 
