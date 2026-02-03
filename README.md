@@ -1,28 +1,35 @@
 # Ember Log 🔥📜
 
-Ember Log is a Python-based backend service that monitors a folder for new Phoenix Fire Department dispatch audio files, transcribes them into JSON, and appends them to a master ledger for easy querying and analysis.
+Ember Log is a Python-based backend worker service that monitors a folder for new dispatch audio files, transcribes them into JSON, and appends structured data to a local ledger for querying and analysis.
+
+This repository contains the **worker pipeline only**. The API server and frontend live in separate repos (`emberlog-api`, `emberlog-web`).
 
 ## ✨ Features
 
 - **Directory Watcher** – Automatically detects new `.wav` files in your inbox directory.
 - **Transcription Engine** – Uses Faster-Whisper or other pluggable backends for accurate speech-to-text.
 - **JSON Output** – Each transcription saved to its own JSON file.
-- **Ledger Support** – Appends structured data to a master JSON ledger for aggregation.
+- **Ledger Support** – Appends structured data to a local SQLite ledger for aggregation.
 - **Extensible** – Modular OOP design to swap transcription engines or add new output sinks (e.g., database, API, cloud storage).
 
-## 📂 Project Structure (planned)
+## 📂 Project Structure (current)
 
 ```
 emberlog/
 ├── emberlog/
-│   ├── config.py         # Paths, constants, env vars
-│   ├── watcher.py        # Watches inbox dir, queues new files
-│   ├── queue_manager.py  # Queue handling
-│   ├── transcriber/      # Multiple transcription engine backends
-│   ├── parser.py         # Extract structured incident data
-│   ├── ledger.py         # Append to master ledger
-│   └── utils/            # Logging, file ops, helpers
-└── tests/
+│   ├── app/           # Process entrypoint
+│   ├── watch/         # Directory watcher
+│   ├── queue/         # Async queue interface + in-memory impl
+│   ├── worker/        # Job consumer / pipeline runner
+│   ├── transcriber/   # Backends (dummy, stub, faster_whisper)
+│   ├── segmentation/  # Dispatch splitting
+│   ├── cleaning/      # Transcript cleanup/parsing
+│   ├── io/            # Sinks (API, JSON, ledger)
+│   ├── ledger/        # Local SQLite ledger
+│   ├── state/         # Processed index (SQLite)
+├── tests/
+├── samples/       # Demo fixtures
+├── docs/
 ```
 
 ## ⚡ Getting Started
@@ -40,11 +47,19 @@ cd emberlog
 poetry install
 ```
 
-**3. Run the watcher**
+**3. Run demo mode (no GPU / no API required)**
 
 ```bash
-poetry run python -m emberlog.watcher
+poetry run emberlog demo
 ```
+
+**4. Run standard worker**
+
+```bash
+poetry run emberlog
+```
+
+See `docs/DEV_QUICKSTART.md` for full local instructions.
 
 ## 🛡 License
 
