@@ -60,7 +60,7 @@ class Worker:
             if include_api_sink:
                 from emberlog.io.api_sink import ApiSink
 
-                sinks.insert(0, ApiSink())
+                sinks.append(ApiSink())
             self.sink = CompositeSink(sinks)
         else:
             self.sink = sink

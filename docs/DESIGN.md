@@ -33,9 +33,9 @@ This document describes the current/target design for the `emberlog` worker serv
 5. Transcript is split into dispatches (`segmentation.splitter`).
 6. Each dispatch is cleaned/parsed (`cleaning.cleaner`) into normalized fields.
 7. `CompositeSink` runs sinks in order:
-   - `ApiSink`: POST incident payload to external API (`emberlog-api`).
    - `JsonFileSink`: write local per-dispatch JSON.
    - `LedgerSink`: write local SQLite ledger row (idempotent hash).
+   - `ApiSink`: POST incident payload to external API (`emberlog-api`).
 8. Worker marks source as processed and source audio is moved to processed storage.
 9. Notification/UI path is external: downstream API (`emberlog-api`) provides SSE/REST to `emberlog-web`.
 
@@ -98,8 +98,8 @@ Current implementation mismatches or design risks relative to intended behavior:
 - Remaining risk: ensure any future sink implementations honor the same payload conventions.
 
 2. Sink ordering side effects
-- `ApiSink` runs before local persistence. API failure can block local JSON/ledger persistence via composite short-circuit behavior.
-- If local-first durability is intended, sink sequencing should be revisited.
+- Resolved: sinks run local-first (JSON → Ledger → API).
+- CompositeSink now runs all sinks and records failures instead of short-circuiting.
 
 3. Output path mismatch
 - Resolved: `JsonFileSink` now respects `out_dir` when provided.

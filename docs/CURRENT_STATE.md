@@ -191,9 +191,9 @@ Implemented flow in `emberlog/app/main.py` + dependent modules:
 
 5. Sink pipeline (in order):
 
-- `ApiSink`: POST incident payload to configured external API.
 - `JsonFileSink`: write per-dispatch JSON via atomic local write.
 - `LedgerSink`: insert ledger row into SQLite (`ledger_path`) using hash-based idempotency.
+- `ApiSink`: POST incident payload to configured external API.
 
 6. State update and file movement:
 
@@ -206,8 +206,9 @@ Behavioral notes (current implementation details):
 
 - Queue is process-local only (no Redis/rabbit/etc. in repo).
 - Graceful shutdown waits for stop signal, stops watcher, drains queue, cancels workers.
-- Worker now passes structured transcript objects plus explicit `cleaned_text` context to sinks.
+- Worker passes structured transcript objects plus explicit `cleaned_text` context to sinks.
 - `LedgerSink` reads incident fields from dicts/models (prefers `incident_type`), reducing missing ledger values.
+- `CompositeSink` runs all sinks and records failures; a single sink failure does not block others.
 
 ## 7) Known gaps / verification-needed areas
 
