@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 from emberlog.ledger.ledger import Ledger
 
@@ -24,15 +25,26 @@ class LedgerSink(Sink):
                 ok=False, extra={"reason": "ledger requires out_path and cleaned_text"}
             )
 
+        def _field(obj: Any, key: str, default=None):
+            if obj is None:
+                return default
+            if isinstance(obj, dict):
+                return obj.get(key, default)
+            return getattr(obj, key, default)
+
+        type_val = _field(incident, "incident_type")
+        if type_val is None:
+            type_val = _field(incident, "type")
+
         inserted, rowid, digest = self.ledger.insert_dispatch(
             audio_path=audio_path,
             out_path=out_path,
             started_s=getattr(transcript, "start", None),
             ended_s=getattr(transcript, "end", None),
-            channel=getattr(incident, "channel", None) if incident else None,
-            units=getattr(incident, "units", None) if incident else None,
-            type_=getattr(incident, "type", None) if incident else None,
-            address=getattr(incident, "address", None) if incident else None,
+            channel=_field(incident, "channel"),
+            units=_field(incident, "units"),
+            type_=type_val,
+            address=_field(incident, "address"),
             cleaned_text=cleaned_text,
         )
         return SinkResult(

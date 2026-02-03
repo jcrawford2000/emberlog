@@ -93,9 +93,9 @@ Datastores currently involved:
 Current implementation mismatches or design risks relative to intended behavior:
 
 1. Sink contract/data mismatch
-- `worker` passes `transcript` as a string into sinks.
-- `JsonFileSink` now handles string transcripts; this reduces `null` transcript risk.
-- `LedgerSink` expects context `cleaned_text` and object-like `incident`; with current payload shapes this can degrade inserted fields.
+- Mostly resolved: worker now passes a structured `Transcript` object and explicit `cleaned_text` context.
+- `LedgerSink` now reads incident fields from dicts/models and prefers `incident_type`.
+- Remaining risk: ensure any future sink implementations honor the same payload conventions.
 
 2. Sink ordering side effects
 - `ApiSink` runs before local persistence. API failure can block local JSON/ledger persistence via composite short-circuit behavior.

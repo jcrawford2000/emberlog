@@ -206,8 +206,8 @@ Behavioral notes (current implementation details):
 
 - Queue is process-local only (no Redis/rabbit/etc. in repo).
 - Graceful shutdown waits for stop signal, stops watcher, drains queue, cancels workers.
-- Some sink interactions and test expectations appear inconsistent with intended behavior.
-  - Unknown/Needs verification: exact success/failure behavior across API/JSON/Ledger sinks under real runs.
+- Worker now passes structured transcript objects plus explicit `cleaned_text` context to sinks.
+- `LedgerSink` reads incident fields from dicts/models (prefers `incident_type`), reducing missing ledger values.
 
 ## 7) Known gaps / verification-needed areas
 
