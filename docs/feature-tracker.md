@@ -14,11 +14,11 @@ Seeded from code TODOs and `docs/CURRENT_STATE.md`, `docs/REQUIREMENTS.md`, `doc
 - Components touched: `emberlog/io/composite.py`, `emberlog/worker/consumer.py`, `emberlog/io/api_sink.py`.
 - Notes / risks: May change operational semantics if API-first was intentional.
 
-## [Planned] Respect dated output paths in JSON sink
-- Summary: Ensure worker-provided `out_dir` (dated tree) is actually used when writing JSON.
-- Acceptance criteria: Output files land under expected dated path (`YYYY/M/D/...`) in outbox.
-- Components touched: `emberlog/io/json_sink.py`, `emberlog/worker/consumer.py`.
-- Notes / risks: Migration/lookup for previously flat output filenames.
+## [Done] Respect dated output paths in JSON sink
+- Summary: `JsonFileSink` now honors `out_dir` to write JSON to the expected dated path.
+- Acceptance criteria: Output files land under expected dated path (`YYYY/M/D/...`) in outbox; test added.
+- Components touched: `emberlog/io/json_sink.py`, `tests/test_json_sink_contract.py`.
+- Notes / risks: Existing flat paths remain supported when `out_dir` is not provided.
 
 ## [In Progress] Replace hardcoded processed paths with settings
 - Summary: Remove `/data/emberlog/*` path coupling in processed file move logic.
