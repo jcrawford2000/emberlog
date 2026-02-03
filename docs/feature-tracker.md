@@ -8,11 +8,11 @@ Seeded from code TODOs and `docs/CURRENT_STATE.md`, `docs/REQUIREMENTS.md`, `doc
 - Components touched: `emberlog/worker/consumer.py`, `emberlog/io/ledger_sink.py`, `tests/test_json_sink_contract.py`, `tests/test_ledger_sink_contract.py`.
 - Notes / risks: Future sink additions should follow the same payload contract to avoid regression.
 
-## [Planned] Reorder sink execution for local-first durability
+## [Done] Reorder sink execution for local-first durability
 - Summary: Persist locally before external API call so API outages do not drop local records.
 - Acceptance criteria: With API down, JSON + ledger still persist; failed API status is observable/retryable.
-- Components touched: `emberlog/io/composite.py`, `emberlog/worker/consumer.py`, `emberlog/io/api_sink.py`.
-- Notes / risks: May change operational semantics if API-first was intentional.
+- Components touched: `emberlog/io/composite.py`, `emberlog/worker/consumer.py`.
+- Notes / risks: Composite now runs all sinks and records failures; verify downstream retry/alerting behavior.
 
 ## [Done] Respect dated output paths in JSON sink
 - Summary: `JsonFileSink` now honors `out_dir` to write JSON to the expected dated path.
