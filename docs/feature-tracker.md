@@ -2,11 +2,11 @@
 
 Seeded from code TODOs and `docs/CURRENT_STATE.md`, `docs/REQUIREMENTS.md`, `docs/DESIGN.md`.
 
-## [In Progress] Align sink contracts (worker -> JSON/API/Ledger)
-- Summary: Normalize payload types between `worker.consumer` and sink interfaces to avoid missing/incorrect fields.
-- Acceptance criteria: `JsonFileSink` and `LedgerSink` receive consistent typed payloads; integration test verifies non-null transcript + expected ledger fields.
-- Components touched: `emberlog/worker/consumer.py`, `emberlog/io/json_sink.py`, `emberlog/io/ledger_sink.py`, `emberlog/io/base.py`.
-- Notes / risks: Partial progress complete (`JsonFileSink` now handles string transcripts); remaining sink contract cleanup still needed.
+## [Done] Align sink contracts (worker -> JSON/API/Ledger)
+- Summary: Normalized worker payloads and hardened `LedgerSink` field extraction for dict incidents.
+- Acceptance criteria: `JsonFileSink` and `LedgerSink` receive consistent typed payloads; tests verify non-null transcript + expected ledger fields.
+- Components touched: `emberlog/worker/consumer.py`, `emberlog/io/ledger_sink.py`, `tests/test_json_sink_contract.py`, `tests/test_ledger_sink_contract.py`.
+- Notes / risks: Future sink additions should follow the same payload contract to avoid regression.
 
 ## [Planned] Reorder sink execution for local-first durability
 - Summary: Persist locally before external API call so API outages do not drop local records.
