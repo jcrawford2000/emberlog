@@ -102,7 +102,7 @@ Current implementation mismatches or design risks relative to intended behavior:
 - If local-first durability is intended, sink sequencing should be revisited.
 
 3. Output path mismatch
-- Worker computes dated `out_dir` path, but `JsonFileSink` currently ignores `out_dir` and writes by audio stem naming.
+- Resolved: `JsonFileSink` now respects `out_dir` when provided.
 
 4. Processed file path coupling
 - `ProcessedIndex` now supports injected inbox/processed roots (used by demo).

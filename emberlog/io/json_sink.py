@@ -35,6 +35,20 @@ class JsonFileSink(Sink):
         name = self.naming.format(stem=ap.stem)
         return (self.subdir / name) if self.subdir else Path(name)
 
+    def _relpath_from_out_dir(
+        self, out_dir: Path | None, audio_path: Path | None = None
+    ) -> Path | None:
+        if not out_dir:
+            return None
+        out = out_dir if isinstance(out_dir, Path) else Path(out_dir)
+        # If a filename is provided, respect it directly.
+        if out.suffix:
+            return out
+        # If a directory is provided, append the named file.
+        if audio_path is None:
+            return None
+        return out / self._relpath_for(audio_path).name
+
     async def process(
         self,
         *,
@@ -71,7 +85,10 @@ class JsonFileSink(Sink):
             ),
         }
 
-        rel = self._relpath_for(audio_path)
+        rel = (
+            self._relpath_from_out_dir(out_dir, audio_path=audio_path)
+            or self._relpath_for(audio_path)
+        )
         out_path = self.local.write_json(
             rel, payload
         )  # atomic write via your LocalSink
