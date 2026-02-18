@@ -1,6 +1,7 @@
-# Ember Log 🔥📜
+# Emberlog Transcriber (module)🔥📜
+This repository is a module within the Emberlog platform.
 
-Ember Log is a Python-based backend worker service that monitors a folder for new dispatch audio files, transcribes them into JSON, and appends structured data to a local ledger for querying and analysis.
+Emberlog is a Python-based backend worker service that monitors a folder for new dispatch audio files, transcribes them into JSON, and appends structured data to a local ledger for querying and analysis.
 
 This repository contains the **worker pipeline only**. The API server and frontend live in separate repos (`emberlog-api`, `emberlog-web`).
 
