@@ -1,0 +1,34 @@
+[project]
+name = "emberlog-api"
+version = "0.1.0"
+description = "A thin FastAPI service that ingests and serves Phoenix dispatch incidents for the Emberlog project."
+authors = [
+    {name = "Justin Crawford",email = "jcrawford2000@gmail.com"}
+]
+license = "MIT"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi (>=0.116.1,<0.117.0)",
+    "uvicorn (>=0.35.0,<0.36.0)",
+    "psycopg[binary,pool] (>=3.2.10,<4.0.0)",
+    "python-dotenv (>=1.1.1,<2.0.0)",
+    "python-json-logger (>=3.3.0,<4.0.0)",
+    "pydantic-settings (>=2.10.1,<3.0.0)",
+    "aiomqtt (>=2.4.0,<3.0.0) ; python_version < '4.0'"
+]
+
+[tool.poetry]
+# Keep package include rules here (Poetry-specific)
+packages = [{ include = "emberlog_api" }]
+
+[tool.poetry.scripts]
+emberlog-api = "emberlog_api.app.main:app"
+
+[tool.poetry.group.dev.dependencies]
+httpx = "^0.28.1"
+pytest = "^9.0.2"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
