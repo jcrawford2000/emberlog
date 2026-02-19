@@ -1,0 +1,81 @@
+############################
+# OS / Editor
+############################
+
+# macOS
+.DS_Store
+
+# Linux
+*~
+
+# VSCode
+.vscode/
+
+############################
+# Node / Vite (web)
+############################
+
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+
+# Vite cache
+.vite/
+
+############################
+# Python (api + modules)
+############################
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python packaging
+*.egg-info/
+.eggs/
+build/
+dist/
+
+############################
+# Environment files
+############################
+
+.env
+.env.*
+!.env.example
+
+############################
+# Logs
+############################
+
+*.log
+
+############################
+# Docker
+############################
+
+# Docker build artifacts (if any local)
+docker-compose.override.yml
+
+############################
+# Kubernetes
+############################
+
+# Ignore local kube config if ever copied
+.kube/
+
+############################
+# Misc
+############################
+
+coverage/
+.pytest_cache/
+.mypy_cache/
+
