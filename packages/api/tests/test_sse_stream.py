@@ -12,11 +12,9 @@ sse_app.include_router(sse.router, prefix="/api/v1")
 
 @pytest.fixture(autouse=True)
 def clear_sse_state():
-    sse.incident_subscribers.clear()
-    sse.event_subscribers.clear()
+    sse.subscribers.clear()
     yield
-    sse.incident_subscribers.clear()
-    sse.event_subscribers.clear()
+    sse.subscribers.clear()
 
 
 @pytest.fixture

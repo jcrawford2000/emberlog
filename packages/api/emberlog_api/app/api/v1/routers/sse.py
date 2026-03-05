@@ -1,16 +1,13 @@
 import asyncio
 import json
-import logging
-import os
 import re
-from typing import Any, AsyncIterator
+from dataclasses import dataclass
+from typing import Any, AsyncIterator, Literal
 
 from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import StreamingResponse
 
 from emberlog_api.models.incident import IncidentOut
-
-log = logging.getLogger("emberlog_api.v1.routers.sse")
 
 _HEARTBEAT_SECONDS = 15
 _ALLOWED_DOMAINS = {"traffic", "system", "dispatch"}
@@ -18,8 +15,15 @@ _EVENT_TYPE_RE = re.compile(r"^[a-z]+(?:\.[a-z_]+){2,}$")
 
 router = APIRouter(prefix="/sse", tags=["sse"])
 
-incident_subscribers: set[asyncio.Queue[str]] = set()
-event_subscribers: dict[asyncio.Queue[dict[str, Any]], dict[str, str | None]] = {}
+
+@dataclass(slots=True)
+class _Subscriber:
+    queue: asyncio.Queue[Any]
+    stream: Literal["events", "incidents"]
+    filters: dict[str, str | None] | None = None
+
+
+subscribers: dict[asyncio.Queue[Any], _Subscriber] = {}
 
 
 def _validate_filters(
@@ -36,9 +40,7 @@ def _validate_filters(
     return {"domain": domain, "event_type": event_type, "system": system, "site": site}
 
 
-def _event_matches_filters(
-    event: dict[str, Any], filters: dict[str, str | None]
-) -> bool:
+def _event_matches_filters(event: dict[str, Any], filters: dict[str, str | None]) -> bool:
     event_type = str(event.get("event_type", ""))
     payload = event.get("payload")
     source = event.get("source")
@@ -67,8 +69,15 @@ def _event_matches_filters(
     return True
 
 
+def _sse_headers() -> dict[str, str]:
+    return {
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+        "X-Accel-Buffering": "no",
+    }
+
+
 async def _event_generator(queue: asyncio.Queue[dict[str, Any]]) -> AsyncIterator[bytes]:
-    # Heartbeat so intermediaries keep the connection open.
     try:
         while True:
             try:
@@ -79,50 +88,57 @@ async def _event_generator(queue: asyncio.Queue[dict[str, Any]]) -> AsyncIterato
             except asyncio.TimeoutError:
                 yield b"event: ping\ndata: {}\n\n"
     except asyncio.CancelledError:
-        pass
+        return
 
 
 async def _incident_event_generator(queue: asyncio.Queue[str]) -> AsyncIterator[bytes]:
-    # Legacy incident-only stream retained for backward compatibility.
     try:
         while True:
             try:
-                msg = await asyncio.wait_for(queue.get(), timeout=_HEARTBEAT_SECONDS)
-                log.debug("SSE: New Incident")
-                yield f"event: incident\ndata: {msg}\n\n".encode("utf-8")
+                incident = await asyncio.wait_for(queue.get(), timeout=_HEARTBEAT_SECONDS)
+                yield f"event: incident\ndata: {incident}\n\n".encode("utf-8")
             except asyncio.TimeoutError:
                 yield b"event: ping\ndata: {}\n\n"
     except asyncio.CancelledError:
-        pass
+        return
+
+
+async def _cleanup_on_disconnect(request: Request, queue: asyncio.Queue[Any]) -> None:
+    try:
+        while True:
+            if await request.is_disconnected():
+                break
+            await asyncio.sleep(1)
+    finally:
+        subscribers.pop(queue, None)
 
 
 async def publish_event(event: dict[str, Any]) -> None:
-    if "event_type" not in event:
+    event_type = event.get("event_type")
+    if not isinstance(event_type, str):
         return
 
-    for queue, filters in list(event_subscribers.items()):
-        if not _event_matches_filters(event, filters):
+    for subscriber in list(subscribers.values()):
+        if subscriber.stream != "events" or subscriber.filters is None:
+            continue
+        if not _event_matches_filters(event, subscriber.filters):
             continue
         try:
-            queue.put_nowait(event)
+            cast_queue: asyncio.Queue[dict[str, Any]] = subscriber.queue
+            cast_queue.put_nowait(event)
         except asyncio.QueueFull:
-            # Slow clients should reconnect and dedupe via event_id.
             pass
 
 
-async def publish_incident(incident: IncidentOut):
-    log.debug(
-        "Publishing: pid=%s subscribers_id=%s size=%d",
-        os.getpid(),
-        id(incident_subscribers),
-        len(incident_subscribers),
-    )
+async def publish_incident(incident: IncidentOut) -> None:
     payload = incident.model_dump_json()
-    for queue in list(incident_subscribers):
+    for subscriber in list(subscribers.values()):
+        if subscriber.stream != "incidents":
+            continue
         try:
-            queue.put_nowait(payload)
+            cast_queue: asyncio.Queue[str] = subscriber.queue
+            cast_queue.put_nowait(payload)
         except asyncio.QueueFull:
-            # Slow clients should reconnect and recover.
             pass
 
 
@@ -138,48 +154,20 @@ async def stream_events(
         domain=domain, event_type=event_type, system=system, site=site
     )
     queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue()
-    event_subscribers[queue] = filters
-
-    async def close_when_client_disconnects() -> None:
-        try:
-            while True:
-                if await request.is_disconnected():
-                    break
-                await asyncio.sleep(1)
-        finally:
-            event_subscribers.pop(queue, None)
-
-    asyncio.create_task(close_when_client_disconnects())
-    headers = {
-        "Cache-Control": "no-cache",
-        "Connection": "keep-alive",
-        "X-Accel-Buffering": "no",
-    }
+    subscribers[queue] = _Subscriber(queue=queue, stream="events", filters=filters)
+    asyncio.create_task(_cleanup_on_disconnect(request, queue))
     return StreamingResponse(
-        _event_generator(queue), media_type="text/event-stream", headers=headers
+        _event_generator(queue), media_type="text/event-stream", headers=_sse_headers()
     )
 
 
 @router.get("/incidents")
 async def stream_incidents(request: Request):
     queue: asyncio.Queue[str] = asyncio.Queue()
-    incident_subscribers.add(queue)
-
-    async def close_when_client_disconnects() -> None:
-        try:
-            while True:
-                if await request.is_disconnected():
-                    break
-                await asyncio.sleep(1)
-        finally:
-            incident_subscribers.discard(queue)
-
-    asyncio.create_task(close_when_client_disconnects())
-    headers = {
-        "Cache-Control": "no-cache",
-        "Connection": "keep-alive",
-        "X-Accel-Buffering": "no",
-    }
+    subscribers[queue] = _Subscriber(queue=queue, stream="incidents")
+    asyncio.create_task(_cleanup_on_disconnect(request, queue))
     return StreamingResponse(
-        _incident_event_generator(queue), media_type="text/event-stream", headers=headers
+        _incident_event_generator(queue),
+        media_type="text/event-stream",
+        headers=_sse_headers(),
     )

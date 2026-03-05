@@ -35,11 +35,10 @@ def _isoformat_utc(timestamp: datetime) -> str:
     return timestamp.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
-def _split_system_site(sys_name: str, sys_num: int | None = None) -> tuple[str, str]:
-    if "-" in sys_name:
-        system, site = sys_name.split("-", 1)
-        return system or sys_name, site or str(sys_num or "unknown")
-    return sys_name, str(sys_num if sys_num is not None else "unknown")
+def _site_from_sys_num(sys_num: Any) -> str:
+    if sys_num is None:
+        return "default"
+    return str(sys_num)
 
 
 def _build_event_envelope(
@@ -73,10 +72,9 @@ def _build_call_payload(call: dict[str, Any]) -> dict[str, Any] | None:
         return None
 
     sys_name = str(sys_name_raw)
-    system_name, site_name = _split_system_site(sys_name)
     payload: dict[str, Any] = {
-        "system": system_name,
-        "site": site_name,
+        "system": sys_name,
+        "site": _site_from_sys_num(call.get("sys_num")),
         "call_id": str(call_id),
     }
 
@@ -132,9 +130,8 @@ async def handle_rates_message(pool: AsyncConnectionPool, payload: dict[str, Any
                 control_channel_hz=control_channel_hz,
                 updated_at=updated_at,
             )
-            system_name, site_name = _split_system_site(
-                str(item["sys_name"]), int(item["sys_num"])
-            )
+            system_name = str(item["sys_name"])
+            site_name = _site_from_sys_num(item.get("sys_num"))
             decode_event = _build_event_envelope(
                 event_type="system.site.decode_rate.updated",
                 timestamp=updated_at,
@@ -254,13 +251,12 @@ async def handle_calls_active_message(
             call_payload = _build_call_payload(call)
             if call_payload is None:
                 continue
-            system_name = str(call_payload["system"])
             await publish_event(
                 _build_event_envelope(
                     event_type="traffic.call.started",
                     timestamp=updated_at,
                     instance_id=instance_id,
-                    system=system_name,
+                    system=str(call_payload["system"]),
                     payload=call_payload,
                 )
             )
@@ -275,13 +271,12 @@ async def handle_calls_active_message(
             if elapsed_seconds is not None:
                 call_payload["duration_seconds"] = float(elapsed_seconds)
 
-            system_name = str(call_payload["system"])
             await publish_event(
                 _build_event_envelope(
                     event_type="traffic.call.ended",
                     timestamp=updated_at,
                     instance_id=instance_id,
-                    system=system_name,
+                    system=str(call_payload["system"]),
                     payload=call_payload,
                 )
             )

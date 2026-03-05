@@ -82,9 +82,9 @@ async def test_handle_rates_message_publishes_decode_rate_event(monkeypatch):
     assert event["schema_version"] == "1.0.0"
     assert event["source"]["module"] == "emberlog-api"
     assert event["source"]["instance"] == "trunk-recorder"
-    assert event["source"]["system"] == "PRWC"
-    assert event["payload"]["system"] == "PRWC"
-    assert event["payload"]["site"] == "J"
+    assert event["source"]["system"] == "PRWC-J"
+    assert event["payload"]["system"] == "PRWC-J"
+    assert event["payload"]["site"] == "1"
     assert event["payload"]["decode_rate"] == 0.41
     assert event["payload"]["control_channel_frequency"] == 769118750
 
@@ -136,6 +136,6 @@ async def test_handle_calls_active_message_publishes_started_and_ended(monkeypat
         "traffic.call.ended",
     ]
     assert events[0]["payload"]["call_id"] == "1_4499_1771215827"
-    assert events[0]["payload"]["system"] == "PRWC"
-    assert events[0]["payload"]["site"] == "J"
+    assert events[0]["payload"]["system"] == "PRWC-J"
+    assert events[0]["payload"]["site"] == "default"
     assert events[1]["payload"]["duration_seconds"] == 4.0
