@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/jcrawford2000/emberlog-api.git
+    repoURL: https://github.com/jcrawford2000/emberlog.git
     targetRevision: main
-    path: k8s/overlays/home
+    path: packages/api/k8s/overlays/home
   destination:
     server: https://kubernetes.default.svc
     namespace: emberlog

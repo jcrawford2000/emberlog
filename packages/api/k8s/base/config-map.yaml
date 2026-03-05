@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: emberlog-config-map
+  namespace: emberlog
+data:
+  POSTGRES_HOST: "pgsql.pi-rack.com"
+  POSTGRES_PORT: "5432"
+  POSTGRES_USER: "emberlog_app"
+  POSTGRES_DB: "emberlog"
+  POSTGRES_POOL_MIN_SIZE: "1"
+  POSTGRES_POOL_MAX_SIZE: "5"
+  MQTT_HOST: "mqtt.pi-rack.com"
+  MQTT_PORT: "1883"
+  MQTT_TOPIC_PREFIX: "emberlog/trunkrecorder"
+  LOG_LEVEL: "INFO"
+  ENABLE_FILE_LOGGING: "false"
+  NOTIFIER_BASE_URL: "http://localhost:8090"
