@@ -20,27 +20,36 @@ router = APIRouter(prefix="/sse", tags=["sse"])
 class _Subscriber:
     queue: asyncio.Queue[Any]
     stream: Literal["events", "incidents"]
-    filters: dict[str, str | None] | None = None
+    filters: dict[str, str | tuple[str, ...] | None] | None = None
 
 
 subscribers: dict[asyncio.Queue[Any], _Subscriber] = {}
 
 
 def _validate_filters(
-    *, domain: str | None, event_type: str | None, system: str | None, site: str | None
-) -> dict[str, str | None]:
+    *,
+    domain: str | None,
+    event_type: list[str] | None,
+    system: str | None,
+    site: str | None,
+) -> dict[str, str | tuple[str, ...] | None]:
     if domain is not None and domain not in _ALLOWED_DOMAINS:
         raise HTTPException(status_code=400, detail="Invalid domain filter")
-    if event_type is not None and not _EVENT_TYPE_RE.fullmatch(event_type):
-        raise HTTPException(status_code=400, detail="Invalid event_type filter")
+    if event_type is not None:
+        for requested_event_type in event_type:
+            if not _EVENT_TYPE_RE.fullmatch(requested_event_type):
+                raise HTTPException(status_code=400, detail="Invalid event_type filter")
     if system is not None and not system.strip():
         raise HTTPException(status_code=400, detail="Invalid system filter")
     if site is not None and not site.strip():
         raise HTTPException(status_code=400, detail="Invalid site filter")
-    return {"domain": domain, "event_type": event_type, "system": system, "site": site}
+    event_types = tuple(dict.fromkeys(event_type)) if event_type else None
+    return {"domain": domain, "event_types": event_types, "system": system, "site": site}
 
 
-def _event_matches_filters(event: dict[str, Any], filters: dict[str, str | None]) -> bool:
+def _event_matches_filters(
+    event: dict[str, Any], filters: dict[str, str | tuple[str, ...] | None]
+) -> bool:
     event_type = str(event.get("event_type", ""))
     payload = event.get("payload")
     source = event.get("source")
@@ -51,8 +60,8 @@ def _event_matches_filters(event: dict[str, Any], filters: dict[str, str | None]
     if domain is not None and not event_type.startswith(f"{domain}."):
         return False
 
-    requested_event_type = filters["event_type"]
-    if requested_event_type is not None and event_type != requested_event_type:
+    requested_event_types = filters["event_types"]
+    if requested_event_types is not None and event_type not in requested_event_types:
         return False
 
     requested_system = filters["system"]
@@ -146,7 +155,7 @@ async def publish_incident(incident: IncidentOut) -> None:
 async def stream_events(
     request: Request,
     domain: str | None = Query(None),
-    event_type: str | None = Query(None),
+    event_type: list[str] | None = Query(None),
     system: str | None = Query(None),
     site: str | None = Query(None),
 ):
