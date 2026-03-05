@@ -3,15 +3,20 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import uuid
 from datetime import datetime, timezone
 from typing import Any
 
 from psycopg_pool import AsyncConnectionPool
 
+from emberlog_api.app.api.v1.routers.sse import publish_event
 from emberlog_api.app.core.settings import settings
 from emberlog_api.app.db.repositories import traffic as traffic_repo
 
 log = logging.getLogger("emberlog_api.services.mqtt_consumer")
+
+_active_calls_by_instance: dict[str, dict[str, dict[str, Any]]] = {}
+
 
 def _topic(topic_suffix: str) -> str:
     return f"{settings.mqtt_topic_prefix}/{topic_suffix}"
@@ -24,6 +29,70 @@ def _updated_at_from_timestamp(timestamp: Any) -> datetime:
 def _decode_rate_pct(decoderate: float) -> float:
     decode_pct = (decoderate / settings.max_decoderate) * 100.0 if settings.max_decoderate > 1.0 else decoderate
     return decode_pct
+
+
+def _isoformat_utc(timestamp: datetime) -> str:
+    return timestamp.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def _split_system_site(sys_name: str, sys_num: int | None = None) -> tuple[str, str]:
+    if "-" in sys_name:
+        system, site = sys_name.split("-", 1)
+        return system or sys_name, site or str(sys_num or "unknown")
+    return sys_name, str(sys_num if sys_num is not None else "unknown")
+
+
+def _build_event_envelope(
+    *,
+    event_type: str,
+    timestamp: datetime,
+    payload: dict[str, Any],
+    instance_id: str,
+    system: str | None = None,
+) -> dict[str, Any]:
+    source: dict[str, Any] = {
+        "module": "emberlog-api",
+        "instance": instance_id,
+    }
+    if system is not None:
+        source["system"] = system
+    return {
+        "event_id": str(uuid.uuid4()),
+        "event_type": event_type,
+        "schema_version": "1.0.0",
+        "timestamp": _isoformat_utc(timestamp),
+        "source": source,
+        "payload": payload,
+    }
+
+
+def _build_call_payload(call: dict[str, Any]) -> dict[str, Any] | None:
+    call_id = call.get("id")
+    sys_name_raw = call.get("sys_name")
+    if call_id is None or sys_name_raw is None:
+        return None
+
+    sys_name = str(sys_name_raw)
+    system_name, site_name = _split_system_site(sys_name)
+    payload: dict[str, Any] = {
+        "system": system_name,
+        "site": site_name,
+        "call_id": str(call_id),
+    }
+
+    talkgroup = call.get("talkgroup")
+    if talkgroup is not None:
+        payload["trunkgroup_id"] = talkgroup
+
+    talkgroup_label = call.get("talkgroup_alpha_tag")
+    if talkgroup_label is not None:
+        payload["trunkgroup_label"] = str(talkgroup_label)
+
+    frequency = call.get("freq")
+    if frequency is not None:
+        payload["frequency"] = float(frequency)
+
+    return payload
 
 
 async def handle_rates_message(pool: AsyncConnectionPool, payload: dict[str, Any]) -> None:
@@ -63,6 +132,22 @@ async def handle_rates_message(pool: AsyncConnectionPool, payload: dict[str, Any
                 control_channel_hz=control_channel_hz,
                 updated_at=updated_at,
             )
+            system_name, site_name = _split_system_site(
+                str(item["sys_name"]), int(item["sys_num"])
+            )
+            decode_event = _build_event_envelope(
+                event_type="system.site.decode_rate.updated",
+                timestamp=updated_at,
+                instance_id=instance_id,
+                system=system_name,
+                payload={
+                    "system": system_name,
+                    "site": site_name,
+                    "decode_rate": decoderate_raw,
+                    "control_channel_frequency": control_channel_hz,
+                },
+            )
+            await publish_event(decode_event)
             log.debug(
                 "processed rates message",
                 extra={
@@ -150,6 +235,59 @@ async def handle_calls_active_message(
             active_calls_count=active_calls_count,
             updated_at=updated_at,
         )
+
+        current_calls: dict[str, dict[str, Any]] = {}
+        for call in calls:
+            if not isinstance(call, dict):
+                continue
+            call_id = call.get("id")
+            if call_id is None:
+                continue
+            current_calls[str(call_id)] = call
+
+        previous_calls = _active_calls_by_instance.get(instance_id, {})
+        started_call_ids = set(current_calls) - set(previous_calls)
+        ended_call_ids = set(previous_calls) - set(current_calls)
+
+        for call_id in started_call_ids:
+            call = current_calls[call_id]
+            call_payload = _build_call_payload(call)
+            if call_payload is None:
+                continue
+            system_name = str(call_payload["system"])
+            await publish_event(
+                _build_event_envelope(
+                    event_type="traffic.call.started",
+                    timestamp=updated_at,
+                    instance_id=instance_id,
+                    system=system_name,
+                    payload=call_payload,
+                )
+            )
+
+        for call_id in ended_call_ids:
+            previous_call = previous_calls[call_id]
+            call_payload = _build_call_payload(previous_call)
+            if call_payload is None:
+                continue
+
+            elapsed_seconds = previous_call.get("elapsed")
+            if elapsed_seconds is not None:
+                call_payload["duration_seconds"] = float(elapsed_seconds)
+
+            system_name = str(call_payload["system"])
+            await publish_event(
+                _build_event_envelope(
+                    event_type="traffic.call.ended",
+                    timestamp=updated_at,
+                    instance_id=instance_id,
+                    system=system_name,
+                    payload=call_payload,
+                )
+            )
+
+        _active_calls_by_instance[instance_id] = current_calls
+
         log.debug(
             "processed calls_active message",
             extra={
