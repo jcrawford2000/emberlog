@@ -22,22 +22,19 @@ export function useTrafficSummary() {
 
     try {
       const summary = await fetchTrafficSummary();
-      if (!mountedRef.current) {
-        return;
+      if (mountedRef.current) {
+        setData(summary);
+        setLastFetchedAt(Date.now());
       }
-      setData(summary);
-      setLastFetchedAt(Date.now());
     } catch (err) {
-      if (!mountedRef.current) {
-        return;
+      if (mountedRef.current) {
+        console.error('Failed to fetch traffic summary', err);
+        setError('Unable to load traffic summary right now.');
       }
-      console.error('Failed to fetch traffic summary', err);
-      setError('Unable to load traffic summary right now.');
     } finally {
-      if (!mountedRef.current) {
-        return;
+      if (mountedRef.current) {
+        setLoading(false);
       }
-      setLoading(false);
       inFlightRef.current = false;
     }
   }, []);

@@ -60,10 +60,16 @@ async def _read_one_sse_event(response, timeout_s: float = 1.5) -> tuple[str, st
 
 async def _open_stream(*, domain=None, event_type=None, system=None, site=None):
     request = _FakeRequest()
+    if event_type is None:
+        event_types = None
+    elif isinstance(event_type, str):
+        event_types = [event_type]
+    else:
+        event_types = event_type
     response = await sse.stream_events(
         request=request,
         domain=domain,
-        event_type=event_type,
+        event_type=event_types,
         system=system,
         site=site,
     )
@@ -109,12 +115,43 @@ async def test_sse_filter_by_event_type():
     event = _event_fixture(
         event_type="traffic.call.ended", system="PRWC", site="J"
     )
-    request, response = await _open_stream(event_type="traffic.call.ended")
+    request, response = await _open_stream(event_type=["traffic.call.ended"])
     await sse.publish_event(event)
     event_line, _ = await _read_one_sse_event(response)
     await _close_stream(request)
 
     assert event_line == "event: traffic.call.ended"
+
+
+@pytest.mark.anyio
+async def test_sse_filter_by_multiple_event_types():
+    started_event = _event_fixture(
+        event_type="traffic.call.started", system="PRWC", site="J"
+    )
+    ended_event = _event_fixture(event_type="traffic.call.ended", system="PRWC", site="J")
+    system_event = _event_fixture(
+        event_type="system.site.decode_rate.updated", system="PRWC", site="J"
+    )
+    request, response = await _open_stream(
+        event_type=[
+            "system.site.decode_rate.updated",
+            "traffic.call.started",
+            "traffic.call.ended",
+        ]
+    )
+    await sse.publish_event(started_event)
+    await sse.publish_event(system_event)
+    await sse.publish_event(ended_event)
+    event_line_one, _ = await _read_one_sse_event(response)
+    event_line_two, _ = await _read_one_sse_event(response)
+    event_line_three, _ = await _read_one_sse_event(response)
+    await _close_stream(request)
+
+    assert {event_line_one, event_line_two, event_line_three} == {
+        "event: traffic.call.started",
+        "event: system.site.decode_rate.updated",
+        "event: traffic.call.ended",
+    }
 
 
 @pytest.mark.anyio
@@ -137,4 +174,16 @@ async def test_multiple_subscribers_receive_same_event():
 @pytest.mark.anyio
 async def test_invalid_filter_returns_400(async_client):
     response = await async_client.get("/api/v1/sse", params={"domain": "invalid"})
+    assert response.status_code == 400
+
+
+@pytest.mark.anyio
+async def test_invalid_event_type_in_multi_filter_returns_400(async_client):
+    response = await async_client.get(
+        "/api/v1/sse",
+        params=[
+            ("event_type", "traffic.call.started"),
+            ("event_type", "Invalid.Event"),
+        ],
+    )
     assert response.status_code == 400

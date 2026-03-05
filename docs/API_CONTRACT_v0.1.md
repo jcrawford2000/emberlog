@@ -106,10 +106,11 @@ SSE provides live event streaming.
 Query parameters:
 
 -   `domain`
--   `event_type`
+-   `event_type` (repeatable; OR match when provided multiple times)
 -   `system`
 
 If no filter is provided, all events may be streamed.
+When multiple filter categories are provided (`domain`, `event_type`, `system`), they are combined with AND semantics.
 
 ------------------------------------------------------------------------
 
