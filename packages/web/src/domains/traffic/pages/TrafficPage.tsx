@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+import { CallsTable } from '../components/CallsTable';
 import { SystemHealthStrip } from '../components/SystemHealthStrip';
 import { TrafficHeader } from '../components/TrafficHeader';
-import { useTrafficSummary } from '../hooks/useTrafficSummary';
+import { useTrafficMonitor } from '../hooks/useTrafficMonitor';
 
 function LoadingCards() {
   return (
@@ -19,7 +20,17 @@ function LoadingCards() {
 }
 
 export function TrafficPage() {
-  const { data, loading, error, refresh, lastFetchedAt, pollIntervalMs } = useTrafficSummary();
+  const {
+    summary,
+    liveCalls,
+    loading,
+    error,
+    refreshSnapshot,
+    lastFetchedAt,
+    connectionStatus,
+    isPollingFallback,
+    pollIntervalMs,
+  } = useTrafficMonitor();
   const [nowMs, setNowMs] = useState(Date.now());
 
   useEffect(() => {
@@ -34,26 +45,31 @@ export function TrafficPage() {
 
   return (
     <div className="space-y-6">
-      <TrafficHeader pollIntervalMs={pollIntervalMs} lastFetchedAt={lastFetchedAt} />
+      <TrafficHeader
+        connectionStatus={connectionStatus}
+        isPollingFallback={isPollingFallback}
+        pollIntervalMs={pollIntervalMs}
+        lastFetchedAt={lastFetchedAt}
+      />
 
-      {loading && !data ? (
+      {loading && !summary ? (
         <LoadingCards />
       ) : null}
 
       {error ? (
         <div className="alert alert-error flex items-center justify-between">
           <span>{error}</span>
-          <button className="btn btn-sm" onClick={() => void refresh()}>
+          <button className="btn btn-sm" onClick={() => void refreshSnapshot()}>
             Retry
           </button>
         </div>
       ) : null}
 
-      {data && data.decode_sites.length > 0 ? (
-        <SystemHealthStrip sites={data.decode_sites} nowMs={nowMs} />
+      {summary && summary.decode_sites.length > 0 ? (
+        <SystemHealthStrip sites={summary.decode_sites} nowMs={nowMs} />
       ) : null}
 
-      {data && data.decode_sites.length === 0 && !error ? (
+      {summary && summary.decode_sites.length === 0 && !error ? (
         <div className="rounded-xl border border-dashed border-white/20 bg-white/5 p-6 text-sm text-white/75">
           No systems are currently reporting decode rates.
         </div>
@@ -61,7 +77,7 @@ export function TrafficPage() {
 
       <section className="card-surface p-6">
         <h2 className="mb-2 text-lg font-semibold">Live Calls</h2>
-        <p className="text-sm text-muted">Live calls will appear when SSE is implemented.</p>
+        <CallsTable calls={liveCalls} />
       </section>
     </div>
   );
