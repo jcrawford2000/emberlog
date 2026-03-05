@@ -10,7 +10,7 @@ data:
   POSTGRES_DB: "emberlog"
   POSTGRES_POOL_MIN_SIZE: "1"
   POSTGRES_POOL_MAX_SIZE: "5"
-  MQTT_HOST: "mqtt.pi-rack.com"
+  MQTT_HOST: "mosquitto.pi-rack.com"
   MQTT_PORT: "1883"
   MQTT_TOPIC_PREFIX: "emberlog/trunkrecorder"
   LOG_LEVEL: "INFO"
