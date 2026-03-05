@@ -80,6 +80,12 @@ function parseEnvelope(rawData: string): ParsedEnvelopeResult {
   if (!isObject(source)) {
     return { envelope: null, reason: 'missing required field: source' };
   }
+  if (typeof source.module !== 'string' || !source.module) {
+    return { envelope: null, reason: 'source.module is required' };
+  }
+  if (typeof source.instance !== 'string' || !source.instance) {
+    return { envelope: null, reason: 'source.instance is required' };
+  }
   if (!('payload' in parsed)) {
     return { envelope: null, reason: 'missing required field: payload' };
   }
@@ -91,8 +97,8 @@ function parseEnvelope(rawData: string): ParsedEnvelopeResult {
       schema_version: schemaVersion,
       timestamp,
       source: {
-        module: String(source.module ?? ''),
-        instance: String(source.instance ?? ''),
+        module: source.module,
+        instance: source.instance,
         system: typeof source.system === 'string' ? source.system : undefined,
       },
       payload,
@@ -164,6 +170,13 @@ export function subscribeToEventStream(options: EventStreamOptions): () => void 
     if (reconnectAttempts > maxReconnectAttempts) {
       setStatus('offline');
       onRetriesExhausted?.();
+      reconnectAttempts = 0;
+      reconnectTimer = window.setTimeout(() => {
+        reconnectTimer = null;
+        if (!closed) {
+          connect();
+        }
+      }, maxBackoffMs);
       return;
     }
 
