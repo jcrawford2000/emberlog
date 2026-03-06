@@ -1,5 +1,5 @@
 [project]
-name = "emberlog"
+name = "emberlog-transcriber"
 dynamic = ["version"]
 description = "Watcher → Queue → Transcribe → Parse → Ledger for Phoenix Fire dispatch audio."
 readme = "README.md"
@@ -9,7 +9,7 @@ authors = [{ name = "Justin Crawford", email = "jcrawford2000@gmail.com" }]
 # Optional, but nice for tooling:
 classifiers = [
   "Programming Language :: Python :: 3",
-  "License :: Other/Proprietary License",
+  "License :: OSI Approved :: Apache Software License",
   "Operating System :: OS Independent",
 ]
 

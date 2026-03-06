@@ -10,6 +10,21 @@ Last verified: 2026-03-06
 poetry install
 ```
 
+Create a local `.env` (CPU-safe defaults):
+
+```bash
+cat > .env <<'ENV'
+EMBERLOG_TRANSCRIBER_BACKEND=stub
+EMBERLOG_LOG_LEVEL=INFO
+EMBERLOG_INBOX_DIR=./out/local/inbox
+EMBERLOG_OUTBOX_DIR=./out/local/outbox
+EMBERLOG_LEDGER_PATH=./out/local/ledger.sqlite
+EMBERLOG_WHISPER_DEVICE=cpu
+EMBERLOG_WHISPER_COMPUTE_TYPE=int8
+EMBERLOG_WHISPER_MODEL=small.en
+ENV
+```
+
 ## Run Demo Mode (no GPU / no API required)
 
 ```bash
@@ -43,7 +58,7 @@ poetry run emberlog
 ## Test / Lint / Type Check
 
 ```bash
-poetry run pytest -q
+poetry run python -m pytest -q
 poetry run ruff check .
 poetry run mypy emberlog
 ```

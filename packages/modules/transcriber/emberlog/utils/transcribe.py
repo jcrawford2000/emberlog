@@ -204,17 +204,25 @@ class ToneSplitter:
 
 @dataclass
 class WhisperConfig:
-    model: str = os.getenv("WHISPER_MODEL", "large-v3")
-    device: str = os.getenv("WHISPER_DEVICE", "cuda")  # "cuda" or "cpu"
+    model: str = os.getenv("EMBERLOG_WHISPER_MODEL", "large-v3")
+    device: str = os.getenv(
+        "EMBERLOG_WHISPER_DEVICE", "cuda"
+    )  # "cuda" or "cpu"
     compute_type: str = os.getenv(
-        "WHISPER_COMPUTE_TYPE", "float16"
+        "EMBERLOG_WHISPER_COMPUTE_TYPE", "float16"
     )  # e.g. float16, int8_float16
-    beam_size: int = int(os.getenv("WHISPER_BEAM_SIZE", "10"))
-    best_of: int = int(os.getenv("WHISPER_BEST_OF", "10"))
-    temperature: float = float(os.getenv("WHISPER_TEMPERATURE", "0.0"))
-    vad_filter: bool = bool(int(os.getenv("WHISPER_VAD_FILTER", "1")))
-    word_timestamps: bool = bool(int(os.getenv("WHISPER_WORD_TIMESTAMPS", "0")))
-    initial_prompt: Optional[str] = os.getenv("WHISPER_INITIAL_PROMPT", None)
+    beam_size: int = int(os.getenv("EMBERLOG_WHISPER_BEAM_SIZE", "10"))
+    best_of: int = int(os.getenv("EMBERLOG_WHISPER_BEST_OF", "10"))
+    temperature: float = float(os.getenv("EMBERLOG_WHISPER_TEMPERATURE", "0.0"))
+    vad_filter: bool = bool(
+        int(os.getenv("EMBERLOG_WHISPER_VAD_FILTER", "1"))
+    )
+    word_timestamps: bool = bool(
+        int(os.getenv("EMBERLOG_WHISPER_WORD_TIMESTAMPS", "0"))
+    )
+    initial_prompt: Optional[str] = os.getenv(
+        "EMBERLOG_WHISPER_INITIAL_PROMPT", None
+    )
     condition_on_previous_text: bool = False
     no_speech_threshold: Optional[float] = None
     log_prob_threshold: Optional[float] = None
@@ -314,28 +322,37 @@ def build_arg_parser() -> argparse.ArgumentParser:
         default=float(os.getenv("TONE_SCORE_THRESH", 0.70)),
     )
     # Whisper params
-    p.add_argument("--model", default=os.getenv("WHISPER_MODEL", "large-v3"))
-    p.add_argument("--device", default=os.getenv("WHISPER_DEVICE", "cuda"))
     p.add_argument(
-        "--compute-type", default=os.getenv("WHISPER_COMPUTE_TYPE", "float16")
+        "--model", default=os.getenv("EMBERLOG_WHISPER_MODEL", "large-v3")
     )
     p.add_argument(
-        "--beam-size", type=int, default=int(os.getenv("WHISPER_BEAM_SIZE", "10"))
+        "--device", default=os.getenv("EMBERLOG_WHISPER_DEVICE", "cuda")
     )
     p.add_argument(
-        "--best-of", type=int, default=int(os.getenv("WHISPER_BEST_OF", "10"))
+        "--compute-type",
+        default=os.getenv("EMBERLOG_WHISPER_COMPUTE_TYPE", "float16"),
+    )
+    p.add_argument(
+        "--beam-size",
+        type=int,
+        default=int(os.getenv("EMBERLOG_WHISPER_BEAM_SIZE", "10")),
+    )
+    p.add_argument(
+        "--best-of",
+        type=int,
+        default=int(os.getenv("EMBERLOG_WHISPER_BEST_OF", "10")),
     )
     p.add_argument(
         "--temperature",
         type=float,
-        default=float(os.getenv("WHISPER_TEMPERATURE", "0.0")),
+        default=float(os.getenv("EMBERLOG_WHISPER_TEMPERATURE", "0.0")),
     )
     p.add_argument(
         "--word-timestamps", action="store_true", help="Enable word-level timestamps."
     )
     p.add_argument(
         "--prompt",
-        default=os.getenv("WHISPER_INITIAL_PROMPT", None),
+        default=os.getenv("EMBERLOG_WHISPER_INITIAL_PROMPT", None),
         help="Initial prompt text.",
     )
     # Output

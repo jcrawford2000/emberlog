@@ -49,41 +49,41 @@ def _load_vad_params() -> dict[str, object]:
 class WhisperConfig:
     model_name: str = (
         settings.whisper_model
-    )  # str = os.getenv("WHISPER_MODEL", "large-v3")
+    )  # str = os.getenv("EMBERLOG_WHISPER_MODEL", "large-v3")
     device: str = (
         settings.whisper_device
-    )  # os.getenv("WHISPER_DEVICE", "cuda")  # "cuda" | "cpu"
+    )  # os.getenv("EMBERLOG_WHISPER_DEVICE", "cuda")  # "cuda" | "cpu"
     compute_type: str = (
         settings.whisper_compute_type
-    )  # os.getenv("WHISPER_COMPUTE_TYPE", "float16")  # "float16" on GPU, "int8" or "float32" as needed
+    )  # os.getenv("EMBERLOG_WHISPER_COMPUTE_TYPE", "float16")  # "float16" on GPU, "int8" or "float32" as needed
     vad_filter: bool = (
         settings.whisper_vad_filter
-    )  # _bool_env("WHISPER_VAD_FILTER", True)
+    )  # _bool_env("EMBERLOG_WHISPER_VAD_FILTER", True)
     vad_parameters: dict[str, object] = field(default_factory=_load_vad_params)
     beam_size: int = (
         settings.whisper_beam_size
-    )  # int(os.getenv("WHISPER_BEAM_SIZE", "5"))
+    )  # int(os.getenv("EMBERLOG_WHISPER_BEAM_SIZE", "5"))
     language: Optional[str] = (
         settings.whisper_language
-    )  # os.getenv("WHISPER_LANGUAGE")  # e.g., "en"
-    best_of: int = settings.whisper_best_of  # int(os.getenv("WHISPER_BEST_OF", "8"))
+    )  # os.getenv("EMBERLOG_WHISPER_LANGUAGE")  # e.g., "en"
+    best_of: int = settings.whisper_best_of  # int(os.getenv("EMBERLOG_WHISPER_BEST_OF", "8"))
     temperature: float = (
         settings.whisper_temperature
-    )  # float(os.getenv("WHISPER_TEMPERATURE", "0.0"))
+    )  # float(os.getenv("EMBERLOG_WHISPER_TEMPERATURE", "0.0"))
     initial_prompt: str = settings.whisper_initial_prompt  # os.getenv(
-    #    "WHISPER_INITIAL_PROMPT",
+    #    "EMBERLOG_WHISPER_INITIAL_PROMPT",
     #    "Phoenix metro fire dispatch. Terms: K-Deck, Battalion, Engine, Ladder, Ladder Tender, Rescue, Medic, HazMat. Street names: Civic Center Plaza, Watson, Yuma, Buckeye. Spell out channels like 'K-Deck 10'.",
     # )
     no_speech_threshold: float = (
         settings.whisper_no_speech_threshold
-    )  # float(os.getenv("WHISPER_NO_SPEECH_THRESHOLD", "0.3"))
+    )  # float(os.getenv("EMBERLOG_WHISPER_NO_SPEECH_THRESHOLD", "0.3"))
     log_prob_threshold: float = (
         settings.whisper_log_prob_threshold
-    )  # float(os.getenv("WHISPER_LOG_PROB_THRESHOLD", "-1.2"))
+    )  # float(os.getenv("EMBERLOG_WHISPER_LOG_PROB_THRESHOLD", "-1.2"))
     compression_ratio_threshold: float = (
         settings.whisper_compression_ratio_threshold
     )  # float(
-    #    os.getenv("WHISPER_COMPRESSION_RATIO_THRESHOLD", "2.8")
+    #    os.getenv("EMBERLOG_WHISPER_COMPRESSION_RATIO_THRESHOLD", "2.8")
     # )
     word_timestamps: bool = settings.whisper_word_timestamps
 
