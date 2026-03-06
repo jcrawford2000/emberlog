@@ -1,5 +1,9 @@
 # Container Runbook
 
+Type: Operational Runbook  
+Normative references: `/docs/API_CONTRACT_v0.1.md`, `/docs/EVENT_MODEL_v0.2.md`, `/docs/DEPLOYMENT_MODEL_v0.1.md`  
+Last verified: 2026-03-06
+
 ## Build
 ```bash
 docker build -t emberlog-api:local .

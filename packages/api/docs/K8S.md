@@ -1,5 +1,9 @@
 # Kubernetes Deployment (Kustomize)
 
+Type: Operational Runbook  
+Normative references: `/docs/DEPLOYMENT_MODEL_v0.1.md`, `/docs/DEVELOPMENT.md`  
+Last verified: 2026-03-06
+
 This repo includes minimal Kustomize manifests for K3S + Traefik in `k8s/`.
 
 ## Apply
