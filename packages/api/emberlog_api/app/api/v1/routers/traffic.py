@@ -1,4 +1,5 @@
 import logging
+import uuid
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, Query
@@ -7,6 +8,10 @@ from psycopg_pool import AsyncConnectionPool
 
 from emberlog_api.app.db.pool import get_pool
 from emberlog_api.app.db.repositories import traffic as traffic_repo
+from emberlog_api.app.services.decode_sites import (
+    DecodeSiteProjection,
+    normalize_decode_site_row,
+)
 
 log = logging.getLogger("emberlog_api.v1.routers.traffic")
 
@@ -25,14 +30,6 @@ class TrafficDecodeSiteOut(BaseModel):
 
 
 class TrafficSummaryOut(BaseModel):
-    instance_id: str
-    last_seen_at: str | None
-    active_calls_count: int
-    recorders_total: int
-    recorders_recording: int
-    recorders_idle: int
-    recorders_available: int
-    recorders_updated_at: str | None
     decode_sites: list[TrafficDecodeSiteOut]
 
 
@@ -76,14 +73,6 @@ def _group_from_sys_name(sys_name: str) -> str:
     return sys_name.split("-", 1)[0] if sys_name else ""
 
 
-def _decode_status(decode_rate_pct: float) -> str:
-    if decode_rate_pct >= 90.0:
-        return "ok"
-    if decode_rate_pct >= 70.0:
-        return "warn"
-    return "bad"
-
-
 def _parse_sys_name_filter(values: list[str] | None) -> set[str] | None:
     if not values:
         return None
@@ -98,22 +87,28 @@ def _parse_sys_name_filter(values: list[str] | None) -> set[str] | None:
     return normalized or None
 
 
-@router.get("/summary", response_model=TrafficSummaryOut)
+class EventSourceOut(BaseModel):
+    module: str
+    instance: str
+
+
+class TrafficSummaryEnvelopeOut(BaseModel):
+    event_id: str
+    event_type: str
+    schema_version: str
+    timestamp: str
+    source: EventSourceOut
+    payload: TrafficSummaryOut
+
+
+@router.get("/summary", response_model=TrafficSummaryEnvelopeOut)
 async def get_traffic_summary(
     *,
     instance_id: str = Query("trunk-recorder"),
     pool: AsyncConnectionPool = Depends(get_pool),
-) -> TrafficSummaryOut:
+) -> TrafficSummaryEnvelopeOut:
     try:
         decode_rows = await traffic_repo.list_decode_rate_latest(
-            pool=pool,
-            instance_id=instance_id,
-        )
-        recorders_row = await traffic_repo.select_recorders_snapshot_latest(
-            pool=pool,
-            instance_id=instance_id,
-        )
-        calls_row = await traffic_repo.select_calls_active_snapshot_latest(
             pool=pool,
             instance_id=instance_id,
         )
@@ -129,8 +124,6 @@ async def get_traffic_summary(
         extra={
             "instance_id": instance_id,
             "decode_rows_count": len(decode_rows),
-            "has_recorders_snapshot": recorders_row is not None,
-            "has_calls_snapshot": calls_row is not None,
         },
     )
 
@@ -141,81 +134,25 @@ async def get_traffic_summary(
         updated_at = row.get("updated_at")
         if isinstance(updated_at, datetime):
             seen_times.append(updated_at)
-
-        sys_name = str(row["sys_name"])
-        decode_rate_pct = float(row["decoderate_pct"])
-        control_channel_hz = row.get("control_channel_hz")
-        decode_sites.append(
-            TrafficDecodeSiteOut(
-                group=_group_from_sys_name(sys_name),
-                sys_num=int(row["sys_num"]),
-                sys_name=sys_name,
-                decode_rate_pct=decode_rate_pct,
-                control_channel_mhz=(
-                    float(control_channel_hz) / 1_000_000.0
-                    if control_channel_hz is not None
-                    else None
-                ),
-                interval_s=(
-                    float(row["decoderate_interval_s"])
-                    if row.get("decoderate_interval_s") is not None
-                    else None
-                ),
-                updated_at=_to_iso_z(updated_at)
-                if isinstance(updated_at, datetime)
-                else None,
-                status=_decode_status(decode_rate_pct),
-            )
-        )
+        projection: DecodeSiteProjection = normalize_decode_site_row(row)
+        decode_sites.append(TrafficDecodeSiteOut(**projection))
 
     decode_sites.sort(key=lambda item: (item.group, item.sys_name))
-
-    active_calls_count = 0
-    calls_updated_at: datetime | None = None
-    if calls_row:
-        active_calls_count = int(calls_row["active_calls_count"])
-        calls_updated_value = calls_row.get("updated_at")
-        if isinstance(calls_updated_value, datetime):
-            calls_updated_at = calls_updated_value
-            seen_times.append(calls_updated_at)
-
-    recorders_total = 0
-    recorders_recording = 0
-    recorders_idle = 0
-    recorders_available = 0
-    recorders_updated_at: datetime | None = None
-
-    if recorders_row:
-        recorders_total = int(recorders_row["total_count"])
-        recorders_recording = int(recorders_row["recording_count"])
-        recorders_idle = int(recorders_row["idle_count"])
-        recorders_available = int(recorders_row["available_count"])
-        recorders_updated_value = recorders_row.get("updated_at")
-        if isinstance(recorders_updated_value, datetime):
-            recorders_updated_at = recorders_updated_value
-            seen_times.append(recorders_updated_at)
-
-    last_seen_at = max(seen_times) if seen_times else None
-
-    response = TrafficSummaryOut(
-        instance_id=instance_id,
-        last_seen_at=_to_iso_z(last_seen_at),
-        active_calls_count=active_calls_count,
-        recorders_total=recorders_total,
-        recorders_recording=recorders_recording,
-        recorders_idle=recorders_idle,
-        recorders_available=recorders_available,
-        recorders_updated_at=_to_iso_z(recorders_updated_at),
-        decode_sites=decode_sites,
+    snapshot_at = max(seen_times) if seen_times else datetime.now(UTC)
+    response = TrafficSummaryEnvelopeOut(
+        event_id=str(uuid.uuid4()),
+        event_type="system.decode_sites.snapshot",
+        schema_version="1.0.0",
+        timestamp=_to_iso_z(snapshot_at) or "",
+        source=EventSourceOut(module="emberlog-api", instance=instance_id),
+        payload=TrafficSummaryOut(decode_sites=decode_sites),
     )
     log.info(
         "traffic summary served",
         extra={
             "instance_id": instance_id,
-            "decode_sites_count": len(response.decode_sites),
-            "active_calls_count": response.active_calls_count,
-            "recorders_total": response.recorders_total,
-            "last_seen_at": response.last_seen_at,
+            "decode_sites_count": len(response.payload.decode_sites),
+            "timestamp": response.timestamp,
         },
     )
     return response

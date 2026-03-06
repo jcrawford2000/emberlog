@@ -12,6 +12,7 @@ from psycopg_pool import AsyncConnectionPool
 from emberlog_api.app.api.v1.routers.sse import publish_event
 from emberlog_api.app.core.settings import settings
 from emberlog_api.app.db.repositories import traffic as traffic_repo
+from emberlog_api.app.services.decode_sites import normalize_decode_site_projection
 
 log = logging.getLogger("emberlog_api.services.mqtt_consumer")
 
@@ -131,18 +132,24 @@ async def handle_rates_message(pool: AsyncConnectionPool, payload: dict[str, Any
                 updated_at=updated_at,
             )
             system_name = str(item["sys_name"])
-            site_name = _site_from_sys_num(item.get("sys_num"))
+            decode_site_projection = normalize_decode_site_projection(
+                sys_num=int(item["sys_num"]),
+                sys_name=system_name,
+                decode_rate_pct=decoderate_pct,
+                control_channel_hz=control_channel_hz,
+                interval_s=(
+                    float(item["decoderate_interval"])
+                    if item.get("decoderate_interval") is not None
+                    else None
+                ),
+                updated_at=updated_at,
+            )
             decode_event = _build_event_envelope(
                 event_type="system.site.decode_rate.updated",
                 timestamp=updated_at,
                 instance_id=instance_id,
                 system=system_name,
-                payload={
-                    "system": system_name,
-                    "site": site_name,
-                    "decode_rate": decoderate_raw,
-                    "control_channel_frequency": control_channel_hz,
-                },
+                payload=decode_site_projection,
             )
             await publish_event(decode_event)
             log.debug(
