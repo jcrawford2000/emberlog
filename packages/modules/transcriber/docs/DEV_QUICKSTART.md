@@ -1,5 +1,9 @@
 # Dev Quickstart
 
+Type: Operational Runbook  
+Normative references: `/docs/DEVELOPMENT.md`, `/docs/DEPLOYMENT_MODEL_v0.1.md`  
+Last verified: 2026-03-06
+
 ## Setup
 
 ```bash
@@ -12,20 +16,19 @@ poetry install
 poetry run emberlog demo
 ```
 
-What demo mode does:
-- Uses fixture audio placeholders from `samples/inbox/`.
-- Uses deterministic transcript text fixtures from `samples/transcripts/` (stub transcriber backend).
-- Stages fixture WAVs into a run-local inbox under `out/demo/inbox/...` (source fixtures are not mutated).
-- Runs the real watcher/queue/worker/segmentation/cleaning/sink pipeline once, then exits.
+Demo mode behavior:
+
+- Uses fixture WAV files from `samples/inbox/`
+- Uses deterministic transcript fixtures from `samples/transcripts/` via stub backend
+- Stages runtime input under `out/demo/inbox/...`
+- Runs watcher/queue/worker pipeline once and exits
 - Writes outputs under `out/demo/`:
   - JSON: `out/demo/json/`
   - Ledger DB: `out/demo/ledger.sqlite`
   - Processed index DB: `out/demo/processed.sqlite`
   - Processed audio: `out/demo/processed/`
-- Re-running demo is idempotent at ledger level (no duplicate rows for the same fixtures).
 
-Optional:
-- Include API sink in demo (off by default):
+Optional API sink in demo:
 
 ```bash
 poetry run emberlog demo --with-api
@@ -40,7 +43,7 @@ poetry run emberlog
 ## Test / Lint / Type Check
 
 ```bash
-poetry run pytest
+poetry run pytest -q
 poetry run ruff check .
 poetry run mypy emberlog
 ```
