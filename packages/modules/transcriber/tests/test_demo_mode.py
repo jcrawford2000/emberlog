@@ -39,7 +39,7 @@ def test_demo_mode_generates_json_and_ledger_rows(tmp_path: Path) -> None:
     )
     assert rc == 0
 
-    json_files = list((out_root / "json").glob("*.json"))
+    json_files = list((out_root / "json").glob("**/*.json"))
     assert len(json_files) == expected
     assert _ledger_count(out_root / "ledger.sqlite") == expected
 
