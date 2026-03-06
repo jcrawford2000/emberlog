@@ -12,10 +12,10 @@ The documents below define the system in reading order.
 
 Start here to understand the intent and direction of the project.
 
--   **PLATFORM_VISION.md**\
+-   **PLATFORM_VISION_v0.2.md**\
     Defines the long-term platform goals and guiding principles.
 
--   **DEPLOYMENT_MODEL.md**\
+-   **DEPLOYMENT_MODEL_v0.1.md**\
     Explains the distributed architecture and runtime separation of
     components.
 
@@ -25,10 +25,10 @@ Start here to understand the intent and direction of the project.
 
 These documents define how components communicate.
 
--   **EVENT_MODEL.md**\
+-   **EVENT_MODEL_v0.2.md**\
     Canonical event envelope and event-type payload expectations.
 
--   **API_CONTRACT.md**\
+-   **API_CONTRACT_v0.1.md**\
     REST + SSE transport rules and ingest expectations.
 
 -   `packages/contracts/`\
@@ -38,7 +38,7 @@ These documents define how components communicate.
 
 ## 3. Frontend Architecture
 
--   **WEB_ARCHITECTURE.md**\
+-   **WEB_ARCHITECTURE_v0.1.md**\
     Design principles for Emberlog Web (live-first, modular, low
     cognitive load).
 
@@ -53,11 +53,11 @@ These documents define how components communicate.
 
 ## Suggested Reading Order
 
-1.  PLATFORM_VISION.md\
-2.  DEPLOYMENT_MODEL.md\
-3.  EVENT_MODEL.md\
-4.  API_CONTRACT.md\
-5.  WEB_ARCHITECTURE.md\
+1.  PLATFORM_VISION_v0.2.md\
+2.  DEPLOYMENT_MODEL_v0.1.md\
+3.  EVENT_MODEL_v0.2.md\
+4.  API_CONTRACT_v0.1.md\
+5.  WEB_ARCHITECTURE_v0.1.md\
 6.  DEVELOPMENT.md
 
 ------------------------------------------------------------------------

@@ -3,8 +3,8 @@
 This package is the long-term home for **machine-readable platform contracts**.
 
 Emberlog is contract-first:
-- `docs/EVENT_MODEL.md` defines the canonical event envelope and domain payload expectations.
-- `docs/API_CONTRACT.md` defines REST/SSE transport conventions and ingest requirements.
+- `docs/EVENT_MODEL_v0.2.md` defines the canonical event envelope and domain payload expectations.
+- `docs/API_CONTRACT_v0.1.md` defines REST/SSE transport conventions and ingest requirements.
 
 In v0.x, the docs are the primary source of truth.
 Over time, this package will grow to include:
@@ -23,11 +23,11 @@ packages/contracts/
 
 ## Current contract sources
 
-- `docs/PLATFORM_VISION.md`
-- `docs/EVENT_MODEL.md`
-- `docs/API_CONTRACT.md`
-- `docs/WEB_ARCHITECTURE.md`
-- `docs/DEPLOYMENT_MODEL.md`
+- `docs/PLATFORM_VISION_v0.2.md`
+- `docs/EVENT_MODEL_v0.2.md`
+- `docs/API_CONTRACT_v0.1.md`
+- `docs/WEB_ARCHITECTURE_v0.1.md`
+- `docs/DEPLOYMENT_MODEL_v0.1.md`
 
 ## Important note
 

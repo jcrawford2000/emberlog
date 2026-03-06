@@ -1,3 +1,6 @@
 #!/usr/bin/env bash
-cd /srv/emberlog/emberlog-web
-doppler run --project emberlog-web --config dev -- npm run dev
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
+cd "$ROOT/packages/web"
+npm run dev
