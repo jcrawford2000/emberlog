@@ -12,9 +12,9 @@ The goal is to deliver Emberlog-API v1.0:
 Agents must follow these rules when generating code, creating branches, writing tests, or opening PRs.
 
 Source of truth:
-- docs/REQUIREMENTS.md defines what v1.0 must achieve.
-- docs/CURRENT_STATE.md defines what currently exists.
-- If there is a mismatch, do NOT guess — update docs or ask for clarification.
+- Repository canon docs under `/docs` are normative (especially `API_CONTRACT_v0.1.md`, `EVENT_MODEL_v0.2.md`, `DEPLOYMENT_MODEL_v0.1.md`, and `DEVELOPMENT.md`).
+- `packages/api/docs/` is operational runbook material only and must not redefine platform contracts or architecture.
+- If there is a mismatch, do NOT guess — raise clarification and align package docs back to canon.
 
 
 --------------------------------------------------------------------
