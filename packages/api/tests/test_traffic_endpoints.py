@@ -27,7 +27,7 @@ def app():
 
 
 @pytest.mark.anyio
-async def test_traffic_summary_flattens_and_computes_last_seen(async_client, monkeypatch):
+async def test_traffic_summary_returns_snapshot_envelope(async_client, monkeypatch):
     decode_rows = [
         {
             "sys_num": 1,
@@ -47,64 +47,44 @@ async def test_traffic_summary_flattens_and_computes_last_seen(async_client, mon
         },
     ]
 
-    recorders_row = {
-        "total_count": 30,
-        "recording_count": 2,
-        "idle_count": 1,
-        "available_count": 27,
-        "updated_at": datetime(2026, 2, 16, 4, 23, 46, tzinfo=UTC),
-    }
-
-    calls_row = {
-        "active_calls_count": 2,
-        "updated_at": datetime(2026, 2, 16, 4, 23, 51, tzinfo=UTC),
-    }
-
     async def fake_list_decode_rate_latest(pool, *, instance_id):
         assert instance_id == "trunk-recorder"
         return decode_rows
 
-    async def fake_select_recorders_snapshot_latest(pool, *, instance_id):
-        assert instance_id == "trunk-recorder"
-        return recorders_row
-
-    async def fake_select_calls_active_snapshot_latest(pool, *, instance_id):
-        assert instance_id == "trunk-recorder"
-        return calls_row
-
     monkeypatch.setattr(
         traffic_repo, "list_decode_rate_latest", fake_list_decode_rate_latest
-    )
-    monkeypatch.setattr(
-        traffic_repo,
-        "select_recorders_snapshot_latest",
-        fake_select_recorders_snapshot_latest,
-    )
-    monkeypatch.setattr(
-        traffic_repo,
-        "select_calls_active_snapshot_latest",
-        fake_select_calls_active_snapshot_latest,
     )
 
     response = await async_client.get("/api/v1/traffic/summary")
     assert response.status_code == 200
-    payload = response.json()
+    envelope = response.json()
 
-    assert payload["instance_id"] == "trunk-recorder"
-    assert payload["last_seen_at"] == "2026-02-16T04:23:51Z"
-    assert payload["active_calls_count"] == 2
-    assert payload["recorders_total"] == 30
-    assert payload["recorders_recording"] == 2
-    assert payload["recorders_idle"] == 1
-    assert payload["recorders_available"] == 27
-    assert payload["recorders_updated_at"] == "2026-02-16T04:23:46Z"
+    assert isinstance(envelope["event_id"], str)
+    assert envelope["event_type"] == "system.decode_sites.snapshot"
+    assert envelope["schema_version"] == "1.0.0"
+    assert envelope["timestamp"] == "2026-02-16T04:23:41Z"
+    assert envelope["source"] == {
+        "module": "emberlog-api",
+        "instance": "trunk-recorder",
+    }
 
-    assert len(payload["decode_sites"]) == 2
-    assert payload["decode_sites"][0]["group"] == "MCSO"
-    assert payload["decode_sites"][0]["status"] == "bad"
-    assert payload["decode_sites"][1]["group"] == "PRWC"
-    assert payload["decode_sites"][1]["status"] == "ok"
-    assert payload["decode_sites"][1]["control_channel_mhz"] == 769.11875
+    decode_sites = envelope["payload"]["decode_sites"]
+    assert len(decode_sites) == 2
+    assert decode_sites[0]["group"] == "MCSO"
+    assert decode_sites[0]["status"] == "bad"
+    assert decode_sites[1]["group"] == "PRWC"
+    assert decode_sites[1]["status"] == "ok"
+    assert decode_sites[1]["control_channel_mhz"] == 769.11875
+
+    first = decode_sites[0]
+    assert isinstance(first["group"], str)
+    assert isinstance(first["sys_num"], int)
+    assert isinstance(first["sys_name"], str)
+    assert isinstance(first["decode_rate_pct"], float)
+    assert isinstance(first["control_channel_mhz"], float)
+    assert isinstance(first["interval_s"], float)
+    assert isinstance(first["updated_at"], str)
+    assert isinstance(first["status"], str)
 
 
 @pytest.mark.anyio

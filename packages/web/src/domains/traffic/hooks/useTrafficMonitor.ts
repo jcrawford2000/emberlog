@@ -6,7 +6,6 @@ import type {
   LiveCall,
   TrafficCallPayload,
   TrafficDecodeRateUpdatedPayload,
-  TrafficDecodeSite,
   TrafficSummary,
 } from '../types';
 
@@ -25,39 +24,51 @@ function normalizeKey(value: string): string {
   return value.trim().toLowerCase();
 }
 
-function decodeStatusFromPct(decodeRatePct: number): string {
-  if (decodeRatePct >= 90) {
-    return 'ok';
-  }
-  if (decodeRatePct >= 70) {
-    return 'warn';
-  }
-  return 'bad';
-}
-
 function toDecodeRatePayload(payload: unknown): TrafficDecodeRateUpdatedPayload | null {
   if (!isObject(payload)) {
     return null;
   }
 
-  const system = payload.system;
-  const site = payload.site;
-  const decodeRate = payload.decode_rate;
-  const controlChannel = payload.control_channel_frequency;
+  const group = payload.group;
+  const sysNum = payload.sys_num;
+  const sysName = payload.sys_name;
+  const decodeRatePct = payload.decode_rate_pct;
+  const controlChannelMhz = payload.control_channel_mhz;
+  const intervalS = payload.interval_s;
+  const updatedAt = payload.updated_at;
+  const status = payload.status;
 
-  if (typeof system !== 'string' || typeof site !== 'string' || typeof decodeRate !== 'number') {
+  if (
+    typeof group !== 'string' ||
+    typeof sysNum !== 'number' ||
+    typeof sysName !== 'string' ||
+    typeof decodeRatePct !== 'number' ||
+    typeof status !== 'string'
+  ) {
     return null;
   }
 
-  if (controlChannel != null && typeof controlChannel !== 'number') {
+  if (controlChannelMhz != null && typeof controlChannelMhz !== 'number') {
+    return null;
+  }
+
+  if (intervalS != null && typeof intervalS !== 'number') {
+    return null;
+  }
+
+  if (updatedAt != null && typeof updatedAt !== 'string') {
     return null;
   }
 
   return {
-    system,
-    site,
-    decode_rate: decodeRate,
-    control_channel_frequency: controlChannel ?? null,
+    group,
+    sys_num: sysNum,
+    sys_name: sysName,
+    decode_rate_pct: decodeRatePct,
+    control_channel_mhz: controlChannelMhz ?? null,
+    interval_s: intervalS ?? null,
+    updated_at: updatedAt ?? null,
+    status,
   };
 }
 
@@ -93,44 +104,29 @@ function mergeDecodeEvent(existing: TrafficSummary, event: EventEnvelope): Traff
     return existing;
   }
 
-  const decodeRatePct = payload.decode_rate * 100;
-  const updatedSite: TrafficDecodeSite = {
-    group: payload.system,
-    sys_num: 0,
-    sys_name: payload.site,
-    decode_rate_pct: decodeRatePct,
-    control_channel_mhz:
-      typeof payload.control_channel_frequency === 'number'
-        ? payload.control_channel_frequency / 1_000_000
-        : null,
-    interval_s: null,
-    updated_at: event.timestamp,
-    status: decodeStatusFromPct(decodeRatePct),
-  };
-
   const sites = [...existing.decode_sites];
   const siteIndex = sites.findIndex(
     (site) =>
-      normalizeKey(site.group) === normalizeKey(payload.system) &&
-      normalizeKey(site.sys_name) === normalizeKey(payload.site)
+      normalizeKey(site.sys_name) === normalizeKey(payload.sys_name) && site.sys_num === payload.sys_num
   );
 
   if (siteIndex === -1) {
-    sites.push(updatedSite);
+    sites.push(payload);
   } else {
     sites[siteIndex] = {
       ...sites[siteIndex],
-      decode_rate_pct: updatedSite.decode_rate_pct,
-      control_channel_mhz: updatedSite.control_channel_mhz,
-      updated_at: updatedSite.updated_at,
-      status: updatedSite.status,
+      group: payload.group,
+      decode_rate_pct: payload.decode_rate_pct,
+      control_channel_mhz: payload.control_channel_mhz,
+      interval_s: payload.interval_s,
+      updated_at: payload.updated_at ?? event.timestamp,
+      status: payload.status,
     };
   }
 
   return {
     ...existing,
     decode_sites: sites,
-    last_seen_at: event.timestamp,
   };
 }
 

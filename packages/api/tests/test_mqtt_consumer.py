@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 import pytest
 
 from emberlog_api.app.services import mqtt_consumer
+from emberlog_api.app.services.decode_sites import normalize_decode_site_row
 
 
 @pytest.mark.anyio
@@ -83,10 +84,68 @@ async def test_handle_rates_message_publishes_decode_rate_event(monkeypatch):
     assert event["source"]["module"] == "emberlog-api"
     assert event["source"]["instance"] == "trunk-recorder"
     assert event["source"]["system"] == "PRWC-J"
-    assert event["payload"]["system"] == "PRWC-J"
-    assert event["payload"]["site"] == "1"
-    assert event["payload"]["decode_rate"] == 0.41
-    assert event["payload"]["control_channel_frequency"] == 769118750
+    assert event["payload"] == {
+        "group": "PRWC",
+        "sys_num": 1,
+        "sys_name": "PRWC-J",
+        "decode_rate_pct": mqtt_consumer._decode_rate_pct(0.41),
+        "control_channel_mhz": 769.11875,
+        "interval_s": 3.0,
+        "updated_at": "2026-02-16T04:18:21Z",
+        "status": "bad",
+    }
+    assert "decode_rate" not in event["payload"]
+    assert "site" not in event["payload"]
+    assert "control_channel_frequency" not in event["payload"]
+
+
+@pytest.mark.anyio
+async def test_decode_site_projection_is_consistent_between_rest_and_sse_paths(monkeypatch):
+    events: list[dict] = []
+    upserted_rows: list[dict] = []
+
+    async def fake_upsert_decode_rate(pool, **kwargs):
+        upserted_rows.append(kwargs)
+        return None
+
+    async def fake_publish_event(event):
+        events.append(event)
+
+    monkeypatch.setattr(
+        mqtt_consumer.traffic_repo, "upsert_decode_rate", fake_upsert_decode_rate
+    )
+    monkeypatch.setattr(mqtt_consumer, "publish_event", fake_publish_event)
+
+    payload = {
+        "type": "rates",
+        "rates": [
+            {
+                "sys_num": 3,
+                "sys_name": "DPS-WT",
+                "decoderate": 0.41,
+                "decoderate_interval": 3.0,
+                "control_channel": 774293750.0,
+            }
+        ],
+        "timestamp": 1771215501,
+        "instance_id": "trunk-recorder",
+    }
+
+    await mqtt_consumer.handle_rates_message(pool=None, payload=payload)
+
+    assert len(upserted_rows) == 1
+    assert len(events) == 1
+    rest_projection = normalize_decode_site_row(
+        {
+            "sys_num": upserted_rows[0]["sys_num"],
+            "sys_name": upserted_rows[0]["sys_name"],
+            "decoderate_pct": upserted_rows[0]["decoderate_pct"],
+            "decoderate_interval_s": upserted_rows[0]["decoderate_interval_s"],
+            "control_channel_hz": upserted_rows[0]["control_channel_hz"],
+            "updated_at": upserted_rows[0]["updated_at"],
+        }
+    )
+    assert rest_projection == events[0]["payload"]
 
 
 @pytest.mark.anyio
