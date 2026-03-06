@@ -19,14 +19,8 @@ export interface TrafficCallPayload {
   system: string;
   site: string;
   call_id: string;
+  trunkgroup_id?: number | string;
+  trunkgroup_label?: string;
   frequency?: number;
-}
-
-export interface LiveCall {
-  callId: string;
-  system: string;
-  site: string;
-  frequency?: number;
-  startedAt: string;
-  rawPayload: unknown;
+  duration_seconds?: number;
 }

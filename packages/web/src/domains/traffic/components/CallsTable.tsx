@@ -1,76 +1,60 @@
-import { useMemo, useState } from 'react';
-import type { LiveCall } from '../types';
+import { formatDuration, formatFrequencyMhz, type RecentCall } from '../recentCalls';
 
 interface CallsTableProps {
-  calls: LiveCall[];
+  calls: RecentCall[];
+  rowLimit: number;
+  rowLimitOptions: number[];
+  onRowLimitChange: (nextValue: number) => void;
 }
 
-function formatTimestamp(value: string): string {
-  const time = new Date(value);
-  if (Number.isNaN(time.getTime())) {
-    return 'Unknown';
-  }
-  return time.toLocaleString();
-}
-
-export function CallsTable({ calls }: CallsTableProps) {
-  const [selectedCallId, setSelectedCallId] = useState<string | null>(null);
-
-  const selectedCall = useMemo(() => {
-    if (!selectedCallId) {
-      return null;
-    }
-    return calls.find((call) => call.callId === selectedCallId) ?? null;
-  }, [calls, selectedCallId]);
-
-  if (calls.length === 0) {
-    return <p className="text-sm text-muted">No active calls right now.</p>;
-  }
-
+export function CallsTable({ calls, rowLimit, rowLimitOptions, onRowLimitChange }: CallsTableProps) {
   return (
-    <div className="space-y-4">
-      <div className="overflow-x-auto rounded-xl border border-border">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>System</th>
-              <th>Site</th>
-              <th>Call ID</th>
-              <th>Frequency</th>
-              <th>Started</th>
-            </tr>
-          </thead>
-          <tbody>
-            {calls.map((call) => (
-              <tr
-                key={call.callId}
-                className="cursor-pointer hover:bg-white/5"
-                onClick={() => setSelectedCallId(call.callId)}
-              >
-                <td>{call.system}</td>
-                <td>{call.site}</td>
-                <td className="font-mono text-xs">{call.callId}</td>
-                <td>{typeof call.frequency === 'number' ? call.frequency.toFixed(5) : 'n/a'}</td>
-                <td>{formatTimestamp(call.startedAt)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="space-y-3">
+      <div className="flex items-center justify-end gap-2 text-sm">
+        <label htmlFor="recent-calls-limit" className="text-white/75">
+          Show
+        </label>
+        <select
+          id="recent-calls-limit"
+          className="select select-sm select-bordered"
+          value={rowLimit}
+          onChange={(event) => onRowLimitChange(Number(event.target.value))}
+        >
+          {rowLimitOptions.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
       </div>
-
-      {selectedCall ? (
-        <section className="rounded-xl border border-white/20 bg-white/5 p-4">
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-white">Call Details</h3>
-            <button className="btn btn-xs" onClick={() => setSelectedCallId(null)}>
-              Close
-            </button>
-          </div>
-          <pre className="max-h-64 overflow-auto rounded-lg bg-black/30 p-3 text-xs text-white/80">
-            {JSON.stringify(selectedCall.rawPayload, null, 2)}
-          </pre>
-        </section>
-      ) : null}
+      {calls.length === 0 ? (
+        <p className="text-sm text-muted">No recent calls yet.</p>
+      ) : (
+        <div className="overflow-x-auto rounded-xl border border-border">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>System</th>
+                <th>Trunkgroup ID</th>
+                <th>Trunkgroup Label</th>
+                <th>Frequency</th>
+                <th>Duration</th>
+              </tr>
+            </thead>
+            <tbody>
+              {calls.map((call) => (
+                <tr key={call.call_id}>
+                  <td>{call.system}</td>
+                  <td className="font-mono text-xs">{call.trunkgroup_id ?? 'n/a'}</td>
+                  <td>{call.trunkgroup_label ?? 'n/a'}</td>
+                  <td>{formatFrequencyMhz(call.frequency_hz)}</td>
+                  <td>{formatDuration(call.duration_seconds, call.status)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
