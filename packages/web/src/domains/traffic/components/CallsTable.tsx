@@ -8,6 +8,14 @@ interface CallsTableProps {
 }
 
 export function CallsTable({ calls, rowLimit, rowLimitOptions, onRowLimitChange }: CallsTableProps) {
+  const formatDateTime = (timestamp: string): string => {
+    const parsed = new Date(timestamp);
+    if (Number.isNaN(parsed.getTime())) {
+      return 'Unknown';
+    }
+    return parsed.toLocaleString();
+  };
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-end gap-2 text-sm">
@@ -27,34 +35,49 @@ export function CallsTable({ calls, rowLimit, rowLimitOptions, onRowLimitChange 
           ))}
         </select>
       </div>
-      {calls.length === 0 ? (
-        <p className="text-sm text-muted">No recent calls yet.</p>
-      ) : (
-        <div className="overflow-x-auto rounded-xl border border-border">
-          <table className="table">
-            <thead>
+      <div className="overflow-x-auto rounded-xl border border-border">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Date/Time</th>
+              <th>System</th>
+              <th>Trunkgroup ID</th>
+              <th>Trunkgroup Label</th>
+              <th>Frequency</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            {calls.length === 0 ? (
               <tr>
-                <th>System</th>
-                <th>Trunkgroup ID</th>
-                <th>Trunkgroup Label</th>
-                <th>Frequency</th>
-                <th>Duration</th>
+                <td colSpan={6} className="py-6 text-center text-sm text-muted">
+                  No recent calls yet.
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {calls.map((call) => (
+            ) : (
+              calls.map((call) => (
                 <tr key={call.call_id}>
+                  <td className="whitespace-nowrap">{formatDateTime(call.latest_event_at)}</td>
                   <td>{call.system}</td>
                   <td className="font-mono text-xs">{call.trunkgroup_id ?? 'n/a'}</td>
                   <td>{call.trunkgroup_label ?? 'n/a'}</td>
                   <td>{formatFrequencyMhz(call.frequency_hz)}</td>
-                  <td>{formatDuration(call.duration_seconds, call.status)}</td>
+                  <td>
+                    {call.status === 'live' ? (
+                      <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-500/15 px-2 py-0.5 text-xs font-semibold text-emerald-300">
+                        <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-300" aria-hidden />
+                        LIVE
+                      </span>
+                    ) : (
+                      formatDuration(call.duration_seconds, call.status)
+                    )}
+                  </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
