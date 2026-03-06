@@ -22,7 +22,10 @@ function LoadingCards() {
 export function TrafficPage() {
   const {
     summary,
-    liveCalls,
+    recentCalls,
+    recentCallsLimit,
+    recentCallsLimitOptions,
+    setRecentCallsLimit,
     loading,
     error,
     refreshSnapshot,
@@ -76,8 +79,13 @@ export function TrafficPage() {
       ) : null}
 
       <section className="card-surface p-6">
-        <h2 className="mb-2 text-lg font-semibold">Live Calls</h2>
-        <CallsTable calls={liveCalls} />
+        <h2 className="mb-2 text-lg font-semibold">Recent Calls</h2>
+        <CallsTable
+          calls={recentCalls}
+          rowLimit={recentCallsLimit}
+          rowLimitOptions={recentCallsLimitOptions}
+          onRowLimitChange={setRecentCallsLimit}
+        />
       </section>
     </div>
   );

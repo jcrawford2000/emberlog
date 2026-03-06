@@ -2,14 +2,20 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useEventStream } from '../../../core/realtime/useEventStream';
 import type { EventEnvelope } from '../../../core/realtime/types';
 import { fetchTrafficSummary } from '../api';
+import {
+  sortRecentCalls,
+  toTrafficCallPayload,
+  upsertRecentCall,
+  type RecentCall,
+} from '../recentCalls';
 import type {
-  LiveCall,
-  TrafficCallPayload,
   TrafficDecodeRateUpdatedPayload,
   TrafficSummary,
 } from '../types';
 
 const FALLBACK_POLL_INTERVAL_MS = 5000;
+const DEFAULT_RECENT_CALLS_LIMIT = 25;
+const RECENT_CALLS_LIMIT_OPTIONS = [10, 25, 50, 100] as const;
 const TRAFFIC_EVENT_TYPES = [
   'system.site.decode_rate.updated',
   'traffic.call.started',
@@ -72,32 +78,6 @@ function toDecodeRatePayload(payload: unknown): TrafficDecodeRateUpdatedPayload 
   };
 }
 
-function toCallPayload(payload: unknown): TrafficCallPayload | null {
-  if (!isObject(payload)) {
-    return null;
-  }
-
-  const system = payload.system;
-  const site = payload.site;
-  const callId = payload.call_id;
-  const frequency = payload.frequency;
-
-  if (typeof system !== 'string' || typeof site !== 'string' || typeof callId !== 'string') {
-    return null;
-  }
-
-  if (frequency != null && typeof frequency !== 'number') {
-    return null;
-  }
-
-  return {
-    system,
-    site,
-    call_id: callId,
-    frequency: frequency ?? undefined,
-  };
-}
-
 function mergeDecodeEvent(existing: TrafficSummary, event: EventEnvelope): TrafficSummary {
   const payload = toDecodeRatePayload(event.payload);
   if (!payload) {
@@ -130,48 +110,34 @@ function mergeDecodeEvent(existing: TrafficSummary, event: EventEnvelope): Traff
   };
 }
 
-function mergeCallStarted(existingCalls: Map<string, LiveCall>, event: EventEnvelope): Map<string, LiveCall> {
-  const payload = toCallPayload(event.payload);
+function mergeCallEvent(
+  existingCalls: Map<string, RecentCall>,
+  event: EventEnvelope,
+  limit: number
+): Map<string, RecentCall> {
+  const payload = toTrafficCallPayload(event.payload);
   if (!payload) {
     return existingCalls;
   }
-
-  const nextCalls = new Map(existingCalls);
-  nextCalls.set(payload.call_id, {
-    callId: payload.call_id,
-    system: payload.system,
-    site: payload.site,
-    frequency: payload.frequency,
-    startedAt: event.timestamp,
-    rawPayload: event.payload,
+  return upsertRecentCall(existingCalls, {
+    eventType: event.event_type,
+    payload,
+    timestamp: event.timestamp,
+    limit,
   });
-  return nextCalls;
-}
-
-function mergeCallEnded(existingCalls: Map<string, LiveCall>, event: EventEnvelope): Map<string, LiveCall> {
-  const payload = toCallPayload(event.payload);
-  if (!payload) {
-    return existingCalls;
-  }
-
-  if (!existingCalls.has(payload.call_id)) {
-    return existingCalls;
-  }
-
-  const nextCalls = new Map(existingCalls);
-  nextCalls.delete(payload.call_id);
-  return nextCalls;
 }
 
 export function useTrafficMonitor() {
   const [summary, setSummary] = useState<TrafficSummary | null>(null);
-  const [callsById, setCallsById] = useState<Map<string, LiveCall>>(new Map());
+  const [callsById, setCallsById] = useState<Map<string, RecentCall>>(new Map());
+  const [recentCallsLimit, setRecentCallsLimit] = useState<number>(DEFAULT_RECENT_CALLS_LIMIT);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastFetchedAt, setLastFetchedAt] = useState<number | null>(null);
   const [isPollingFallback, setIsPollingFallback] = useState(false);
   const snapshotInFlightRef = useRef(false);
   const mountedRef = useRef(true);
+  const recentCallsLimitRef = useRef(DEFAULT_RECENT_CALLS_LIMIT);
 
   const refreshSnapshot = useCallback(async () => {
     if (snapshotInFlightRef.current) {
@@ -218,13 +184,28 @@ export function useTrafficMonitor() {
     }
 
     if (event.event_type === 'traffic.call.started') {
-      setCallsById((current) => mergeCallStarted(current, event));
+      setCallsById((current) => mergeCallEvent(current, event, recentCallsLimitRef.current));
       return;
     }
 
     if (event.event_type === 'traffic.call.ended') {
-      setCallsById((current) => mergeCallEnded(current, event));
+      setCallsById((current) => mergeCallEvent(current, event, recentCallsLimitRef.current));
     }
+  }, []);
+
+  const updateRecentCallsLimit = useCallback((nextLimit: number) => {
+    if (!RECENT_CALLS_LIMIT_OPTIONS.includes(nextLimit as (typeof RECENT_CALLS_LIMIT_OPTIONS)[number])) {
+      return;
+    }
+    recentCallsLimitRef.current = nextLimit;
+    setRecentCallsLimit(nextLimit);
+    setCallsById((current) => {
+      if (current.size <= nextLimit) {
+        return current;
+      }
+      const sorted = sortRecentCalls(current.values());
+      return new Map(sorted.slice(0, nextLimit).map((call) => [call.call_id, call]));
+    });
   }, []);
 
   const stream = useMemo(
@@ -266,19 +247,14 @@ export function useTrafficMonitor() {
     };
   }, [isPollingFallback, refreshSnapshot]);
 
-  const liveCalls = useMemo(() => {
-    return [...callsById.values()].sort((a, b) => {
-      const timestampOrder = new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime();
-      if (timestampOrder !== 0) {
-        return timestampOrder;
-      }
-      return a.callId.localeCompare(b.callId);
-    });
-  }, [callsById]);
+  const recentCalls = useMemo(() => sortRecentCalls(callsById.values()), [callsById]);
 
   return {
     summary,
-    liveCalls,
+    recentCalls,
+    recentCallsLimit,
+    recentCallsLimitOptions: [...RECENT_CALLS_LIMIT_OPTIONS],
+    setRecentCallsLimit: updateRecentCallsLimit,
     loading,
     error,
     refreshSnapshot,
