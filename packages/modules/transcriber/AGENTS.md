@@ -1,53 +1,43 @@
 # AGENTS.md
 
-## What Emberlog Is
+Guidelines for automated agents working in `packages/modules/transcriber`.
 
-Emberlog (this repo) is the Python backend worker pipeline that:
+## Source of Truth
 
-- watches for incoming dispatch audio files,
-- queues and transcribes audio,
-- cleans/splits parsed dispatch data,
-- writes outputs to local sinks and downstream API integrations.
+- Root `/docs` is canonical for platform architecture and contracts.
+- Especially follow:
+  - `/docs/PLATFORM_VISION_v0.2.md`
+  - `/docs/DEPLOYMENT_MODEL_v0.1.md`
+  - `/docs/EVENT_MODEL_v0.2.md`
+  - `/docs/API_CONTRACT_v0.1.md`
+  - `/docs/DEVELOPMENT.md`
+- `packages/modules/transcriber/docs` is module-local operational documentation only.
 
-## What Emberlog Is Not (Non-Goals)
+If package docs and root canon differ, root `/docs` wins.
 
-- Not the REST API server.
-- Not the web frontend.
-- Not a monorepo for full-stack deployment.
+## Current Integration Boundary
 
-## Repo Scope
+This module currently posts to Emberlog API incidents endpoint (`POST /api/v1/incidents`).
+Treat that as current implementation truth unless explicitly instructed to migrate.
 
-This repository's scope is **emberlog backend worker only**.
+## Scope Rules
 
-Related but separate repositories:
+Do:
+- Keep changes inside module boundaries.
+- Maintain watcher -> queue -> worker -> sinks flow.
+- Keep local sinks and API sink behavior explicit and testable.
 
-- `emberlog-api`: API server + Postgres + SSE
-- `emberlog-web`: frontend consuming REST/SSE
+Do not:
+- Add API server runtime code here.
+- Add frontend code here.
+- Redefine platform contracts in this package docs folder.
 
-## Hard Boundaries / Rules
+## Validation Commands
 
-- Do **not** add API server runtime code to this repo.
-- Do **not** add frontend/UI code to this repo.
-- For local development, prefer mocks/stubs/fakes over pulling in cross-repo runtime dependencies.
-- Keep integration points explicit (client/sink interfaces), not tightly embedded.
+From `packages/modules/transcriber`:
 
-## Run / Lint / Test (Known)
-
-From repo root:
-
-- Install deps: `poetry install`
-- Run worker pipeline: `poetry run emberlog`
-  - Alternate: `poetry run python -m emberlog.app.main`
-- Run tests: `poetry run pytest`
-- Lint: `poetry run ruff check .`
-- Type-check: `poetry run mypy emberlog`
-
-## Coding Conventions
-
-- Use type hints on public functions, methods, and models.
-- Add concise docstrings for modules/classes/functions with non-obvious behavior.
-- Use structured logging via the existing logging setup; include useful context fields.
-- Prefer minimal coupling:
-  - depend on interfaces/protocols where practical,
-  - isolate external integrations behind sinks/clients,
-  - avoid cross-module side effects unless required.
+```bash
+poetry run pytest -q
+poetry run ruff check .
+poetry run mypy emberlog
+```
