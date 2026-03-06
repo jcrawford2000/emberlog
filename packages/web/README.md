@@ -1,54 +1,61 @@
-# React + TypeScript + Vite
+# emberlog-web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend shell for Emberlog.
 
-Currently, two official plugins are available:
+This package provides the web UI that consumes Emberlog API REST and SSE endpoints. The current implemented domain is Traffic Monitor.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Current Scope
 
-## Expanding the ESLint configuration
+- App shell and routing (`/traffic`)
+- Traffic summary and live calls views
+- SSE live event stream integration (`/api/v1/sse`)
+- Shared API and realtime clients under `src/core`
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Architecture
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
+This package follows the domain/core split defined in the root canon docs:
+
+- `src/core/` for shell, routing, shared API client, shared realtime client
+- `src/domains/` for domain-specific UI and hooks
+
+Current domain implementation:
+
+- `src/domains/traffic`
+
+## API Integration
+
+The app reads API base URL from:
+
+- `VITE_API_BASE_URL` (preferred)
+- `VITE_API_BASE` (legacy fallback)
+
+Default fallback is `http://localhost:8000` when env vars are not set.
+
+## Local Development
+
+From repo root:
+
+```bash
+cd packages/web
+cp .env.example .env
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Default dev server host is enabled via `vite --host`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x';
-import reactDom from 'eslint-plugin-react-dom';
+## Build and Lint
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-});
+```bash
+npm run build
+npm run lint
 ```
+
+## Package Docs
+
+- Operational assets and screenshots live under `docs/`
+- Platform architecture and contracts are canonical in root `/docs`
+
+## License
+
+This package uses the repository canonical license at [LICENSE.md](/home/justin/Development/emberlog/LICENSE.md).
