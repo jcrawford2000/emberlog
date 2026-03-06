@@ -24,7 +24,7 @@ export function CallsTable({ calls, rowLimit, rowLimitOptions, onRowLimitChange 
         </label>
         <select
           id="recent-calls-limit"
-          className="select select-sm select-bordered"
+          className="select select-sm border-white/30 bg-slate-900 text-white"
           value={rowLimit}
           onChange={(event) => onRowLimitChange(Number(event.target.value))}
         >
@@ -36,21 +36,21 @@ export function CallsTable({ calls, rowLimit, rowLimitOptions, onRowLimitChange 
         </select>
       </div>
       <div className="overflow-x-auto rounded-xl border border-border">
-        <table className="table">
-          <thead>
+        <table className="table bg-slate-900/90 text-slate-100">
+          <thead className="bg-slate-800 text-slate-100">
             <tr>
-              <th>Date/Time</th>
-              <th>System</th>
-              <th>Trunkgroup ID</th>
-              <th>Trunkgroup Label</th>
-              <th>Frequency</th>
-              <th>Duration</th>
+              <th className="text-slate-100">Date/Time</th>
+              <th className="text-slate-100">System</th>
+              <th className="text-slate-100">Trunkgroup ID</th>
+              <th className="text-slate-100">Trunkgroup Label</th>
+              <th className="text-slate-100">Frequency</th>
+              <th className="text-slate-100">Duration</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="text-slate-100">
             {calls.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-6 text-center text-sm text-muted">
+                <td colSpan={6} className="py-6 text-center text-sm text-slate-300">
                   No recent calls yet.
                 </td>
               </tr>
