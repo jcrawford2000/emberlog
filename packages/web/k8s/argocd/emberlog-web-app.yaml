@@ -1,0 +1,21 @@
+apiVersion: argo-cd.argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: emberlog-web
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/jcrawford2000/emberlog.git
+    targetRevision: main
+    path: packages/web/k8s/overlays/home
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: emberlog
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      
