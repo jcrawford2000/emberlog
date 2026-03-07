@@ -18,6 +18,9 @@ RUN npm run build
 # --- Runtime ---
 FROM nginx:alpine
 
+LABEL org.opencontainers.image.source https://github.com/jcrawford2000/emberlog
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 EXPOSE 80
