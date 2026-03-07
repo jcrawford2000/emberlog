@@ -42,7 +42,7 @@ export function SystemHealthCard({ site, nowMs }: SystemHealthCardProps) {
   const toggleLabel = isExpanded ? 'Collapse details' : 'Expand details';
 
   return (
-    <article className={`card-surface border p-0 text-body transition-colors ${cardClassForStatus(site.status)}`}>
+    <article className={`card-surface border p-0 !text-slate-100 transition-colors ${cardClassForStatus(site.status)}`}>
       <button
         type="button"
         className="w-full p-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-engine]"
@@ -52,13 +52,13 @@ export function SystemHealthCard({ site, nowMs }: SystemHealthCardProps) {
       >
         <div className="flex items-start justify-between gap-2">
           <h2 className="text-lg font-semibold">{site.sys_name}</h2>
-          <span className="text-sm text-body/70" aria-hidden>
+          <span className="text-sm text-slate-200/85" aria-hidden>
             {isExpanded ? '▾' : '▸'}
           </span>
         </div>
 
         <div className="mt-2">
-          <p className="text-xs uppercase tracking-wide text-body/70">Decode rate</p>
+          <p className="text-xs uppercase tracking-wide text-slate-200/85">Decode rate</p>
           <p className="text-3xl font-bold leading-tight">{decodeRate}</p>
         </div>
 
@@ -67,22 +67,22 @@ export function SystemHealthCard({ site, nowMs }: SystemHealthCardProps) {
         </span>
 
         {isExpanded ? (
-          <div id={detailsId} className="mt-4 border-t border-black/10 pt-3 text-xs text-body/80">
+          <div id={detailsId} className="mt-4 border-t border-white/20 pt-3 text-xs text-slate-200/90">
             <dl className="grid grid-cols-1 gap-2 sm:grid-cols-3">
               <div>
-                <dt className="uppercase tracking-wide text-body/60">Group</dt>
-                <dd className="text-sm font-medium text-body">{group}</dd>
+                <dt className="uppercase tracking-wide text-slate-300/85">Group</dt>
+                <dd className="text-sm font-medium text-slate-100">{group}</dd>
               </div>
               <div>
-                <dt className="uppercase tracking-wide text-body/60">Frequency</dt>
-                <dd className="text-sm font-medium text-body">{controlChannel}</dd>
+                <dt className="uppercase tracking-wide text-slate-300/85">Frequency</dt>
+                <dd className="text-sm font-medium text-slate-100">{controlChannel}</dd>
               </div>
               <div>
-                <dt className="uppercase tracking-wide text-body/60">System</dt>
-                <dd className="text-sm font-medium text-body">#{site.sys_num}</dd>
+                <dt className="uppercase tracking-wide text-slate-300/85">System</dt>
+                <dd className="text-sm font-medium text-slate-100">#{site.sys_num}</dd>
               </div>
             </dl>
-            <p className="mt-2 text-body/65">Updated {formatUpdatedAge(site.updated_at, nowMs)}</p>
+            <p className="mt-2 text-slate-300/85">Updated {formatUpdatedAge(site.updated_at, nowMs)}</p>
           </div>
         ) : null}
       </button>
