@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: emberlog-web
+  namespace: emberlog
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: emberlog.pi-rack.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: emberlog-web
+                port:
+                  number: 80
+                  
