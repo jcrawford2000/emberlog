@@ -1,3 +1,4 @@
+import { useId, useState } from 'react';
 import type { TrafficDecodeSite } from '../types';
 
 interface SystemHealthCardProps {
@@ -5,16 +6,16 @@ interface SystemHealthCardProps {
   nowMs: number;
 }
 
-function badgeClassForStatus(status: string): string {
+function cardClassForStatus(status: string): string {
   switch (status) {
     case 'ok':
-      return 'badge-success';
+      return '!border-emerald-500/60 !bg-emerald-500/18 hover:!bg-emerald-500/24';
     case 'warn':
-      return 'badge-warning';
+      return '!border-amber-500/65 !bg-amber-400/24 hover:!bg-amber-400/30';
     case 'bad':
-      return 'badge-error';
+      return '!border-rose-500/70 !bg-rose-500/22 hover:!bg-rose-500/30';
     default:
-      return 'badge-neutral';
+      return '!border-slate-500/55 !bg-slate-400/20 hover:!bg-slate-400/28';
   }
 }
 
@@ -33,32 +34,58 @@ function formatUpdatedAge(updatedAt: string | null, nowMs: number): string {
 }
 
 export function SystemHealthCard({ site, nowMs }: SystemHealthCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const detailsId = useId();
   const decodeRate = `${site.decode_rate_pct.toFixed(1)}%`;
+  const group = site.group || 'Unknown Group';
+  const controlChannel = site.control_channel_mhz ? `${site.control_channel_mhz.toFixed(5)} MHz` : 'No control channel';
+  const toggleLabel = isExpanded ? 'Collapse details' : 'Expand details';
 
   return (
-    <article className="card-surface p-4">
-      <div className="mb-3 flex items-start justify-between gap-2">
-        <div>
-          <p className="text-xs uppercase tracking-wide text-muted">{site.group || 'Unknown Group'}</p>
+    <article className={`card-surface border p-0 text-body transition-colors ${cardClassForStatus(site.status)}`}>
+      <button
+        type="button"
+        className="w-full p-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-engine]"
+        onClick={() => setIsExpanded((current) => !current)}
+        aria-expanded={isExpanded}
+        aria-controls={detailsId}
+      >
+        <div className="flex items-start justify-between gap-2">
           <h2 className="text-lg font-semibold">{site.sys_name}</h2>
+          <span className="text-sm text-body/70" aria-hidden>
+            {isExpanded ? '▾' : '▸'}
+          </span>
         </div>
-        <span className={`badge ${badgeClassForStatus(site.status)}`}>{site.status.toUpperCase()}</span>
-      </div>
 
-      <div className="mb-4 flex items-end justify-between gap-2">
-        <div>
-          <p className="text-xs text-muted">Decode rate</p>
-          <p className="text-2xl font-bold text-body">{decodeRate}</p>
+        <div className="mt-2">
+          <p className="text-xs uppercase tracking-wide text-body/70">Decode rate</p>
+          <p className="text-3xl font-bold leading-tight">{decodeRate}</p>
         </div>
-        <div className="text-right text-xs text-muted">
-          <p>System #{site.sys_num}</p>
-          {site.control_channel_mhz ? <p>{site.control_channel_mhz.toFixed(5)} MHz</p> : <p>No control channel</p>}
-        </div>
-      </div>
 
-      <div className="text-xs text-muted">
-        <p>Updated {formatUpdatedAge(site.updated_at, nowMs)}</p>
-      </div>
+        <span className="sr-only">
+          {site.status} status. {toggleLabel}.
+        </span>
+
+        {isExpanded ? (
+          <div id={detailsId} className="mt-4 border-t border-black/10 pt-3 text-xs text-body/80">
+            <dl className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+              <div>
+                <dt className="uppercase tracking-wide text-body/60">Group</dt>
+                <dd className="text-sm font-medium text-body">{group}</dd>
+              </div>
+              <div>
+                <dt className="uppercase tracking-wide text-body/60">Frequency</dt>
+                <dd className="text-sm font-medium text-body">{controlChannel}</dd>
+              </div>
+              <div>
+                <dt className="uppercase tracking-wide text-body/60">System</dt>
+                <dd className="text-sm font-medium text-body">#{site.sys_num}</dd>
+              </div>
+            </dl>
+            <p className="mt-2 text-body/65">Updated {formatUpdatedAge(site.updated_at, nowMs)}</p>
+          </div>
+        ) : null}
+      </button>
     </article>
   );
 }
