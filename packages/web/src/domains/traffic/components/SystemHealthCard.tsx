@@ -45,7 +45,7 @@ export function SystemHealthCard({ site, nowMs }: SystemHealthCardProps) {
   const gaugeBackground = `conic-gradient(${accent} ${decodeRateClamped * 3.6}deg, rgba(255,255,255,0.16) 0deg)`;
 
   return (
-    <article className="card-surface border border-white/15 bg-slate-900/80 p-4 text-slate-100">
+    <article className="flex justify-center p-1 text-slate-100">
       <button
         type="button"
         className="group mx-auto block h-56 w-56 rounded-full border border-white/15 p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-engine]"
@@ -56,10 +56,9 @@ export function SystemHealthCard({ site, nowMs }: SystemHealthCardProps) {
           className="relative flex h-full w-full items-center justify-center rounded-full transition-transform group-hover:scale-[1.01]"
           style={{ background: gaugeBackground }}
         >
-          <div className="flex h-[76%] w-[76%] flex-col items-center justify-center rounded-full border border-white/20 bg-slate-950/95 px-4 text-center">
-            <p className="truncate text-sm font-semibold tracking-wide text-slate-100">{site.sys_name}</p>
-            <p className="mt-1 text-3xl font-bold text-slate-100">{decodeRate}</p>
-            <p className="mt-1 text-xs uppercase tracking-wider text-slate-300">Decode</p>
+          <div className="flex h-[82%] w-[82%] flex-col items-center justify-center rounded-full border border-white/20 bg-slate-950/95 px-4 text-center">
+            <p className="truncate text-xl font-extrabold tracking-wide text-slate-100">{site.sys_name}</p>
+            <p className="mt-2 text-lg font-semibold text-slate-200">{decodeRate}</p>
           </div>
         </div>
       </button>
