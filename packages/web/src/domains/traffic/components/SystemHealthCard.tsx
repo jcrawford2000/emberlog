@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { TrafficDecodeSite } from '../types';
 
 interface SystemHealthCardProps {
@@ -5,16 +6,16 @@ interface SystemHealthCardProps {
   nowMs: number;
 }
 
-function badgeClassForStatus(status: string): string {
+function gaugeAccentForStatus(status: string): string {
   switch (status) {
     case 'ok':
-      return 'badge-success';
+      return '#10b981';
     case 'warn':
-      return 'badge-warning';
+      return '#f59e0b';
     case 'bad':
-      return 'badge-error';
+      return '#f43f5e';
     default:
-      return 'badge-neutral';
+      return '#94a3b8';
   }
 }
 
@@ -33,32 +34,84 @@ function formatUpdatedAge(updatedAt: string | null, nowMs: number): string {
 }
 
 export function SystemHealthCard({ site, nowMs }: SystemHealthCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
   const decodeRate = `${site.decode_rate_pct.toFixed(1)}%`;
+  const group = site.group || 'Unknown Group';
+  const controlChannel = site.control_channel_mhz ? `${site.control_channel_mhz.toFixed(5)} MHz` : 'No control channel';
+  const interval = site.interval_s != null ? `${site.interval_s.toFixed(1)}s` : 'Unknown';
+  const updated = formatUpdatedAge(site.updated_at, nowMs);
+  const decodeRateClamped = Math.max(0, Math.min(100, site.decode_rate_pct));
+  const accent = gaugeAccentForStatus(site.status);
+  const gaugeBackground = `conic-gradient(${accent} ${decodeRateClamped * 3.6}deg, rgba(255,255,255,0.16) 0deg)`;
 
   return (
-    <article className="card-surface p-4">
-      <div className="mb-3 flex items-start justify-between gap-2">
-        <div>
-          <p className="text-xs uppercase tracking-wide text-muted">{site.group || 'Unknown Group'}</p>
-          <h2 className="text-lg font-semibold">{site.sys_name}</h2>
+    <article className="flex justify-center p-1 text-slate-100">
+      <button
+        type="button"
+        className="group mx-auto block h-56 w-56 rounded-full border border-white/15 p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-engine]"
+        onClick={() => setIsExpanded(true)}
+        aria-label={`Open decode details for ${site.sys_name}`}
+      >
+        <div
+          className="relative flex h-full w-full items-center justify-center rounded-full transition-transform group-hover:scale-[1.01]"
+          style={{ background: gaugeBackground }}
+        >
+          <div className="flex h-[82%] w-[82%] flex-col items-center justify-center rounded-full border border-white/20 bg-slate-950/95 px-4 text-center">
+            <p className="truncate text-xl font-extrabold tracking-wide text-slate-100">{site.sys_name}</p>
+            <p className="mt-2 text-lg font-semibold text-slate-200">{decodeRate}</p>
+          </div>
         </div>
-        <span className={`badge ${badgeClassForStatus(site.status)}`}>{site.status.toUpperCase()}</span>
-      </div>
+      </button>
 
-      <div className="mb-4 flex items-end justify-between gap-2">
-        <div>
-          <p className="text-xs text-muted">Decode rate</p>
-          <p className="text-2xl font-bold text-body">{decodeRate}</p>
-        </div>
-        <div className="text-right text-xs text-muted">
-          <p>System #{site.sys_num}</p>
-          {site.control_channel_mhz ? <p>{site.control_channel_mhz.toFixed(5)} MHz</p> : <p>No control channel</p>}
-        </div>
-      </div>
+      {isExpanded ? (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/55 p-4" onClick={() => setIsExpanded(false)}>
+          <section
+            className="w-full max-w-sm rounded-2xl border border-white/20 bg-slate-900 p-5 text-slate-100 shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mb-3 flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-semibold">{site.sys_name}</h2>
+                <p className="text-sm text-slate-300">{group}</p>
+              </div>
+              <button
+                type="button"
+                className="rounded-md border border-white/20 px-2 py-1 text-xs text-slate-200 hover:bg-white/10"
+                onClick={() => setIsExpanded(false)}
+              >
+                Close
+              </button>
+            </div>
 
-      <div className="text-xs text-muted">
-        <p>Updated {formatUpdatedAge(site.updated_at, nowMs)}</p>
-      </div>
+            <dl className="grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <dt className="text-slate-400">Decode Rate</dt>
+                <dd className="font-semibold">{decodeRate}</dd>
+              </div>
+              <div>
+                <dt className="text-slate-400">Status</dt>
+                <dd className="font-semibold capitalize">{site.status}</dd>
+              </div>
+              <div>
+                <dt className="text-slate-400">System #</dt>
+                <dd className="font-semibold">{site.sys_num}</dd>
+              </div>
+              <div>
+                <dt className="text-slate-400">Interval</dt>
+                <dd className="font-semibold">{interval}</dd>
+              </div>
+              <div className="col-span-2">
+                <dt className="text-slate-400">Control Channel</dt>
+                <dd className="font-semibold">{controlChannel}</dd>
+              </div>
+              <div className="col-span-2">
+                <dt className="text-slate-400">Updated</dt>
+                <dd className="font-semibold">{updated}</dd>
+              </div>
+            </dl>
+          </section>
+        </div>
+      ) : null}
     </article>
   );
 }
