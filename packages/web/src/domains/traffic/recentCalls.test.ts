@@ -35,6 +35,8 @@ test('traffic.call.started adds a row', () => {
   assert.equal(call.trunkgroup_id, 1795);
   assert.equal(call.trunkgroup_label, 'K1 PHX Alarm');
   assert.equal(call.frequency_hz, 769868750);
+  assert.equal(call.started_at, '2026-03-06T05:44:31Z');
+  assert.equal(call.latest_event_at, '2026-03-06T05:44:31Z');
   assert.equal(call.status, 'live');
 });
 
@@ -72,6 +74,8 @@ test('traffic.call.ended updates same row rather than duplicating', () => {
   assert.equal(withEnded.size, 1);
   const call = withEnded.get('1_1795_1772778389');
   assert.ok(call);
+  assert.equal(call.started_at, '2026-03-06T05:44:31Z');
+  assert.equal(call.latest_event_at, '2026-03-06T05:44:51Z');
   assert.equal(call.duration_seconds, 20);
   assert.equal(call.status, 'ended');
 });
@@ -134,4 +138,46 @@ test('ended calls remain visible until trimmed out', () => {
   });
   assert.equal(kept.size, 1);
   assert.ok(kept.has('call-1'));
+});
+
+test('live calls always sort above ended calls', () => {
+  const sorted = sortRecentCalls([
+    {
+      call_id: 'ended-newest',
+      system: 'PRWC-J',
+      trunkgroup_id: 2001,
+      trunkgroup_label: 'Ended New',
+      frequency_hz: 769118750,
+      duration_seconds: 12,
+      started_at: '2026-03-06T05:45:00Z',
+      latest_event_at: '2026-03-06T05:45:12Z',
+      status: 'ended',
+    },
+    {
+      call_id: 'live-older',
+      system: 'PRWC-J',
+      trunkgroup_id: 2002,
+      trunkgroup_label: 'Live Old',
+      frequency_hz: 769118760,
+      duration_seconds: null,
+      started_at: '2026-03-06T05:44:00Z',
+      latest_event_at: '2026-03-06T05:44:00Z',
+      status: 'live',
+    },
+    {
+      call_id: 'live-newer',
+      system: 'PRWC-J',
+      trunkgroup_id: 2003,
+      trunkgroup_label: 'Live New',
+      frequency_hz: 769118770,
+      duration_seconds: null,
+      started_at: '2026-03-06T05:44:30Z',
+      latest_event_at: '2026-03-06T05:44:30Z',
+      status: 'live',
+    },
+  ]);
+
+  assert.equal(sorted[0].call_id, 'live-newer');
+  assert.equal(sorted[1].call_id, 'live-older');
+  assert.equal(sorted[2].call_id, 'ended-newest');
 });

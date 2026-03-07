@@ -70,6 +70,10 @@ function parseTimestampMs(timestamp: string): number {
 }
 
 function compareRecentCalls(left: RecentCall, right: RecentCall): number {
+  if (left.status !== right.status) {
+    return left.status === 'live' ? -1 : 1;
+  }
+
   const byTimestamp = parseTimestampMs(right.latest_event_at) - parseTimestampMs(left.latest_event_at);
   if (byTimestamp !== 0) {
     return byTimestamp;
