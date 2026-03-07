@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useState } from 'react';
 import type { TrafficDecodeSite } from '../types';
 
 interface SystemHealthCardProps {
@@ -6,16 +6,16 @@ interface SystemHealthCardProps {
   nowMs: number;
 }
 
-function cardClassForStatus(status: string): string {
+function gaugeAccentForStatus(status: string): string {
   switch (status) {
     case 'ok':
-      return '!border-emerald-500/60 !bg-emerald-500/18 hover:!bg-emerald-500/24';
+      return '#10b981';
     case 'warn':
-      return '!border-amber-500/65 !bg-amber-400/24 hover:!bg-amber-400/30';
+      return '#f59e0b';
     case 'bad':
-      return '!border-rose-500/70 !bg-rose-500/22 hover:!bg-rose-500/30';
+      return '#f43f5e';
     default:
-      return '!border-slate-500/55 !bg-slate-400/20 hover:!bg-slate-400/28';
+      return '#94a3b8';
   }
 }
 
@@ -35,57 +35,84 @@ function formatUpdatedAge(updatedAt: string | null, nowMs: number): string {
 
 export function SystemHealthCard({ site, nowMs }: SystemHealthCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const detailsId = useId();
   const decodeRate = `${site.decode_rate_pct.toFixed(1)}%`;
   const group = site.group || 'Unknown Group';
   const controlChannel = site.control_channel_mhz ? `${site.control_channel_mhz.toFixed(5)} MHz` : 'No control channel';
-  const toggleLabel = isExpanded ? 'Collapse details' : 'Expand details';
+  const interval = site.interval_s != null ? `${site.interval_s.toFixed(1)}s` : 'Unknown';
+  const updated = formatUpdatedAge(site.updated_at, nowMs);
+  const decodeRateClamped = Math.max(0, Math.min(100, site.decode_rate_pct));
+  const accent = gaugeAccentForStatus(site.status);
+  const gaugeBackground = `conic-gradient(${accent} ${decodeRateClamped * 3.6}deg, rgba(255,255,255,0.16) 0deg)`;
 
   return (
-    <article className={`card-surface border p-0 !text-slate-100 transition-colors ${cardClassForStatus(site.status)}`}>
+    <article className="card-surface border border-white/15 bg-slate-900/80 p-4 text-slate-100">
       <button
         type="button"
-        className="w-full p-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-engine]"
-        onClick={() => setIsExpanded((current) => !current)}
-        aria-expanded={isExpanded}
-        aria-controls={detailsId}
+        className="group mx-auto block h-56 w-56 rounded-full border border-white/15 p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-engine]"
+        onClick={() => setIsExpanded(true)}
+        aria-label={`Open decode details for ${site.sys_name}`}
       >
-        <div className="flex items-start justify-between gap-2">
-          <h2 className="text-lg font-semibold">{site.sys_name}</h2>
-          <span className="text-sm text-slate-200/85" aria-hidden>
-            {isExpanded ? '▾' : '▸'}
-          </span>
+        <div
+          className="relative flex h-full w-full items-center justify-center rounded-full transition-transform group-hover:scale-[1.01]"
+          style={{ background: gaugeBackground }}
+        >
+          <div className="flex h-[76%] w-[76%] flex-col items-center justify-center rounded-full border border-white/20 bg-slate-950/95 px-4 text-center">
+            <p className="truncate text-sm font-semibold tracking-wide text-slate-100">{site.sys_name}</p>
+            <p className="mt-1 text-3xl font-bold text-slate-100">{decodeRate}</p>
+            <p className="mt-1 text-xs uppercase tracking-wider text-slate-300">Decode</p>
+          </div>
         </div>
+      </button>
 
-        <div className="mt-2">
-          <p className="text-xs uppercase tracking-wide text-slate-200/85">Decode rate</p>
-          <p className="text-3xl font-bold leading-tight">{decodeRate}</p>
-        </div>
-
-        <span className="sr-only">
-          {site.status} status. {toggleLabel}.
-        </span>
-
-        {isExpanded ? (
-          <div id={detailsId} className="mt-4 border-t border-white/20 pt-3 text-xs text-slate-200/90">
-            <dl className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+      {isExpanded ? (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/55 p-4" onClick={() => setIsExpanded(false)}>
+          <section
+            className="w-full max-w-sm rounded-2xl border border-white/20 bg-slate-900 p-5 text-slate-100 shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mb-3 flex items-start justify-between gap-4">
               <div>
-                <dt className="uppercase tracking-wide text-slate-300/85">Group</dt>
-                <dd className="text-sm font-medium text-slate-100">{group}</dd>
+                <h2 className="text-xl font-semibold">{site.sys_name}</h2>
+                <p className="text-sm text-slate-300">{group}</p>
+              </div>
+              <button
+                type="button"
+                className="rounded-md border border-white/20 px-2 py-1 text-xs text-slate-200 hover:bg-white/10"
+                onClick={() => setIsExpanded(false)}
+              >
+                Close
+              </button>
+            </div>
+
+            <dl className="grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <dt className="text-slate-400">Decode Rate</dt>
+                <dd className="font-semibold">{decodeRate}</dd>
               </div>
               <div>
-                <dt className="uppercase tracking-wide text-slate-300/85">Frequency</dt>
-                <dd className="text-sm font-medium text-slate-100">{controlChannel}</dd>
+                <dt className="text-slate-400">Status</dt>
+                <dd className="font-semibold capitalize">{site.status}</dd>
               </div>
               <div>
-                <dt className="uppercase tracking-wide text-slate-300/85">System</dt>
-                <dd className="text-sm font-medium text-slate-100">#{site.sys_num}</dd>
+                <dt className="text-slate-400">System #</dt>
+                <dd className="font-semibold">{site.sys_num}</dd>
+              </div>
+              <div>
+                <dt className="text-slate-400">Interval</dt>
+                <dd className="font-semibold">{interval}</dd>
+              </div>
+              <div className="col-span-2">
+                <dt className="text-slate-400">Control Channel</dt>
+                <dd className="font-semibold">{controlChannel}</dd>
+              </div>
+              <div className="col-span-2">
+                <dt className="text-slate-400">Updated</dt>
+                <dd className="font-semibold">{updated}</dd>
               </div>
             </dl>
-            <p className="mt-2 text-slate-300/85">Updated {formatUpdatedAge(site.updated_at, nowMs)}</p>
-          </div>
-        ) : null}
-      </button>
+          </section>
+        </div>
+      ) : null}
     </article>
   );
 }
