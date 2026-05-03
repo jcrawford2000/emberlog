@@ -1,6 +1,6 @@
 import { getJson } from '../../core/api/client';
 import type { EventEnvelope } from '../../core/realtime/types';
-import type { TrafficSummary } from './types';
+import type { TrafficLiveCallsSnapshot, TrafficSummary } from './types';
 
 type DecodeSitesSnapshotPayload = {
   decode_sites: TrafficSummary['decode_sites'];
@@ -19,4 +19,16 @@ export async function fetchTrafficSummary(instanceId?: string): Promise<TrafficS
   return {
     decode_sites: envelope.payload.decode_sites,
   };
+}
+
+export async function fetchTrafficLiveCalls(instanceId?: string): Promise<TrafficLiveCallsSnapshot> {
+  const params = new URLSearchParams();
+
+  if (instanceId?.trim()) {
+    params.set('instance_id', instanceId.trim());
+  }
+
+  const query = params.toString();
+  const path = query ? `/api/v1/traffic/live-calls?${query}` : '/api/v1/traffic/live-calls';
+  return getJson<TrafficLiveCallsSnapshot>(path);
 }

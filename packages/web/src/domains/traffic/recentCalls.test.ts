@@ -18,6 +18,8 @@ test('traffic.call.started adds a row', () => {
     trunkgroup_id: 1795,
     trunkgroup_label: 'K1 PHX Alarm',
     frequency: 769868750,
+    encrypted: true,
+    is_recording: true,
   });
   assert.ok(payload);
 
@@ -32,12 +34,15 @@ test('traffic.call.started adds a row', () => {
   const call = updated.get('1_1795_1772778389');
   assert.ok(call);
   assert.equal(call.system, 'PRWC-J');
+  assert.equal(call.site, '1');
   assert.equal(call.trunkgroup_id, 1795);
   assert.equal(call.trunkgroup_label, 'K1 PHX Alarm');
   assert.equal(call.frequency_hz, 769868750);
   assert.equal(call.started_at, '2026-03-06T05:44:31Z');
   assert.equal(call.latest_event_at, '2026-03-06T05:44:31Z');
   assert.equal(call.status, 'live');
+  assert.equal(call.encrypted, true);
+  assert.equal(call.is_recording, true);
 });
 
 test('traffic.call.ended updates same row rather than duplicating', () => {
@@ -145,6 +150,7 @@ test('live calls always sort above ended calls', () => {
     {
       call_id: 'ended-newest',
       system: 'PRWC-J',
+      site: 'J',
       trunkgroup_id: 2001,
       trunkgroup_label: 'Ended New',
       frequency_hz: 769118750,
@@ -152,10 +158,13 @@ test('live calls always sort above ended calls', () => {
       started_at: '2026-03-06T05:45:00Z',
       latest_event_at: '2026-03-06T05:45:12Z',
       status: 'ended',
+      encrypted: false,
+      is_recording: false,
     },
     {
       call_id: 'live-older',
       system: 'PRWC-J',
+      site: 'J',
       trunkgroup_id: 2002,
       trunkgroup_label: 'Live Old',
       frequency_hz: 769118760,
@@ -163,10 +172,13 @@ test('live calls always sort above ended calls', () => {
       started_at: '2026-03-06T05:44:00Z',
       latest_event_at: '2026-03-06T05:44:00Z',
       status: 'live',
+      encrypted: false,
+      is_recording: false,
     },
     {
       call_id: 'live-newer',
       system: 'PRWC-J',
+      site: 'J',
       trunkgroup_id: 2003,
       trunkgroup_label: 'Live New',
       frequency_hz: 769118770,
@@ -174,6 +186,8 @@ test('live calls always sort above ended calls', () => {
       started_at: '2026-03-06T05:44:30Z',
       latest_event_at: '2026-03-06T05:44:30Z',
       status: 'live',
+      encrypted: false,
+      is_recording: false,
     },
   ]);
 

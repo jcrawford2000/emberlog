@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { CallsTable } from '../components/CallsTable';
 import { SystemHealthStrip } from '../components/SystemHealthStrip';
 import { TrafficHeader } from '../components/TrafficHeader';
@@ -23,6 +24,7 @@ export function TrafficPage() {
   const {
     summary,
     recentCalls,
+    activeCallsBySystem,
     recentCallsLimit,
     recentCallsLimitOptions,
     setRecentCallsLimit,
@@ -35,6 +37,8 @@ export function TrafficPage() {
     pollIntervalMs,
   } = useTrafficMonitor();
   const [nowMs, setNowMs] = useState(Date.now());
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedSystem = searchParams.get('system');
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -45,6 +49,20 @@ export function TrafficPage() {
       window.clearInterval(timer);
     };
   }, []);
+
+  const filteredRecentCalls = selectedSystem
+    ? recentCalls.filter((call) => call.system === selectedSystem)
+    : recentCalls;
+
+  const handleSelectSystem = (system: string) => {
+    const next = new URLSearchParams(searchParams);
+    if (selectedSystem === system) {
+      next.delete('system');
+    } else {
+      next.set('system', system);
+    }
+    setSearchParams(next);
+  };
 
   return (
     <div className="space-y-6">
@@ -69,7 +87,13 @@ export function TrafficPage() {
       ) : null}
 
       {summary && summary.decode_sites.length > 0 ? (
-        <SystemHealthStrip sites={summary.decode_sites} nowMs={nowMs} />
+        <SystemHealthStrip
+          sites={summary.decode_sites}
+          activeCallsBySystem={activeCallsBySystem}
+          nowMs={nowMs}
+          selectedSystem={selectedSystem}
+          onSelectSystem={handleSelectSystem}
+        />
       ) : null}
 
       {summary && summary.decode_sites.length === 0 && !error ? (
@@ -79,9 +103,21 @@ export function TrafficPage() {
       ) : null}
 
       <section className="card-surface p-6">
-        <h2 className="mb-2 text-lg font-semibold">Recent Calls</h2>
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold">Recent Calls</h2>
+          {selectedSystem ? (
+            <button
+              type="button"
+              className="rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 hover:bg-white/10"
+              onClick={() => handleSelectSystem(selectedSystem)}
+            >
+              Clear filter: {selectedSystem}
+            </button>
+          ) : null}
+        </div>
         <CallsTable
-          calls={recentCalls}
+          calls={filteredRecentCalls}
+          selectedSystem={selectedSystem}
           rowLimit={recentCallsLimit}
           rowLimitOptions={recentCallsLimitOptions}
           onRowLimitChange={setRecentCallsLimit}
