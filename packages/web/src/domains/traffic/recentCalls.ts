@@ -7,6 +7,7 @@ export type RecentCallStatus = 'live' | 'ended';
 export interface RecentCall {
   call_id: string;
   system: string;
+  site: string | null;
   trunkgroup_id: number | string | null;
   trunkgroup_label: string | null;
   frequency_hz: number | null;
@@ -14,6 +15,8 @@ export interface RecentCall {
   started_at: string | null;
   latest_event_at: string;
   status: RecentCallStatus;
+  encrypted: boolean;
+  is_recording: boolean;
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {
@@ -32,6 +35,8 @@ export function toTrafficCallPayload(payload: unknown): TrafficCallPayload | nul
   const trunkgroupLabel = payload.trunkgroup_label;
   const frequency = payload.frequency;
   const durationSeconds = payload.duration_seconds;
+  const encrypted = payload.encrypted;
+  const isRecording = payload.is_recording;
 
   if (typeof system !== 'string' || typeof site !== 'string' || typeof callId !== 'string') {
     return null;
@@ -53,6 +58,14 @@ export function toTrafficCallPayload(payload: unknown): TrafficCallPayload | nul
     return null;
   }
 
+  if (encrypted != null && typeof encrypted !== 'boolean') {
+    return null;
+  }
+
+  if (isRecording != null && typeof isRecording !== 'boolean') {
+    return null;
+  }
+
   return {
     system,
     site,
@@ -61,6 +74,8 @@ export function toTrafficCallPayload(payload: unknown): TrafficCallPayload | nul
     trunkgroup_label: trunkgroupLabel ?? undefined,
     frequency: frequency ?? undefined,
     duration_seconds: durationSeconds ?? undefined,
+    encrypted: encrypted ?? undefined,
+    is_recording: isRecording ?? undefined,
   };
 }
 
@@ -95,6 +110,7 @@ export function mergeRecentCallEvent(
   return {
     call_id: payload.call_id,
     system: payload.system,
+    site: payload.site ?? existing?.site ?? null,
     trunkgroup_id: payload.trunkgroup_id ?? existing?.trunkgroup_id ?? null,
     trunkgroup_label: payload.trunkgroup_label ?? existing?.trunkgroup_label ?? null,
     frequency_hz: payload.frequency ?? existing?.frequency_hz ?? null,
@@ -103,6 +119,8 @@ export function mergeRecentCallEvent(
     started_at: existing?.started_at ?? (eventType === 'traffic.call.started' ? timestamp : null),
     latest_event_at: timestamp,
     status: nextStatus,
+    encrypted: payload.encrypted ?? existing?.encrypted ?? false,
+    is_recording: payload.is_recording ?? existing?.is_recording ?? false,
   };
 }
 

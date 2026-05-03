@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useEventStream } from '../../../core/realtime/useEventStream';
 import type { EventEnvelope } from '../../../core/realtime/types';
-import { fetchTrafficSummary } from '../api';
+import { fetchTrafficLiveCalls, fetchTrafficSummary } from '../api';
 import {
   sortRecentCalls,
   toTrafficCallPayload,
@@ -10,6 +10,8 @@ import {
 } from '../recentCalls';
 import type {
   TrafficDecodeRateUpdatedPayload,
+  TrafficLiveCall,
+  TrafficLiveCallsSnapshot,
   TrafficSummary,
 } from '../types';
 
@@ -127,9 +129,76 @@ function mergeCallEvent(
   });
 }
 
+function normalizeSystemKey(value: string): string {
+  return value.trim().toLowerCase();
+}
+
+function toRecentCallFromLiveCall(
+  liveCall: TrafficLiveCall,
+  existing: RecentCall | undefined,
+  snapshotUpdatedAt: string | null
+): RecentCall {
+  const latestEventAt = existing?.latest_event_at ?? liveCall.started_at ?? snapshotUpdatedAt ?? new Date().toISOString();
+
+  return {
+    call_id: liveCall.id,
+    system: liveCall.sys_name,
+    site: existing?.site ?? null,
+    trunkgroup_id: liveCall.talkgroup_id ?? existing?.trunkgroup_id ?? null,
+    trunkgroup_label: liveCall.talkgroup ?? existing?.trunkgroup_label ?? liveCall.description ?? null,
+    frequency_hz:
+      liveCall.freq_mhz != null ? Math.round(liveCall.freq_mhz * 1_000_000) : existing?.frequency_hz ?? null,
+    duration_seconds: null,
+    started_at: liveCall.started_at ?? existing?.started_at ?? null,
+    latest_event_at: latestEventAt,
+    status: 'live',
+    encrypted: liveCall.encrypted,
+    is_recording: liveCall.recorder_id != null,
+  };
+}
+
+function reconcileRecentCallsWithLiveSnapshot(
+  current: Map<string, RecentCall>,
+  liveSnapshot: TrafficLiveCallsSnapshot,
+  limit: number
+): Map<string, RecentCall> {
+  const next = new Map(current);
+  const liveIds = new Set<string>();
+
+  for (const liveCall of liveSnapshot.calls) {
+    liveIds.add(liveCall.id);
+    next.set(
+      liveCall.id,
+      toRecentCallFromLiveCall(liveCall, next.get(liveCall.id), liveSnapshot.updated_at)
+    );
+  }
+
+  for (const [callId, call] of next.entries()) {
+    if (call.status === 'live' && !liveIds.has(callId)) {
+      next.set(callId, {
+        ...call,
+        status: 'ended',
+        is_recording: false,
+      });
+    }
+  }
+
+  const sorted = sortRecentCalls(next.values());
+  return new Map(sorted.slice(0, limit).map((call) => [call.call_id, call]));
+}
+
+function countActiveCallsBySystem(liveCalls: TrafficLiveCall[]): Record<string, number> {
+  return liveCalls.reduce<Record<string, number>>((counts, call) => {
+    const key = normalizeSystemKey(call.sys_name);
+    counts[key] = (counts[key] ?? 0) + 1;
+    return counts;
+  }, {});
+}
+
 export function useTrafficMonitor() {
   const [summary, setSummary] = useState<TrafficSummary | null>(null);
   const [callsById, setCallsById] = useState<Map<string, RecentCall>>(new Map());
+  const [activeCallsBySystem, setActiveCallsBySystem] = useState<Record<string, number>>({});
   const [recentCallsLimit, setRecentCallsLimit] = useState<number>(DEFAULT_RECENT_CALLS_LIMIT);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -146,12 +215,19 @@ export function useTrafficMonitor() {
 
     snapshotInFlightRef.current = true;
     try {
-      const nextSummary = await fetchTrafficSummary();
+      const [nextSummary, liveSnapshot] = await Promise.all([
+        fetchTrafficSummary(),
+        fetchTrafficLiveCalls(),
+      ]);
       if (!mountedRef.current) {
         return;
       }
 
       setSummary(nextSummary);
+      setActiveCallsBySystem(countActiveCallsBySystem(liveSnapshot.calls));
+      setCallsById((current) =>
+        reconcileRecentCallsWithLiveSnapshot(current, liveSnapshot, recentCallsLimitRef.current)
+      );
       setLastFetchedAt(Date.now());
       setError(null);
     } catch (err) {
@@ -252,6 +328,7 @@ export function useTrafficMonitor() {
   return {
     summary,
     recentCalls,
+    activeCallsBySystem,
     recentCallsLimit,
     recentCallsLimitOptions: [...RECENT_CALLS_LIMIT_OPTIONS],
     setRecentCallsLimit: updateRecentCallsLimit,

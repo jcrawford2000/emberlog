@@ -1,13 +1,21 @@
+import { Lock, Radio } from 'lucide-react';
 import { formatDuration, formatFrequencyMhz, type RecentCall } from '../recentCalls';
 
 interface CallsTableProps {
   calls: RecentCall[];
+  selectedSystem: string | null;
   rowLimit: number;
   rowLimitOptions: number[];
   onRowLimitChange: (nextValue: number) => void;
 }
 
-export function CallsTable({ calls, rowLimit, rowLimitOptions, onRowLimitChange }: CallsTableProps) {
+export function CallsTable({
+  calls,
+  selectedSystem,
+  rowLimit,
+  rowLimitOptions,
+  onRowLimitChange,
+}: CallsTableProps) {
   const formatDateTime = (timestamp: string): string => {
     const parsed = new Date(timestamp);
     if (Number.isNaN(parsed.getTime())) {
@@ -44,14 +52,15 @@ export function CallsTable({ calls, rowLimit, rowLimitOptions, onRowLimitChange 
               <th className="text-slate-100">Trunkgroup ID</th>
               <th className="text-slate-100">Trunkgroup Label</th>
               <th className="text-slate-100">Frequency</th>
+              <th className="text-slate-100">Flags</th>
               <th className="text-slate-100">Duration</th>
             </tr>
           </thead>
           <tbody className="text-slate-100">
             {calls.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-6 text-center text-sm text-slate-300">
-                  No recent calls yet.
+                <td colSpan={7} className="py-6 text-center text-sm text-slate-300">
+                  {selectedSystem ? `No recent calls for ${selectedSystem} yet.` : 'No recent calls yet.'}
                 </td>
               </tr>
             ) : (
@@ -62,6 +71,29 @@ export function CallsTable({ calls, rowLimit, rowLimitOptions, onRowLimitChange 
                   <td className="font-mono text-xs">{call.trunkgroup_id ?? 'n/a'}</td>
                   <td>{call.trunkgroup_label ?? 'n/a'}</td>
                   <td>{formatFrequencyMhz(call.frequency_hz)}</td>
+                  <td>
+                    <div className="flex flex-wrap gap-2">
+                      {call.encrypted ? (
+                        <span
+                          className="inline-flex items-center gap-1 rounded-full border border-amber-400/40 bg-amber-500/15 px-2 py-0.5 text-xs font-semibold text-amber-200"
+                          title="Encrypted talkgroup"
+                        >
+                          <Lock className="h-3.5 w-3.5" aria-hidden />
+                          ENC
+                        </span>
+                      ) : null}
+                      {call.is_recording ? (
+                        <span
+                          className="inline-flex items-center gap-1 rounded-full border border-rose-400/40 bg-rose-500/15 px-2 py-0.5 text-xs font-semibold text-rose-200"
+                          title="This call is recording"
+                        >
+                          <Radio className="h-3.5 w-3.5" aria-hidden />
+                          REC
+                        </span>
+                      ) : null}
+                      {!call.encrypted && !call.is_recording ? <span className="text-slate-400">-</span> : null}
+                    </div>
+                  </td>
                   <td>
                     {call.status === 'live' ? (
                       <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-500/15 px-2 py-0.5 text-xs font-semibold text-emerald-300">
