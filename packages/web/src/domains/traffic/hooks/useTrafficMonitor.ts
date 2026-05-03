@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useEventStream } from '../../../core/realtime/useEventStream';
-import type { EventEnvelope } from '../../../core/realtime/types';
+import type { ConnectionStatus, EventEnvelope } from '../../../core/realtime/types';
 import { fetchTrafficLiveCalls, fetchTrafficSummary } from '../api';
+import {
+  countActiveCallsFromSystemMap,
+  mapLiveCallSystems,
+  reduceLiveCallSystems,
+} from './liveCallSystems';
 import {
   sortRecentCalls,
   toTrafficCallPayload,
@@ -129,10 +134,6 @@ function mergeCallEvent(
   });
 }
 
-function normalizeSystemKey(value: string): string {
-  return value.trim().toLowerCase();
-}
-
 function toRecentCallFromLiveCall(
   liveCall: TrafficLiveCall,
   existing: RecentCall | undefined,
@@ -187,18 +188,9 @@ function reconcileRecentCallsWithLiveSnapshot(
   return new Map(sorted.slice(0, limit).map((call) => [call.call_id, call]));
 }
 
-function countActiveCallsBySystem(liveCalls: TrafficLiveCall[]): Record<string, number> {
-  return liveCalls.reduce<Record<string, number>>((counts, call) => {
-    const key = normalizeSystemKey(call.sys_name);
-    counts[key] = (counts[key] ?? 0) + 1;
-    return counts;
-  }, {});
-}
-
 export function useTrafficMonitor() {
   const [summary, setSummary] = useState<TrafficSummary | null>(null);
   const [callsById, setCallsById] = useState<Map<string, RecentCall>>(new Map());
-  const [activeCallsBySystem, setActiveCallsBySystem] = useState<Record<string, number>>({});
   const [recentCallsLimit, setRecentCallsLimit] = useState<number>(DEFAULT_RECENT_CALLS_LIMIT);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -207,6 +199,8 @@ export function useTrafficMonitor() {
   const snapshotInFlightRef = useRef(false);
   const mountedRef = useRef(true);
   const recentCallsLimitRef = useRef(DEFAULT_RECENT_CALLS_LIMIT);
+  const liveCallSystemsByIdRef = useRef<Map<string, string>>(new Map());
+  const previousConnectionStatusRef = useRef<ConnectionStatus>('connecting');
 
   const refreshSnapshot = useCallback(async () => {
     if (snapshotInFlightRef.current) {
@@ -224,7 +218,7 @@ export function useTrafficMonitor() {
       }
 
       setSummary(nextSummary);
-      setActiveCallsBySystem(countActiveCallsBySystem(liveSnapshot.calls));
+      liveCallSystemsByIdRef.current = mapLiveCallSystems(liveSnapshot.calls);
       setCallsById((current) =>
         reconcileRecentCallsWithLiveSnapshot(current, liveSnapshot, recentCallsLimitRef.current)
       );
@@ -260,11 +254,13 @@ export function useTrafficMonitor() {
     }
 
     if (event.event_type === 'traffic.call.started') {
+      liveCallSystemsByIdRef.current = reduceLiveCallSystems(liveCallSystemsByIdRef.current, event);
       setCallsById((current) => mergeCallEvent(current, event, recentCallsLimitRef.current));
       return;
     }
 
     if (event.event_type === 'traffic.call.ended') {
+      liveCallSystemsByIdRef.current = reduceLiveCallSystems(liveCallSystemsByIdRef.current, event);
       setCallsById((current) => mergeCallEvent(current, event, recentCallsLimitRef.current));
     }
   }, []);
@@ -299,15 +295,21 @@ export function useTrafficMonitor() {
   });
 
   useEffect(() => {
+    const previousStatus = previousConnectionStatusRef.current;
     if (status === 'live') {
       setIsPollingFallback(false);
+      if (lastFetchedAt !== null && previousStatus !== 'live') {
+        void refreshSnapshot();
+      }
+      previousConnectionStatusRef.current = status;
       return;
     }
 
     if (retriesExhausted) {
       setIsPollingFallback(true);
     }
-  }, [retriesExhausted, status]);
+    previousConnectionStatusRef.current = status;
+  }, [lastFetchedAt, refreshSnapshot, retriesExhausted, status]);
 
   useEffect(() => {
     if (!isPollingFallback) {
@@ -324,6 +326,10 @@ export function useTrafficMonitor() {
   }, [isPollingFallback, refreshSnapshot]);
 
   const recentCalls = useMemo(() => sortRecentCalls(callsById.values()), [callsById]);
+  const activeCallsBySystem = useMemo(
+    () => countActiveCallsFromSystemMap(liveCallSystemsByIdRef.current),
+    [callsById, lastFetchedAt]
+  );
 
   return {
     summary,
