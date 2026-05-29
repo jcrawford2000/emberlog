@@ -326,10 +326,7 @@ export function useTrafficMonitor() {
   }, [isPollingFallback, refreshSnapshot]);
 
   const recentCalls = useMemo(() => sortRecentCalls(callsById.values()), [callsById]);
-  const activeCallsBySystem = useMemo(
-    () => countActiveCallsFromSystemMap(liveCallSystemsByIdRef.current),
-    [callsById, lastFetchedAt]
-  );
+  const activeCallsBySystem = countActiveCallsFromSystemMap(liveCallSystemsByIdRef.current);
 
   return {
     summary,
