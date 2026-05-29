@@ -1,9 +1,6 @@
 import logging
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, Query, Request, status
-from psycopg_pool import AsyncConnectionPool
-
 from emberlog_api.app.api.v1.routers.sse import publish_dispatch_incident_created
 from emberlog_api.app.db.pool import get_pool
 from emberlog_api.app.db.repositories import incidents
@@ -16,6 +13,8 @@ from emberlog_api.models.incident import (
     NewIncident,
 )
 from emberlog_api.utils.loggersetup import configure_logging
+from fastapi import APIRouter, Depends, Query, Request, status
+from psycopg_pool import AsyncConnectionPool
 
 configure_logging()
 log = logging.getLogger("emberlog_api.v1.routers.incidents")
@@ -23,7 +22,8 @@ log = logging.getLogger("emberlog_api.v1.routers.incidents")
 router = APIRouter(prefix="/incidents", tags=["incidents"])
 
 
-@router.get("/", name="list_incidents", response_model=IncidentListOut)
+@router.get("", name="list_incidents", response_model=IncidentListOut)
+@router.get("/", include_in_schema=False)
 async def list_incidents(
     *,
     from_dispatched_at: datetime | None = Query(None),
