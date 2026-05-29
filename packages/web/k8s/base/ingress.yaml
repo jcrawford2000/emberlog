@@ -16,4 +16,7 @@ spec:
                 name: emberlog-web
                 port:
                   number: 80
-                  
+  tls:
+    - hosts:
+        - emberlog.pi-rack.com
+      secretName: wildcard-pi-rack-com-tls
