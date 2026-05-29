@@ -38,7 +38,6 @@ export function TrafficHeader({
     <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
       <div>
         <h1 className="text-2xl font-semibold">Traffic Monitor</h1>
-        <p className="text-sm text-white/70">Snapshot from /api/v1/traffic/summary + live updates from /api/v1/sse</p>
       </div>
       <div className="flex items-center gap-3">
         <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-sm">
