@@ -1,10 +1,12 @@
 import json
+from datetime import UTC, datetime
 
 import anyio
 import pytest
 from fastapi import FastAPI
 
 from emberlog_api.app.api.v1.routers import sse
+from emberlog_api.models.incident import IncidentOut
 
 sse_app = FastAPI()
 sse_app.include_router(sse.router, prefix="/api/v1")
@@ -175,6 +177,38 @@ async def test_multiple_subscribers_receive_same_event():
 async def test_invalid_filter_returns_400(async_client):
     response = await async_client.get("/api/v1/sse", params={"domain": "invalid"})
     assert response.status_code == 400
+
+
+@pytest.mark.anyio
+async def test_dispatch_incident_created_publishes_canonical_event():
+    incident = IncidentOut(
+        id=42,
+        dispatched_at=datetime(2026, 5, 29, 10, 43, 25, tzinfo=UTC),
+        special_call=False,
+        units=["Engine 9"],
+        channel="K-Deck 3",
+        incident_type="Structure Fire",
+        address="1402 E Roosevelt St",
+        source_audio="call_42.wav",
+        original_text="engine 9 structure fire",
+        transcript="Engine 9 structure fire",
+        parsed={},
+        created_at=datetime(2026, 5, 29, 17, 43, 30, tzinfo=UTC),
+    )
+    request, response = await _open_stream(event_type="dispatch.incident.created")
+
+    await sse.publish_dispatch_incident_created(incident)
+    event_line, data_line = await _read_one_sse_event(response)
+    await _close_stream(request)
+
+    assert event_line == "event: dispatch.incident.created"
+    body = json.loads(data_line.removeprefix("data: "))
+    assert body["event_type"] == "dispatch.incident.created"
+    assert body["schema_version"] == "1.0.0"
+    assert body["timestamp"] == "2026-05-29T17:43:30Z"
+    assert body["source"] == {"module": "emberlog-api", "instance": "api"}
+    assert body["payload"]["id"] == 42
+    assert body["payload"]["dispatched_at"] == "2026-05-29T10:43:25-07:00"
 
 
 @pytest.mark.anyio
