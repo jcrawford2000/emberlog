@@ -1,0 +1,197 @@
+/* =============================================================================
+   EMBERLOG DESIGN SYSTEM — Colors & Type
+   Source of truth: jcrawford2000/emberlog → packages/web/src/index.css (@theme)
+   plus computed values pulled from component code (gauges, status dots, panels).
+
+   Emberlog is a dark, public-safety / fire-department console. The chrome is
+   firehouse charcoal + fire-engine red; data panels are slate-dark; accents are
+   safety orange + brass gold. Status semantics use emerald / amber / rose.
+============================================================================= */
+
+:root {
+  /* ---------------------------------------------------------------------------
+     BRAND PALETTE  (from @theme in index.css — "Firehouse palette")
+  --------------------------------------------------------------------------- */
+  --el-engine:  #B22222;  /* fire-engine red — header chrome, primary accent  */
+  --el-safety:  #FF6B00;  /* safety orange — active/live emphasis, selection  */
+  --el-brass:   #FFD447;  /* brass / gold — tertiary accent, highlights       */
+
+  /* ---------------------------------------------------------------------------
+     NEUTRALS / SURFACES
+  --------------------------------------------------------------------------- */
+  --el-surface: #2E2E2E;  /* gear / charcoal — app background                 */
+  --el-card:    #FAFAFA;  /* light card surface (light-card variant)          */
+  --el-ash:     #B0B0B0;  /* ash gray — alternate fills                       */
+  --el-ink:     #1C1C1C;  /* near-black body text on light surfaces           */
+  --el-on-dark: #FFFFFF;  /* white text on dark chrome                        */
+  --el-border:  #444444;  /* default border on dark chrome                    */
+  --el-muted:   #7A7A7A;  /* muted / secondary text                          */
+
+  /* Slate data panels (tables, gauges, modals — from component code) */
+  --el-slate-950: #020617; /* gauge inner well                                */
+  --el-slate-900: #0F172A; /* table body / modal / detail surfaces            */
+  --el-slate-800: #1E293B; /* table head row                                  */
+  --el-slate-100: #F1F5F9; /* primary text on slate panels                    */
+  --el-slate-300: #CBD5E1; /* secondary text on slate panels                  */
+  --el-slate-400: #94A3B8; /* tertiary / labels on slate panels               */
+
+  /* Hairlines used over dark surfaces (alpha white) */
+  --el-line-10: rgba(255,255,255,0.10);
+  --el-line-15: rgba(255,255,255,0.15);
+  --el-line-20: rgba(255,255,255,0.20);
+  --el-fill-05: rgba(255,255,255,0.05);
+  --el-fill-10: rgba(255,255,255,0.10);
+
+  /* ---------------------------------------------------------------------------
+     STATUS / SEMANTIC  (decode-site health + flags)
+     gaugeAccentForStatus(): ok=emerald, warn=amber, bad=rose, else=slate
+  --------------------------------------------------------------------------- */
+  --el-ok:    #10B981;  /* emerald-500 — healthy / ok                         */
+  --el-warn:  #F59E0B;  /* amber-500   — warning                              */
+  --el-bad:   #F43F5E;  /* rose-500    — bad / fault                          */
+  --el-idle:  #94A3B8;  /* slate-400   — unknown / idle                       */
+
+  /* Connection-status dots (TrafficHeader) */
+  --el-conn-live:  #BEF264; /* lime-300  — Live                               */
+  --el-conn-recon: #FCD34D; /* amber-300 — Reconnecting                       */
+  --el-conn-conn:  #7DD3FC; /* sky-300   — Connecting                         */
+  --el-conn-off:   #FDA4AF; /* rose-300  — Offline                            */
+
+  /* Flag chips (tinted, used on slate panels) */
+  --el-enc-fg: #FCD34D;            /* amber-200-ish text — ENC (encrypted)    */
+  --el-enc-bg: rgba(245,158,11,0.15);
+  --el-enc-bd: rgba(251,191,36,0.40);
+  --el-rec-fg: #FDA4AF;            /* rose-200-ish text — REC (recording)     */
+  --el-rec-bg: rgba(244,63,94,0.15);
+  --el-rec-bd: rgba(251,113,133,0.40);
+  --el-emer-fg: #6EE7B7;           /* emerald-300 — LIVE row flag             */
+  --el-emer-bg: rgba(16,185,129,0.15);
+  --el-emer-bd: rgba(52,211,153,0.40);
+
+  /* ---------------------------------------------------------------------------
+     TYPOGRAPHY  (system stacks — no custom webfont ships with Emberlog)
+  --------------------------------------------------------------------------- */
+  --el-font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --el-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+
+  /* Weights actually used in the app */
+  --el-fw-medium:    500;
+  --el-fw-semibold:  600;
+  --el-fw-bold:      700;
+  --el-fw-extrabold: 800;
+
+  /* Type scale (Tailwind defaults the app leans on) */
+  --el-text-xs:   0.75rem;   /* 12px — labels, flags, meta                    */
+  --el-text-sm:   0.875rem;  /* 14px — secondary copy, table cells            */
+  --el-text-base: 1rem;      /* 16px — body                                   */
+  --el-text-lg:   1.125rem;  /* 18px — card titles, section headers           */
+  --el-text-xl:   1.25rem;   /* 20px — gauge value, brand wordmark            */
+  --el-text-2xl:  1.5rem;    /* 24px — page H1                                */
+  --el-text-3xl:  1.875rem;  /* 30px — big stat (decode rate)                 */
+
+  --el-tracking-wide:  0.025em; /* tracking-wide on wordmark / titles         */
+  --el-tracking-label: 0.20em;  /* uppercase eyebrow labels (group names)     */
+
+  /* ---------------------------------------------------------------------------
+     RADII / SHADOW / SPACING
+  --------------------------------------------------------------------------- */
+  --el-radius-card: 1rem;     /* --radius-card — light cards                  */
+  --el-radius-xl:   0.75rem;  /* inputs, tables, alerts                       */
+  --el-radius-2xl:  1rem;     /* modals, logo tile                            */
+  --el-radius-full: 9999px;   /* pills, gauges, status dots                   */
+
+  --el-shadow-card: 0 20px 25px -5px rgba(0,0,0,.35), 0 8px 10px -6px rgba(0,0,0,.35); /* shadow-xl */
+  --el-shadow-modal: 0 25px 50px -12px rgba(0,0,0,.55); /* shadow-2xl         */
+  --el-ring-engine: 0 0 0 3px rgba(178,34,34,0.20);     /* selected gauge ring */
+}
+
+/* =============================================================================
+   SEMANTIC ELEMENT STYLES  (drop-in classes mirroring the app's utilities)
+============================================================================= */
+
+.el-app {
+  background: var(--el-surface);
+  color: var(--el-on-dark);
+  font-family: var(--el-font-sans);
+}
+
+/* Page heading — "Traffic Monitor" */
+.el-h1 {
+  font-size: var(--el-text-2xl);
+  font-weight: var(--el-fw-semibold);
+  color: var(--el-on-dark);
+  line-height: 1.2;
+}
+
+/* Section / card heading — "Recent Calls" */
+.el-h2 {
+  font-size: var(--el-text-lg);
+  font-weight: var(--el-fw-semibold);
+}
+
+/* Eyebrow / group label */
+.el-eyebrow {
+  font-size: var(--el-text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--el-tracking-label);
+  color: var(--el-muted);
+}
+
+.el-body { font-size: var(--el-text-sm); line-height: 1.5; }
+.el-meta { font-size: var(--el-text-xs); color: var(--el-muted); }
+
+.el-mono {
+  font-family: var(--el-font-mono);
+  font-size: var(--el-text-xs);
+}
+
+/* Brand wordmark */
+.el-wordmark {
+  font-weight: var(--el-fw-bold);
+  font-size: var(--el-text-2xl);
+  letter-spacing: var(--el-tracking-wide);
+  color: var(--el-on-dark);
+}
+
+/* Light card surface (.card-surface) */
+.el-card-surface {
+  background: var(--el-card);
+  color: var(--el-ink);
+  border: 1px solid var(--el-border);
+  border-radius: var(--el-radius-card);
+  box-shadow: var(--el-shadow-card);
+}
+
+/* Dark slate panel (tables / detail) */
+.el-panel-slate {
+  background: var(--el-slate-900);
+  color: var(--el-slate-100);
+  border: 1px solid var(--el-border);
+  border-radius: var(--el-radius-xl);
+}
+
+/* Pill (.pill) */
+.el-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--el-radius-full);
+  padding: 0.125rem 0.5rem;
+  font-size: var(--el-text-xs);
+  font-weight: var(--el-fw-medium);
+  background: var(--el-ash);
+  color: var(--el-ink);
+  border: 1px solid var(--el-border);
+}
+
+/* Text input (.input-ember) — on dark chrome */
+.el-input {
+  background: var(--el-fill-10);
+  border: 1px solid var(--el-line-20);
+  border-radius: var(--el-radius-xl);
+  padding: 0.625rem 1rem;
+  color: var(--el-on-dark);
+}
+.el-input::placeholder { color: rgba(255,255,255,0.70); }
+.el-input:focus { outline: none; box-shadow: 0 0 0 2px var(--el-engine); }

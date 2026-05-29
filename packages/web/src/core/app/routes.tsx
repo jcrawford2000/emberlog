@@ -1,5 +1,6 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { AppShell } from './AppShell';
+import { DispatchPage } from '../../domains/dispatch/pages/DispatchPage';
 import { TrafficPage } from '../../domains/traffic/pages/TrafficPage';
 
 export const appRouter = createBrowserRouter([
@@ -14,6 +15,10 @@ export const appRouter = createBrowserRouter([
       {
         path: 'traffic',
         element: <TrafficPage />,
+      },
+      {
+        path: 'dispatch',
+        element: <DispatchPage />,
       },
       {
         path: '*',

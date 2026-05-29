@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; font-family: var(--el-font-sans); background: var(--el-slate-900); color: var(--el-slate-100); }
+  .wrap { padding: 24px; display:flex; flex-wrap:wrap; gap: 12px; align-items:center; }
+  .pill { display:inline-flex; align-items:center; border-radius:9999px; padding:2px 10px; font-size:12px; font-weight:500; background: var(--el-ash); color: var(--el-ink); border:1px solid var(--el-border); }
+  .flag { display:inline-flex; align-items:center; gap:5px; border-radius:9999px; padding:3px 9px; font-size:12px; font-weight:700; }
+  .enc { color:#fcd34d; background:rgba(245,158,11,.15); border:1px solid rgba(251,191,36,.4); }
+  .rec { color:#fda4af; background:rgba(244,63,94,.15); border:1px solid rgba(251,113,133,.4); }
+  .live { color:#6ee7b7; background:rgba(16,185,129,.15); border:1px solid rgba(52,211,153,.4); }
+  .live .dot { width:8px; height:8px; border-radius:9999px; background:#6ee7b7; animation:pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+  [data-lucide] { width:14px; height:14px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <span class="flag enc"><i data-lucide="lock"></i>ENC</span>
+    <span class="flag rec"><i data-lucide="radio"></i>REC</span>
+    <span class="flag live"><span class="dot"></span>LIVE</span>
+    <span class="pill">ok</span>
+    <span class="pill">Emergency</span>
+    <span class="pill">TDMA 1</span>
+  </div>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

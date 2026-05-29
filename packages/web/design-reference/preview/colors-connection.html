@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; font-family: var(--el-font-sans); background: var(--el-surface); color: var(--el-on-dark); }
+  .wrap { padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+  .item { display: flex; align-items: center; gap: 12px; }
+  .dot { height: 10px; width: 10px; border-radius: 9999px; flex: none; }
+  .pulse { animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+  .pill { display:inline-flex; align-items:center; gap:8px; border:1px solid var(--el-line-20); background: var(--el-fill-10); border-radius:9999px; padding:6px 12px; font-size:13px; }
+  .name { font-size:13px; font-weight:600; width:118px; }
+  .hex { font-family: var(--el-font-mono); font-size:11px; color: rgba(255,255,255,.55); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="item"><div class="pill"><span class="dot pulse" style="background:#BEF264"></span>Live</div><span class="name">conn-live</span><span class="hex">lime-300 #BEF264</span></div>
+    <div class="item"><div class="pill"><span class="dot" style="background:#FCD34D"></span>Reconnecting</div><span class="name">conn-recon</span><span class="hex">amber-300 #FCD34D</span></div>
+    <div class="item"><div class="pill"><span class="dot" style="background:#7DD3FC"></span>Connecting</div><span class="name">conn-conn</span><span class="hex">sky-300 #7DD3FC</span></div>
+    <div class="item"><div class="pill"><span class="dot" style="background:#FDA4AF"></span>Offline</div><span class="name">conn-off</span><span class="hex">rose-300 #FDA4AF</span></div>
+  </div>
+</body>
+</html>

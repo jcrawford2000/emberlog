@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; font-family: var(--el-font-sans); background: var(--el-surface); color: var(--el-on-dark); }
+  .wrap { padding: 22px 24px; display:flex; flex-direction:column; gap: 13px; }
+  .eyebrow { text-transform:uppercase; letter-spacing:.2em; font-size:11px; color: var(--el-muted); margin-bottom:2px; }
+  .spec { display:flex; align-items:baseline; gap:14px; }
+  .meta { font-size:11px; color: rgba(255,255,255,.5); width:96px; flex:none; }
+  .mono { font-family: var(--el-font-mono); color: var(--el-slate-100); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="eyebrow">Mono — IDs, frequencies, raw values</div>
+    <div class="spec"><span class="meta">freq</span><span class="mono" style="font-size:15px">851.06250 MHz</span></div>
+    <div class="spec"><span class="meta">trunkgroup</span><span class="mono" style="font-size:15px">tg&nbsp;52071</span></div>
+    <div class="spec"><span class="meta">raw rate</span><span class="mono" style="font-size:15px">34.0&nbsp;/&nbsp;40</span></div>
+    <div class="spec"><span class="meta">recorder</span><span class="mono" style="font-size:15px">SRC&nbsp;1042&nbsp;•&nbsp;REC&nbsp;3</span></div>
+    <div class="spec"><span class="meta">elapsed</span><span class="mono" style="font-size:15px">3:07&nbsp;&nbsp;·&nbsp;&nbsp;12s&nbsp;ago</span></div>
+  </div>
+</body>
+</html>

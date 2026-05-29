@@ -212,35 +212,32 @@ The dispatch domain MUST remain generic. Region/system-specific semantics belong
 
 ```json
 {
-  "incident_id": "string",
-  "dispatched_at": "ISO-8601 UTC string",
+  "id": 123,
+  "dispatched_at": "ISO-8601 string with explicit timezone offset",
   "special_call": false,
   "units": ["string"],
-  "channel": "optional string",
-  "incident_type": "optional string",
-  "address": "optional string",
-  "audio": {
-    "ref": "string",
-    "kind": "file|object|stream",
-    "format": "optional string",
-    "uri": "optional string",
-    "segment": { "start_ms": 0, "end_ms": 0 }
-  },
-  "original_text": "optional string",
-  "transcript": "optional string",
-  "parsed": {}
+  "channel": "string",
+  "incident_type": "string",
+  "address": "string",
+  "source_audio": "string",
+  "original_text": "string",
+  "transcript": "string",
+  "parsed": {},
+  "created_at": "ISO-8601 UTC string"
 }
 ```
 
 Notes:
-- `audio.ref` replaces older notions of “source audio path” while remaining compatible with file-based storage.
+- `source_audio` is the current stable reference to the source call audio. A future audio object MAY add richer object/stream metadata without changing the meaning of this field.
+- `dispatched_at` represents the dispatch wall-clock time. Producers MUST include an explicit timezone offset; region adapters MAY preserve local dispatch time (for example, Phoenix dispatch timestamps as `-07:00`) rather than converting the payload field to UTC. The envelope `timestamp` remains UTC and is the canonical event occurrence time.
+- `correlation_id`, when present, belongs on the event envelope and links the incident to related traffic events.
 - `parsed` is the adapter sandbox: it may contain region-specific extraction, but consumers must treat it as optional and non-canonical.
 
 #### dispatch.incident.updated (suggested payload)
 
 ```json
 {
-  "incident_id": "string",
+  "id": 123,
   "changes": {}
 }
 ```
@@ -313,7 +310,7 @@ Modules sending events to the hub:
 
 - MUST validate against canonical schemas
 - MUST include `schema_version`
-- MUST provide stable identifiers (`event_id`, and domain IDs like `call_id` / `incident_id`)
+- MUST provide stable identifiers (`event_id`, and domain IDs like `call_id` / incident `id`)
 - MUST NOT write directly to hub storage outside the hub’s ingest path
 
 ---

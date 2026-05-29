@@ -4,7 +4,7 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, Query, Request, status
 from psycopg_pool import AsyncConnectionPool
 
-from emberlog_api.app.api.v1.routers.sse import publish_incident
+from emberlog_api.app.api.v1.routers.sse import publish_dispatch_incident_created
 from emberlog_api.app.db.pool import get_pool
 from emberlog_api.app.db.repositories import incidents
 from emberlog_api.models.incident import (
@@ -89,7 +89,7 @@ async def create_incident(
         parsed=payload.parsed,
         created_at=new_incident.created_at,
     )
-    await publish_incident(incident)
+    await publish_dispatch_incident_created(incident)
 
     log.debug("Published to SSE")
     return NewIncident(id=resp_id, created_at=resp_created_at, links=links)

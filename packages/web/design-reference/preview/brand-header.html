@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; font-family: var(--el-font-sans); background: var(--el-surface); }
+  .header { background: rgba(178,34,34,.95); backdrop-filter: blur(6px); border-bottom:1px solid var(--el-line-10); padding:14px 22px; display:flex; align-items:center; justify-content:space-between; }
+  .brand { display:flex; align-items:center; gap:12px; }
+  .tile { width:42px; height:42px; border-radius:13px; background: var(--el-safety); display:grid; place-items:center; box-shadow:0 2px 6px rgba(0,0,0,.25); flex:none; }
+  .tile [data-lucide] { width:26px; height:26px; color:#fff; }
+  .left { color:#fff; }
+  .title { font-size:20px; font-weight:600; letter-spacing:.02em; }
+  .sub { font-size:11px; color: rgba(255,255,255,.75); }
+  .nav { display:flex; gap:8px; }
+  .nav a { border-radius:.5rem; padding:6px 12px; font-size:13px; font-weight:500; text-decoration:none; }
+  .nav a.active { background: rgba(255,255,255,.2); color:#fff; }
+  .nav a.idle { background: rgba(255,255,255,.05); color: rgba(255,255,255,.8); }
+  .body { padding:20px 22px; }
+  .conn { display:inline-flex; align-items:center; gap:8px; border:1px solid var(--el-line-20); background: var(--el-fill-10); color:#fff; border-radius:9999px; padding:6px 12px; font-size:13px; }
+  .dot { width:8px; height:8px; border-radius:9999px; background:#BEF264; animation:pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div class="brand">
+      <div class="tile"><i data-lucide="audio-lines"></i></div>
+      <div class="left"><div class="title">Emberlog</div><div class="sub">Platform Operations Console</div></div>
+    </div>
+    <div class="nav"><a class="active">Traffic</a><a class="idle">Systems</a><a class="idle">Dispatch</a></div>
+  </div>
+  <div class="body"><span class="conn"><span class="dot"></span>Live · Last fetch: 3s ago</span></div>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

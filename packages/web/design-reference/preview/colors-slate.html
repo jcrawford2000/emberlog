@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; font-family: var(--el-font-sans); background: var(--el-surface); color: var(--el-on-dark); }
+  .wrap { padding: 22px 24px; }
+  .row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .sw { border-radius: 11px; overflow: hidden; border: 1px solid var(--el-line-15); }
+  .chip { height: 64px; }
+  .lbl { padding: 7px 9px 9px; background: rgba(0,0,0,0.28); }
+  .name { font-size: 12px; font-weight: 700; }
+  .hex { font-family: var(--el-font-mono); font-size: 10.5px; color: rgba(255,255,255,.6); margin-top: 2px; }
+  .use { font-size: 10.5px; color: rgba(255,255,255,.5); margin-top: 2px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="row">
+      <div class="sw"><div class="chip" style="background:#020617;border-bottom:1px solid var(--el-line-15)"></div><div class="lbl"><div class="name">slate-950</div><div class="hex">#020617</div><div class="use">Gauge well</div></div></div>
+      <div class="sw"><div class="chip" style="background:#0F172A"></div><div class="lbl"><div class="name">slate-900</div><div class="hex">#0F172A</div><div class="use">Table / modal</div></div></div>
+      <div class="sw"><div class="chip" style="background:#1E293B"></div><div class="lbl"><div class="name">slate-800</div><div class="hex">#1E293B</div><div class="use">Table head</div></div></div>
+      <div class="sw"><div class="chip" style="background:#94A3B8"></div><div class="lbl"><div class="name">slate-400</div><div class="hex">#94A3B8</div><div class="use">Labels</div></div></div>
+    </div>
+  </div>
+</body>
+</html>

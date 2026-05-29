@@ -1,10 +1,12 @@
 import asyncio
 import json
 import re
+import uuid
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from typing import Any, AsyncIterator, Literal
 
-from fastapi import APIRouter, HTTPException, Query, Request
+from fastapi import APIRouter, HTTPException, Query, Request, status
 from fastapi.responses import StreamingResponse
 
 from emberlog_api.models.incident import IncidentOut
@@ -151,6 +153,32 @@ async def publish_incident(incident: IncidentOut) -> None:
             pass
 
 
+def _to_iso_z(value: datetime) -> str:
+    if value.tzinfo is None:
+        value = value.replace(tzinfo=UTC)
+    return value.astimezone(UTC).isoformat().replace("+00:00", "Z")
+
+
+def build_dispatch_incident_created_event(incident: IncidentOut) -> dict[str, Any]:
+    """Build the canonical event envelope for a newly created dispatch incident."""
+    return {
+        "event_id": str(uuid.uuid4()),
+        "event_type": "dispatch.incident.created",
+        "schema_version": "1.0.0",
+        "timestamp": _to_iso_z(incident.created_at),
+        "source": {
+            "module": "emberlog-api",
+            "instance": "api",
+        },
+        "payload": incident.model_dump(mode="json"),
+    }
+
+
+async def publish_dispatch_incident_created(incident: IncidentOut) -> None:
+    """Publish a dispatch incident on the canonical event SSE stream."""
+    await publish_event(build_dispatch_incident_created_event(incident))
+
+
 @router.get("")
 async def stream_events(
     request: Request,
@@ -170,13 +198,19 @@ async def stream_events(
     )
 
 
-@router.get("/incidents")
+@router.get("/incidents", deprecated=True)
 async def stream_incidents(request: Request):
     queue: asyncio.Queue[str] = asyncio.Queue()
     subscribers[queue] = _Subscriber(queue=queue, stream="incidents")
     asyncio.create_task(_cleanup_on_disconnect(request, queue))
+    headers = {
+        **_sse_headers(),
+        "Deprecation": "true",
+        "Link": '</api/v1/sse>; rel="successor-version"',
+    }
     return StreamingResponse(
         _incident_event_generator(queue),
         media_type="text/event-stream",
-        headers=_sse_headers(),
+        headers=headers,
+        status_code=status.HTTP_200_OK,
     )

@@ -1,7 +1,16 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from typing import List, Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_serializer
+
+
+PHOENIX_TZ = ZoneInfo("America/Phoenix")
+
+
+def serialize_phoenix_wall_time(value: datetime) -> str:
+    """Serialize dispatch wall time with the Phoenix timezone offset."""
+    return value.replace(tzinfo=PHOENIX_TZ).isoformat()
 
 
 class IncidentIn(BaseModel):
@@ -45,6 +54,10 @@ class IncidentOut(BaseModel):
     transcript: Optional[str]
     parsed: Optional[dict] = None
     created_at: datetime
+
+    @field_serializer("dispatched_at")
+    def serialize_dispatched_at(self, value: datetime) -> str:
+        return serialize_phoenix_wall_time(value)
 
 
 class IncidentListOut(BaseModel):

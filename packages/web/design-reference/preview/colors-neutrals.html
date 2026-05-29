@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; font-family: var(--el-font-sans); background: var(--el-surface); color: var(--el-on-dark); }
+  .wrap { padding: 22px 24px; }
+  .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .sw { border-radius: 12px; overflow: hidden; border: 1px solid var(--el-line-15); }
+  .chip { height: 76px; }
+  .lbl { padding: 8px 10px 10px; background: rgba(0,0,0,0.25); }
+  .name { font-size: 13px; font-weight: 700; }
+  .hex { font-family: var(--el-font-mono); font-size: 11px; color: rgba(255,255,255,.65); margin-top: 2px; }
+  .use { font-size: 11px; color: rgba(255,255,255,.55); margin-top: 3px; }
+  .light .lbl { background: rgba(0,0,0,.06); }
+  .light .name { color:#1C1C1C; } .light .hex { color:#555; } .light .use { color:#777; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="row">
+      <div class="sw"><div class="chip" style="background:#2E2E2E;border-bottom:1px solid var(--el-line-15)"></div><div class="lbl"><div class="name">Surface</div><div class="hex">#2E2E2E</div><div class="use">App background</div></div></div>
+      <div class="sw"><div class="chip" style="background:#444444"></div><div class="lbl"><div class="name">Border</div><div class="hex">#444444</div><div class="use">Dark-chrome border</div></div></div>
+      <div class="sw"><div class="chip" style="background:#7A7A7A"></div><div class="lbl"><div class="name">Muted</div><div class="hex">#7A7A7A</div><div class="use">Secondary text</div></div></div>
+      <div class="sw"><div class="chip" style="background:#B0B0B0"></div><div class="lbl"><div class="name">Ash</div><div class="hex">#B0B0B0</div><div class="use">Alternate fill</div></div></div>
+      <div class="sw light"><div class="chip" style="background:#FAFAFA;border-bottom:1px solid #ddd"></div><div class="lbl"><div class="name">Card</div><div class="hex">#FAFAFA</div><div class="use">Light card surface</div></div></div>
+      <div class="sw"><div class="chip" style="background:#1C1C1C"></div><div class="lbl"><div class="name">Ink</div><div class="hex">#1C1C1C</div><div class="use">Body text on light</div></div></div>
+    </div>
+  </div>
+</body>
+</html>

@@ -134,6 +134,7 @@ async def test_list_incidents_default_pagination(async_client):
     assert payload["page_size"] == 50
     assert payload["total"] == 3
     assert [item["id"] for item in payload["items"]] == [3, 2, 1]
+    assert payload["items"][0]["dispatched_at"] == "2024-05-03T12:00:00-07:00"
 
 
 @pytest.mark.anyio
@@ -207,3 +208,43 @@ async def test_pagination_parameters(async_client):
     assert payload["page_size"] == 1
     assert payload["total"] == 3
     assert [item["id"] for item in payload["items"]] == [2]
+
+
+@pytest.mark.anyio
+async def test_create_incident_publishes_canonical_dispatch_event(async_client, monkeypatch):
+    published: list[IncidentOut] = []
+
+    async def fake_insert_incident(pool, payload):
+        assert payload.incident_type == "Structure Fire"
+        return {"id": 42, "created_at": datetime(2026, 5, 29, 17, 43, 30, tzinfo=timezone.utc)}
+
+    async def fake_publish_dispatch_incident_created(incident: IncidentOut):
+        published.append(incident)
+
+    monkeypatch.setattr(incidents_repo, "insert_incident", fake_insert_incident)
+    monkeypatch.setattr(
+        incidents,
+        "publish_dispatch_incident_created",
+        fake_publish_dispatch_incident_created,
+    )
+
+    response = await async_client.post(
+        "/api/v1/incidents",
+        json={
+            "dispatched_at": "2026-05-29T10:43:25",
+            "special_call": False,
+            "units": ["Engine 9"],
+            "channel": "K-Deck 3",
+            "incident_type": "Structure Fire",
+            "address": "1402 E Roosevelt St",
+            "source_audio": "call_42.wav",
+            "original_text": "engine 9 structure fire",
+            "transcript": "Engine 9 structure fire",
+            "parsed": {},
+        },
+    )
+
+    assert response.status_code == 201
+    assert len(published) == 1
+    assert published[0].id == 42
+    assert published[0].incident_type == "Structure Fire"

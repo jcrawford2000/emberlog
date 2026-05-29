@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; font-family: var(--el-font-sans); background: var(--el-surface); color:#fff; }
+  .wrap { padding: 26px 24px; display:flex; align-items:center; gap:32px; }
+  .lockup { display:flex; align-items:center; gap:14px; }
+  .tile { width:56px; height:56px; border-radius:16px; background: var(--el-safety); display:grid; place-items:center; }
+  .tile [data-lucide] { width:34px; height:34px; color:#fff; }
+  .word { font-size:28px; font-weight:700; letter-spacing:.02em; }
+  .sub { font-size:12px; color: rgba(255,255,255,.7); margin-top:1px; }
+  .div { width:1px; height:60px; background: var(--el-line-15); }
+  .mono { font-family: var(--el-font-mono); font-size:11px; color: rgba(255,255,255,.55); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="lockup">
+      <div class="tile"><i data-lucide="audio-lines"></i></div>
+      <div><div class="word">Emberlog</div><div class="sub">Platform Operations Console</div></div>
+    </div>
+    <div class="div"></div>
+    <div>
+      <div class="mono">mark · lucide audio-lines</div>
+      <div class="mono">tile · #FF6B00 · radius 16px</div>
+      <div class="mono">docs flourish · 🔥📜</div>
+    </div>
+  </div>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

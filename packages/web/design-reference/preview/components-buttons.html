@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; font-family: var(--el-font-sans); background: var(--el-surface); color: var(--el-on-dark); }
+  .wrap { padding: 24px; display:flex; flex-wrap:wrap; gap: 14px; align-items:center; }
+  button { font-family:inherit; cursor:pointer; border:none; }
+  .btn-primary { background: var(--el-engine); color:#fff; border-radius:.5rem; padding:9px 16px; font-size:14px; font-weight:600; }
+  .btn-ghost { background: var(--el-fill-05); color: rgba(255,255,255,.8); border:1px solid var(--el-line-20); border-radius:.75rem; padding:8px 16px; font-size:14px; font-weight:500; }
+  .btn-pill { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--el-line-15); background: var(--el-fill-05); color: var(--el-slate-100); border-radius:9999px; padding:6px 14px; font-size:12px; font-weight:600; }
+  .btn-pill.sel { border-color: var(--el-engine); background: rgba(178,34,34,.15); color:#F0A; color:#ef8a8a; }
+  .btn-pill.sel { color:#ef8a8a; }
+  .btn-pill.orange.sel { border-color: var(--el-safety); background: rgba(255,107,0,.15); color:#ffb27a; }
+  .nav { display:inline-flex; gap:8px; background: var(--el-engine); padding:8px; border-radius:.75rem; }
+  .nav a { border-radius:.5rem; padding:6px 12px; font-size:13px; font-weight:500; text-decoration:none; color: rgba(255,255,255,.8); }
+  .nav a.active { background: rgba(255,255,255,.2); color:#fff; }
+  [data-lucide] { width:14px; height:14px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <button class="btn-primary">Retry</button>
+    <button class="btn-ghost">Clear filters</button>
+    <button class="btn-pill orange sel"><i data-lucide="search"></i>Showing Filter</button>
+    <button class="btn-pill"><i data-lucide="search"></i>Filter Calls</button>
+    <button class="btn-pill">Details</button>
+    <div class="nav"><a class="active">Traffic</a><a>Systems</a><a>Dispatch</a></div>
+  </div>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

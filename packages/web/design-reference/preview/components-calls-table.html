@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; font-family: var(--el-font-sans); background: var(--el-surface); }
+  .wrap { padding: 20px; }
+  table { width:100%; border-collapse:collapse; border-radius:.75rem; overflow:hidden; border:1px solid var(--el-border); font-size:13px; }
+  thead { background: var(--el-slate-800); }
+  th { text-align:left; padding:9px 12px; color: var(--el-slate-100); font-weight:600; }
+  tbody { background: rgba(15,23,42,.92); }
+  td { padding:10px 12px; color: var(--el-slate-100); border-top:1px solid rgba(255,255,255,.06); }
+  .mono { font-family: var(--el-font-mono); font-size:11.5px; }
+  .flag { display:inline-flex; align-items:center; gap:4px; border-radius:9999px; padding:2px 7px; font-size:11px; font-weight:700; }
+  .enc { color:#fcd34d; background:rgba(245,158,11,.15); border:1px solid rgba(251,191,36,.4); }
+  .live { display:inline-flex; align-items:center; gap:6px; color:#6ee7b7; background:rgba(16,185,129,.15); border:1px solid rgba(52,211,153,.4); border-radius:9999px; padding:2px 8px; font-size:11px; font-weight:700; }
+  .live .dot { width:7px; height:7px; border-radius:9999px; background:#6ee7b7; animation:pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+  [data-lucide] { width:13px; height:13px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <table>
+      <thead><tr><th>Date/Time</th><th>System</th><th>Trunkgroup</th><th>Frequency</th><th>Flags</th><th>Duration</th></tr></thead>
+      <tbody>
+        <tr><td>May 28, 2:14:07 PM</td><td>RWC</td><td class="mono">52071 · Fire Dispatch</td><td class="mono">851.06250 MHz</td><td><span class="flag enc"><i data-lucide="lock"></i>ENC</span></td><td><span class="live"><span class="dot"></span>LIVE</span></td></tr>
+        <tr><td>May 28, 2:13:51 PM</td><td>PSPRS</td><td class="mono">1207 · EMS Tac 2</td><td class="mono">853.48750 MHz</td><td style="color:#94a3b8">-</td><td>37s</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

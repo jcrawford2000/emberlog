@@ -10,7 +10,7 @@ Implemented in this package today:
 
 - Incident APIs (`/api/v1/incidents`)
 - Traffic monitor APIs (`/api/v1/traffic/summary`, `/api/v1/traffic/live-calls`)
-- SSE streams (`/api/v1/sse`, `/api/v1/sse/incidents`)
+- Canonical SSE stream (`/api/v1/sse`)
 - Liveness/readiness probes (`/healthz`, `/readyz`)
 - MQTT consumer for rates/recorders/calls-active snapshots
 - Outbox drain for `incident.created` notifier delivery
@@ -25,7 +25,10 @@ Implemented in this package today:
 - `GET /api/v1/traffic/summary`
 - `GET /api/v1/traffic/live-calls`
 - `GET /api/v1/sse`
-- `GET /api/v1/sse/incidents`
+
+Deprecated compatibility endpoint:
+
+- `GET /api/v1/sse/incidents` — legacy raw incident stream. New clients should use `/api/v1/sse` with `domain=dispatch` or `event_type=dispatch.incident.created`.
 
 Interactive docs (FastAPI default):
 
@@ -122,6 +125,7 @@ Current tests cover:
 
 - Health/readiness behavior
 - Incident list filters/pagination
+- Dispatch incident timestamp serialization and canonical SSE publishing
 - Traffic endpoint normalization/filtering
 - SSE streaming/filter validation
 - MQTT consumer processing

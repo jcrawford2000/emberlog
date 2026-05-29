@@ -86,12 +86,19 @@ Examples:
 
 -   `GET /api/v1/traffic/calls`
 -   `GET /api/v1/system/sites`
--   `GET /api/v1/dispatch/incidents`
+-   `GET /api/v1/incidents` (current dispatch incident projection)
+-   `GET /api/v1/dispatch/incidents` (reserved canonical domain path)
 
 These endpoints MUST still return canonical event envelopes or clearly
 documented domain projections derived from them.
 
 Domain projections MUST NOT invent incompatible schemas.
+
+The current dispatch incident projection returns persisted incident rows derived from
+`dispatch.incident.created` payloads. New live clients MUST consume dispatch updates
+through the canonical `GET /api/v1/sse` stream with `domain=dispatch` or
+`event_type=dispatch.incident.created`. Legacy raw incident streams are deprecated
+and MUST NOT be used by new clients.
 
 ------------------------------------------------------------------------
 
