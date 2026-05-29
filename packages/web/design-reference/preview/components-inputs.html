@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; font-family: var(--el-font-sans); background: var(--el-surface); color: var(--el-on-dark); }
+  .wrap { padding: 24px; display:flex; flex-direction:column; gap: 14px; }
+  .input { background: var(--el-fill-10); border:1px solid var(--el-line-20); border-radius:.75rem; padding:11px 16px; color:#fff; font-size:14px; font-family:inherit; width:100%; box-sizing:border-box; }
+  .input::placeholder { color: rgba(255,255,255,.7); }
+  .row { display:flex; gap:12px; align-items:center; }
+  .check { display:inline-flex; align-items:center; gap:8px; background: var(--el-fill-10); border:1px solid var(--el-line-20); border-radius:.75rem; padding:9px 14px; font-size:14px; }
+  .select { background: var(--el-slate-900); border:1px solid var(--el-line-20); border-radius:.5rem; padding:7px 12px; color:#fff; font-size:13px; font-family:inherit; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <input class="input" placeholder="Search talkgroup, category, tag, or system">
+    <div class="row">
+      <label class="check"><input type="checkbox" checked>Hide encrypted</label>
+      <span style="font-size:13px;color:rgba(255,255,255,.75)">Show</span>
+      <select class="select"><option>25</option><option>50</option><option>80</option></select>
+    </div>
+  </div>
+</body>
+</html>

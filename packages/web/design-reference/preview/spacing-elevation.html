@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; font-family: var(--el-font-sans); background: var(--el-surface); color: var(--el-on-dark); }
+  .wrap { padding: 28px 24px; display:flex; gap: 26px; align-items:center; }
+  .item { display:flex; flex-direction:column; align-items:center; gap:12px; }
+  .box { width: 130px; height: 70px; border-radius: 1rem; display:grid; place-items:center; font-size:11px; font-weight:600; }
+  .cap { font-size:12px; font-weight:600; }
+  .sub { font-size:10.5px; color: rgba(255,255,255,.5); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="item">
+      <div class="box" style="background:#FAFAFA;color:#1C1C1C;border:1px solid #444;box-shadow:var(--el-shadow-card)">card</div>
+      <div class="cap">shadow-xl</div><div class="sub">light cards</div>
+    </div>
+    <div class="item">
+      <div class="box" style="background:var(--el-slate-900);color:var(--el-slate-100);border:1px solid var(--el-line-20);box-shadow:var(--el-shadow-modal)">modal</div>
+      <div class="cap">shadow-2xl</div><div class="sub">overlays</div>
+    </div>
+    <div class="item">
+      <div class="box" style="background:var(--el-slate-900);color:var(--el-slate-100);box-shadow:var(--el-ring-engine)">selected</div>
+      <div class="cap">ring (engine)</div><div class="sub">0 0 0 3px / 20%</div>
+    </div>
+  </div>
+</body>
+</html>

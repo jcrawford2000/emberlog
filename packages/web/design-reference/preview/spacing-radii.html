@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; font-family: var(--el-font-sans); background: var(--el-surface); color: var(--el-on-dark); }
+  .wrap { padding: 24px; display:flex; gap: 20px; align-items:flex-end; }
+  .item { display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .box { width: 92px; height: 64px; background: var(--el-slate-800); border:1px solid var(--el-line-20); }
+  .cap { font-size:12px; font-weight:600; }
+  .sub { font-family: var(--el-font-mono); font-size:10.5px; color: rgba(255,255,255,.55); }
+  .dot { width: 56px; height: 56px; border-radius:9999px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="item"><div class="box" style="border-radius:.75rem"></div><div class="cap">xl</div><div class="sub">0.75rem</div></div>
+    <div class="item"><div class="box" style="border-radius:1rem"></div><div class="cap">2xl / card</div><div class="sub">1rem</div></div>
+    <div class="item"><div class="dot" style="background:var(--el-slate-800);border:1px solid var(--el-line-20)"></div><div class="cap">full</div><div class="sub">9999px</div></div>
+  </div>
+</body>
+</html>

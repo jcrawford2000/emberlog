@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; font-family: var(--el-font-sans); background: var(--el-surface); color: var(--el-on-dark); }
+  .wrap { padding: 22px 24px; }
+  .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .sw { border-radius: 12px; overflow: hidden; border: 1px solid var(--el-line-15); }
+  .chip { height: 84px; }
+  .lbl { padding: 8px 10px 10px; background: rgba(0,0,0,0.25); }
+  .name { font-size: 13px; font-weight: 700; letter-spacing: .01em; }
+  .hex { font-family: var(--el-font-mono); font-size: 11px; color: rgba(255,255,255,.65); margin-top: 2px; }
+  .use { font-size: 11px; color: rgba(255,255,255,.55); margin-top: 3px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="row">
+      <div class="sw"><div class="chip" style="background:#B22222"></div><div class="lbl"><div class="name">Engine</div><div class="hex">#B22222</div><div class="use">Header chrome · primary</div></div></div>
+      <div class="sw"><div class="chip" style="background:#FF6B00"></div><div class="lbl"><div class="name">Safety</div><div class="hex">#FF6B00</div><div class="use">Live / active · selection</div></div></div>
+      <div class="sw"><div class="chip" style="background:#FFD447"></div><div class="lbl"><div class="name">Brass</div><div class="hex">#FFD447</div><div class="use">Tertiary highlight</div></div></div>
+    </div>
+  </div>
+</body>
+</html>
