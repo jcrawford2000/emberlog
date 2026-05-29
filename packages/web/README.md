@@ -2,12 +2,13 @@
 
 Frontend shell for Emberlog.
 
-This package provides the web UI that consumes Emberlog API REST and SSE endpoints. The current implemented domain is Traffic Monitor.
+This package provides the web UI that consumes Emberlog API REST and SSE endpoints. The current implemented domains are Traffic Monitor and Dispatch Intelligence.
 
 ## Current Scope
 
-- App shell and routing (`/traffic`)
+- App shell and routing (`/traffic`, `/dispatch`)
 - Traffic summary and live calls views
+- Dispatch incident feed, filtering, and detail view
 - SSE live event stream integration (`/api/v1/sse`)
 - Shared API and realtime clients under `src/core`
 
@@ -21,6 +22,9 @@ This package follows the domain/core split defined in the root canon docs:
 Current domain implementation:
 
 - `src/domains/traffic`
+- `src/domains/dispatch`
+
+Dispatch reads its REST snapshot from `GET /api/v1/incidents` and subscribes to canonical live events from `GET /api/v1/sse` with `dispatch.incident.created` / `dispatch.incident.updated` filters.
 
 ## API Integration
 
