@@ -1,20 +1,22 @@
 import logging
 
+from emberlog_api.app.api.v1.routers import incidents, sse, traffic
+from emberlog_api.app.core.lifespan import lifespan
+from emberlog_api.app.db.pool import get_pool
+from emberlog_api.utils.loggersetup import configure_logging
 from fastapi import Depends, FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from psycopg_pool import AsyncConnectionPool
-
-from emberlog_api.app.api.v1.routers import incidents, sse, traffic
-from emberlog_api.app.db.pool import get_pool
-from emberlog_api.app.core.lifespan import lifespan
-from emberlog_api.utils.loggersetup import configure_logging
-
+from uvicorn.middleware.proxyheaders import ProxyHeadersMiddleware
 
 configure_logging()
 log = logging.getLogger("emberlog_api.app.main")
 
-app = FastAPI(lifespan=lifespan, title="Emberlog API", version="1.0.0")
+app = FastAPI(
+    lifespan=lifespan, title="Emberlog API", version="1.0.0", redirect_slashes=False
+)
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # tighten in prod
