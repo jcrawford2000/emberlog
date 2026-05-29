@@ -1,3 +1,4 @@
+import { AudioLines } from 'lucide-react';
 import { NavLink, Outlet } from 'react-router-dom';
 
 export function AppShell() {
@@ -5,9 +6,14 @@ export function AppShell() {
     <div className="min-h-screen bg-surface text-primary-text">
       <header className="sticky top-0 z-20 border-b border-white/10 bg-engine/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-          <div>
-            <p className="text-xl font-semibold tracking-wide">Emberlog Web</p>
-            <p className="text-xs text-white/75">Platform Operations Console</p>
+          <div className="flex items-center gap-3">
+            <div className="flex h-[42px] w-[42px] flex-none items-center justify-center rounded-[13px] bg-safety shadow-md">
+              <AudioLines className="h-[26px] w-[26px] text-white" />
+            </div>
+            <div>
+              <p className="text-xl font-semibold tracking-wide">Emberlog</p>
+              <p className="text-xs text-white/75">Platform Operations Console</p>
+            </div>
           </div>
           <nav className="flex items-center gap-2">
             <NavLink

@@ -14,7 +14,7 @@ export function IncidentFeed({ incidents, selectedId, nowMs, onSelect }: Inciden
       <div className="mb-3 flex-none text-xs font-semibold uppercase tracking-[0.18em] text-white/45">
         Live Feed · {incidents.length} shown
       </div>
-      <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain pr-2">
+      <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain pl-0.5 pt-0.5 pr-2">
         {incidents.length > 0 ? (
           incidents.map((incident) => (
             <IncidentCard
