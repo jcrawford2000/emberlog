@@ -8,7 +8,7 @@ from fastapi import Depends, FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from psycopg_pool import AsyncConnectionPool
-from uvicorn.middleware.proxyheaders import ProxyHeadersMiddleware
+from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
 configure_logging()
 log = logging.getLogger("emberlog_api.app.main")
