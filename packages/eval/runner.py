@@ -53,6 +53,7 @@ from typing import Any, Optional
 # bootstrap is in the same directory; add it to path if needed
 sys.path.insert(0, str(Path(__file__).parent))
 import bootstrap  # noqa: E402
+from corpus_io import load_corpus  # noqa: E402
 
 
 # ---------------------------------------------------------------------------
@@ -278,16 +279,26 @@ async def _run_e2e_tone(
 
 
 def _run_parser_isolated(corpus_rec: dict) -> dict:
-    """Feed truth transcripts to parser only — no audio, no transcription, no splitting."""
+    """
+    Feed dispatch_transcript (per-dispatch parser-feed text) to the parser only.
+    No audio, no Whisper, no splitting.
+
+    Dispatches with an empty dispatch_transcript are skipped — they are not yet
+    labeled for multi-dispatch clips. They are NOT zero-scored; the scorer
+    excludes and counts them separately.
+    """
     truth_dispatches = corpus_rec.get("dispatches", [])
     audio_ref = corpus_rec["audio_ref"]
-    # Use a sentinel path; audio_path is used only for logging in clean_transcript
+    # Sentinel path — used only for logging inside clean_transcript
     sentinel_path = Path(f"{audio_ref}.wav")
 
     dispatches_out = []
     for td in truth_dispatches:
-        truth_text = td.get("truth_transcript", "")
-        parsed = _run_parser(truth_text, sentinel_path, transcript_text=truth_text)
+        dispatch_tx = td.get("dispatch_transcript", "")
+        if not dispatch_tx.strip():
+            # Missing label — skip, don't feed empty text to parser
+            continue
+        parsed = _run_parser(dispatch_tx, sentinel_path, transcript_text=dispatch_tx)
         dispatches_out.append(parsed)
 
     return {
@@ -478,7 +489,7 @@ def main() -> None:
     # MUST happen before any emberlog import — bootstrap.setup() sets env vars
     bootstrap.setup(workspace=args.workspace)
 
-    corpus = json.loads(args.corpus.read_text())
+    corpus = load_corpus(args.corpus)
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
     cfg = RunConfig(

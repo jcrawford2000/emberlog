@@ -47,32 +47,62 @@ if it is not (the transcriber shells out to ffmpeg for tone trimming).
 
 ## Corpus format
 
-`corpus/corpus.json` is an array of objects, one per audio file:
+`corpus/corpus.json` has the shape produced by the labeling tool:
 
 ```json
-[
-  {
-    "audio_ref": "1795-1685000000",
-    "audio_file": "1795-1685000000.wav",
-    "audio_quality": "ok",
-    "expected_dispatch_count": 2,
-    "dispatches": [
-      {
-        "truth_transcript": "K-Deck 8 Difficulty breathing 4210 North 154th Drive Engine 12 Rescue 3 K-Deck 8",
-        "special_call": false,
-        "units": ["Engine 12", "Rescue 3"],
-        "channel": "K-Deck 8",
-        "incident_type": "Difficulty breathing",
-        "address": "4210 N 154th Dr"
+{
+  "_meta": { ... },
+  "clips": [
+    {
+      "audio_ref": "1795-1780086990...-call_76187",
+      "audio_filename": "1795-1780086990...-call_76187.wav",
+      "audio_quality": "ok",
+      "system_output": { ... },
+      "verified": {
+        "transcript": "Special Call Rescue 74 K-Deck 8 Fall Injury 420 East South Fork Drive Rescue 74 K-Deck 8 Engine 2840 K-Deck 7 Fall Injury ...",
+        "expected_dispatch_count": 2,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special Call Rescue 74 K-Deck 8 Fall Injury 420 East South Fork Drive Rescue 74 K-Deck 8",
+            "special_call": true,
+            "units": ["Rescue 74"],
+            "channel": "K-Deck 8",
+            "incident_type": "Fall Injury",
+            "address": "420 E South Fork Dr"
+          }
+        ],
+        "notes": ""
       }
-    ]
-  }
-]
+    }
+  ]
+}
 ```
 
-`audio_quality` values: `"ok"` or `"unintelligible"`.
-Unintelligible clips are excluded from the headline WER and parsing tables;
-they are counted and reported separately.
+`corpus_io.load_corpus()` normalizes this into the internal record format used
+by both runner and scorer. It also tolerates a bare array of flat records.
+
+### The two-field transcript model
+
+There are **two** distinct transcript fields with different jobs. They are
+never interchangeable:
+
+| Field | Location | Used for |
+|---|---|---|
+| `verified.transcript` | clip level | **WER truth only.** One acoustic utterance. Includes preambles, `[unintelligible]` sentinels. Scored ONCE per clip against the system's Whisper output. |
+| `verified.dispatches[i].dispatch_transcript` | per dispatch | **Parser feed only** in parser-isolated mode. The clean, single-dispatch span passed to `clean_transcript`. Never used for WER. |
+
+Critical consequences:
+- Per-dispatch transcripts are NOT required to concatenate back to the clip
+  transcript. Don't assume they do.
+- On single-dispatch clips the two fields often contain identical text. That
+  coincidence is fine — same words, different roles.
+- If `dispatch_transcript` is missing or empty on a multi-dispatch clip, that
+  dispatch is **excluded from parse scoring** and counted as skipped — never
+  zero-scored. The `metrics.json` reports `skipped_dispatches: N`.
+
+`audio_quality` values: `"ok"` or `"unintelligible"`. Unintelligible clips are
+excluded from the headline WER and parsing tables; they are counted and
+reported separately.
 
 **The corpus is frozen truth. Never edit it to make a number look better —
 that is a finding, not a fix.**
