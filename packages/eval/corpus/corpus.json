@@ -1,0 +1,21 @@
+[
+  {
+    "_comment": "Add ground-truth records here. One object per audio file. See README for schema.",
+    "_schema": {
+      "audio_ref": "unique identifier (e.g. filename stem)",
+      "audio_file": "filename relative to --audio-dir (e.g. 1795-1234567890.wav)",
+      "audio_quality": "ok | unintelligible",
+      "expected_dispatch_count": "integer",
+      "dispatches": [
+        {
+          "truth_transcript": "what Whisper should ideally produce for this dispatch",
+          "special_call": "bool",
+          "units": ["list", "of", "unit", "strings"],
+          "channel": "K-Deck N or AN or null",
+          "incident_type": "string or null",
+          "address": "normalized address string or null"
+        }
+      ]
+    }
+  }
+]
