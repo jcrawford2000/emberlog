@@ -1,0 +1,81 @@
+{
+  "_about": "Phoenix dispatch parsing vocabulary. Region-specific adapter resource, loaded by the parser at runtime — NOT hardcoded. Edit this file to add types/aliases; do not edit parser code. Matching key is the SPOKEN PHRASE (canonical_phrase + aliases), never the code. The code rides along into parsed.* for free when a match is unambiguous.",
+
+  "incident_types": [
+    {"code": "CP",     "canonical_phrase": "Chest pain",                    "aliases": []},
+    {"code": "ALOC",   "canonical_phrase": "Altered level of consciousness","aliases": []},
+    {"code": "FALL",   "canonical_phrase": "Fall injury",                   "aliases": ["minor fall injury"]},
+    {"code": "ILL",    "canonical_phrase": "Ill person",                    "aliases": []},
+    {"code": "INJ",    "canonical_phrase": "Injured person",               "aliases": ["minor injury"]},
+    {"code": "UNC",    "canonical_phrase": "Unconscious person",            "aliases": []},
+    {"code": "DB",     "canonical_phrase": "Difficulty breathing",          "aliases": []},
+    {"code": "SEIZ",   "canonical_phrase": "Seizure",                       "aliases": []},
+    {"code": "HA",     "canonical_phrase": "Heart problem",                 "aliases": ["heart problems"]},
+    {"code": "CVA",    "canonical_phrase": "Stroke",                        "aliases": ["CVA"]},
+    {"code": "ALLRG",  "canonical_phrase": "Allergic reaction",             "aliases": []},
+    {"code": "ABD",    "canonical_phrase": "Abdominal pain",                "aliases": []},
+    {"code": "OD",     "canonical_phrase": "Overdose",                      "aliases": []},
+    {"code": "MAT",    "canonical_phrase": "Maternity problem",             "aliases": ["maternity problems"]},
+    {"code": "INTB",   "canonical_phrase": "Internal bleeding",             "aliases": []},
+    {"code": "CKWELF", "canonical_phrase": "Check welfare",                 "aliases": []},
+    {"code": "COMCAR", "canonical_phrase": "Crisis care",                   "aliases": []},
+    {"code": "ASSPD",  "canonical_phrase": "Assist PD",                     "aliases": []},
+    {"code": "ALARM",  "canonical_phrase": "Fire alarm indication",         "aliases": []},
+    {"code": "ALLEY",  "canonical_phrase": "Alley fire",                    "aliases": []},
+    {"code": "UNKM",   "canonical_phrase": "Unknown medical",               "aliases": []},
+    {"code": "SERV",   "canonical_phrase": "Service call",                  "aliases": []},
+
+    {"_comment": "962 family — STEM + optional qualifier. Matcher: recognize '962' as a stem, then absorb a trailing qualifier phrase if present. Longest match wins so '962 involving pedestrian' beats bare '962'.",
+     "code": "962",    "canonical_phrase": "962", "is_stem": true,
+     "qualifiers": [
+       {"code": "962X",  "phrase": "extrication"},
+       {"code": "962P",  "phrase": "involving pedestrian"},
+       {"code": "962MC", "phrase": "involving motorcycle"},
+       {"code": "962BC", "phrase": "involving bicycle"},
+       {"code": "962F",  "phrase": "with fire"},
+       {"code": "962HM", "phrase": "with hazardous material"},
+       {"code": "962R",  "phrase": "rollover"},
+       {"code": "962W",  "phrase": "car into canal"}
+     ]}
+  ],
+  "_incident_types_note": "ABOVE IS A SEED of the high-frequency types seen in the corpus. FULL list (the table Justin provided — ~200 codes) must be transcribed into this file before Fix 4 ships. Many codes map to the same phrase (ENG/LAD/SERV/UTIL -> 'Service call'; the HAZ* family -> 'Hazardous situation'); that many-to-one is fine — output the phrase, optionally record the code in parsed only when unambiguous.",
+
+  "response_modifiers": [
+    {"token": "AOI",    "meaning": "Available On Incident", "parsed_key": "aoi",           "parsed_value": true},
+    {"token": "Code 2", "meaning": "non-emergency response","parsed_key": "response_code", "parsed_value": "2"},
+    {"token": "Code 3", "meaning": "emergency response",    "parsed_key": "response_code", "parsed_value": "3"}
+  ],
+  "_modifiers_note": "Recognize and REMOVE from the stream so they don't pollute type/address. Park in parsed.* (region-specific, not canonical). They sit between type and address (e.g. 'Service Call AOI Station 154').",
+
+  "freeways": [
+    {"canonical": "I-10",  "aliases": ["I-10","Interstate 10","the 10","Papago Freeway","Papago","Inner Loop","Maricopa Freeway","Wild Horse Pass Corridor"]},
+    {"canonical": "I-17",  "aliases": ["I-17","Interstate 17","the 17","Black Canyon Freeway","Black Canyon","Arizona Veterans Highway","Maricopa Freeway"]},
+    {"canonical": "I-8",   "aliases": ["I-8","Interstate 8","the 8"]},
+    {"canonical": "US-60", "aliases": ["US 60","US-60","Grand Avenue","Superstition Freeway","Superstition"]},
+    {"canonical": "US-93", "aliases": ["US 93","US-93"]},
+    {"canonical": "SR-24", "aliases": ["SR 24","State Route 24","Gateway Freeway","Williams Gateway Freeway"]},
+    {"canonical": "SR-51", "aliases": ["SR 51","State Route 51","the 51","Piestewa Freeway","Piestewa","Squaw Peak Freeway"]},
+    {"canonical": "SR-74", "aliases": ["SR 74","State Route 74","Carefree Highway"]},
+    {"canonical": "SR-85", "aliases": ["SR 85","State Route 85"]},
+    {"canonical": "SR-87", "aliases": ["SR 87","State Route 87","Beeline Highway","Beeline"]},
+    {"canonical": "SR-88", "aliases": ["SR 88","State Route 88","Apache Trail"]},
+    {"canonical": "Loop 101", "aliases": ["Loop 101","the 101","SR 101","Agua Fria Freeway","Agua Fria","Pima Freeway","Pima","Price Freeway","Price"]},
+    {"canonical": "SR-143","aliases": ["SR 143","State Route 143","the 143","Hohokam Expressway","Hohokam"]},
+    {"canonical": "Loop 202", "aliases": ["Loop 202","the 202","SR 202","Red Mountain Freeway","Red Mountain","Santan Freeway","Santan","South Mountain Freeway"]},
+    {"canonical": "Loop 303", "aliases": ["Loop 303","the 303","SR 303","Estrella Freeway","Estrella","Bob Stump Memorial Parkway"]},
+    {"canonical": "SR-347", "aliases": ["SR 347","State Route 347","Maricopa Road","John Wayne Parkway"]},
+    {"canonical": "SR-587", "aliases": ["SR 587","State Route 587","Hunt Highway"]}
+  ],
+  "_freeways_note": "Recognition is BINARY for parsing: 'does the address-start token match a freeway alias?' -> trigger highway address form. Do NOT try to resolve canonical road from an ambiguous name ('Maricopa Freeway' maps to two roads) — that's a parsed.* nicety, not required for the address field.",
+
+  "named_interchanges": [
+    {"name": "the Stack",      "refers_to": "I-10 / I-17 near 19th Ave & McDowell"},
+    {"name": "the Mini-Stack", "refers_to": "I-10 / SR 51 / Loop 202 Red Mountain"},
+    {"name": "the North Stack","refers_to": "I-17 / Loop 101"},
+    {"name": "the Split",      "refers_to": "I-10 / I-17 near Sky Harbor"},
+    {"name": "the Broadway Curve","refers_to": "I-10 near Broadway Rd / SR 143"},
+    {"name": "the Durango Curve","refers_to": "I-17 near Durango St"},
+    {"name": "SuperRedTan",    "refers_to": "US 60 Superstition / Loop 202 Red Mountain / Santan, East Mesa"}
+  ],
+  "_interchanges_note": "Bare named-landmark address form ('962 at the Stack'). Recognize as a complete address; do not attempt civic-address normalization."
+}
