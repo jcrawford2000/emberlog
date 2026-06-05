@@ -1,0 +1,3909 @@
+{
+  "_meta": {
+    "generated_at": "2026-05-29T22:22:47.039021+00:00",
+    "source_total_rows": 100,
+    "unique_audio_files": 81,
+    "multi_row_audio_files": 19,
+    "labeling_instructions": [
+      "Ground-truth unit is the audio file, not the incident row.",
+      "verified.transcript: listen and type the spoken words fresh. Do NOT paste the system transcript or WER is always zero.",
+      "verified.expected_dispatch_count: number of distinct real dispatches in the audio (ignore preambles).",
+      "verified.dispatches: one object per dispatch, in spoken order. Seeds are hints from system output.",
+      "Fields use canonical/normalized form (e.g. '7602 W Meadowbrook Ave'); spoken form lives only in transcript.",
+      "Drop dispatch-center preambles like '1430 hours Phoenix Fire Regional Dispatch'."
+    ]
+  },
+  "clips": [
+    {
+      "audio_ref": "1795-1780086948.467_769818750.0-call_76161",
+      "audio_filename": "1795-1780086948.467_769818750.0-call_76161.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1048
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1048,
+            "transcript": "Rescue 608 and Ladder Tender 608 K-Deck 7 Unconscious Person 12701 North Scottsdale Road Rescue 608 and Ladder Tender 608 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Ladder Tender 608",
+              "Rescue 608"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Unconscious Person",
+            "address": "12701 N Scottsdale Rd"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Rescue 608 and Ladder Tender 608 K-Deck 7 Unconscious Person 12701 North Scottsdale Road Rescue 608 and Ladder Tender 608 K-Deck 7",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Rescue 608 and Ladder Tender 608 K-Deck 7 Unconscious Person 12701 North Scottsdale Road Rescue 608 and Ladder Tender 608 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Ladder Tender 608",
+              "Rescue 608"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Unconscious Person",
+            "address": "12701 N Scottsdale Rd"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780086990.879_773931250.0-call_76187",
+      "audio_filename": "1795-1780086990.879_773931250.0-call_76187.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1049,
+          1050
+        ],
+        "produced_dispatch_count": 2,
+        "rows": [
+          {
+            "id": 1049,
+            "transcript": "Special Call Rescue 74 K-Deck 8 Fall Injury 420 East South Fork Drive Rescue 74 K-Deck 8",
+            "special_call": true,
+            "units": [
+              "Rescue 74"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Fall Injury",
+            "address": "420 E South Fork Dr"
+          },
+          {
+            "id": 1050,
+            "transcript": "Engine 2840 K-Deck 7 Fall Injury 1728 East Iris Drive Engine 2840 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 2840"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Fall Injury",
+            "address": "1728 E Iris Dr"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special Call Rescue 74 K-Deck 8 Fall Injury 420 East South Fork Drive Rescue 74 K-Deck 8 Engine 2840 K-Deck 7 Fall Injury 1728 East Iris Drive Engine 2840 K-Deck 7",
+        "expected_dispatch_count": 2,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special Call Rescue 74 K-Deck 8 Fall Injury 420 East South Fork Drive Rescue 74 K-Deck 8",
+            "special_call": true,
+            "units": [
+              "Rescue 74"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Fall Injury",
+            "address": "420 E South Fork Dr"
+          },
+          {
+            "dispatch_transcript": "Engine 2840 K-Deck 7 Fall Injury 1728 East Iris Drive Engine 2840 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 2840"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Fall Injury",
+            "address": "1728 E Iris Dr"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780087022.141_769618750.0-call_76212",
+      "audio_filename": "1795-1780087022.141_769618750.0-call_76212.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1051
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1051,
+            "transcript": "Engine 11 K-Deck 8 Unconscious person 3745 East Polk Street Engine 11 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 11"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Unconscious person",
+            "address": "3745 E Polk St"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 11 K-Deck 8 Unconscious person 3745 East Polk Street Engine 11 K-Deck 8",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 11 K-Deck 8 Unconscious person 3745 East Polk Street Engine 11 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 11"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Unconscious person",
+            "address": "3745 E Polk St"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780087079.260_769868750.0-call_76253",
+      "audio_filename": "1795-1780087079.260_769868750.0-call_76253.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1052,
+          1053
+        ],
+        "produced_dispatch_count": 2,
+        "rows": [
+          {
+            "id": 1052,
+            "transcript": "Special Calls Rush Engine 6130 K-Deck 7 Unconscious Person 12701 North Scottsdale Road Rush Engine 6130 K-Deck 7",
+            "special_call": true,
+            "units": [
+              "Engine 6130"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "s Rush Unconscious Person",
+            "address": "12701 N Scottsdale Rd"
+          },
+          {
+            "id": 1053,
+            "transcript": "Medic 326 K-Deck 9 Interfacility 525 South Watson Road Medic 326 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Medic 326"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Interfacility",
+            "address": "525 S Watson Rd"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special Call Brush Engine 6130 K-Deck 7 Unconscious Person 12701 North Scottsdale Road Brush Engine 6130 K-Deck 7 Medic 326 K-Deck 9 Interfacility 525 South Watson Road Medic 326 K-Deck 9 Special Call Rescue 22 K-Deck 8 Chest Pain 26 East Baseline Road Rescue 22 K-Deck 8",
+        "expected_dispatch_count": 3,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special Call Brush Engine 6130 K-Deck 7 Unconscious Person 12701 North Scottsdale Road Brush Engine 6130 K-Deck 7",
+            "special_call": true,
+            "units": [
+              "Brush Engine 6130"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Unconscious Person",
+            "address": "12701 N Scottsdale Rd"
+          },
+          {
+            "dispatch_transcript": "Medic 326 K-Deck 9 Interfacility 525 South Watson Road Medic 326 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Medic 326"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Interfacility",
+            "address": "525 S Watson Rd"
+          },
+          {
+            "dispatch_transcript": "Special Call Rescue 22 K-Deck 8 Chest Pain 26 East Baseline Road Rescue 22 K-Deck 8",
+            "special_call": true,
+            "units": [
+              "Rescue 22"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Chest pain",
+            "address": "26 E Baseline Rd"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780087205.426_769568750.0-call_76341",
+      "audio_filename": "1795-1780087205.426_769568750.0-call_76341.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1054
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1054,
+            "transcript": "Special Cacoba 612 K-Deck 7 Conscience 1201 North Scottsdale Road Maricopa 612 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Maricopa 612"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Special Cacoba 612 Conscience",
+            "address": "1201 N Scottsdale Rd"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special [unintelligible] 612 K-Deck 7  [unintelligable] Scottsdale Road Maricopa 612 K-Deck 7",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special [unintelligable] 612 K-Deck 7  [unintelligable] Scottsdale Road Maricopa 612 K-Deck 7",
+            "special_call": true,
+            "units": [
+              "Maricopa 612"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Unconscious person",
+            "address": "12701 N Scottsdale Rd"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780087231.691_769868750.0-call_76358",
+      "audio_filename": "1795-1780087231.691_769868750.0-call_76358.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1055
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1055,
+            "transcript": "Engine 27 and Rescue 35 K-Deck 7 962 25th Place and Cactus Road Engine 27 and Rescue 35 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 27",
+              "Rescue 35"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "",
+            "address": "25th Place and Cactus Road  and"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 27 and Rescue 35 K-Deck 7 962 25th Place and Cactus Road Engine 27 and Rescue 35 K-Deck 7",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 27 and Rescue 35 K-Deck 7 962 25th Place and Cactus Road Engine 27 and Rescue 35 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 27",
+              "Rescue 35"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "962",
+            "address": "25th Place and Cactus Road"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780087337.525_769818750.0-call_76423",
+      "audio_filename": "1795-1780087337.525_769818750.0-call_76423.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1056
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1056,
+            "transcript": "Engine 606 K-Deck 7 Fall Injury 11700 East Belinda Engine 606 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 606"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Fall Injury",
+            "address": "11700 E Belinda"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 606 K-Deck 7 Fall Injury 11700 East Via Linda Engine 606 K-Deck 7",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 606 K-Deck 7 Fall Injury 11700 East Via Linda Engine 606 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 606"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Fall Injury",
+            "address": "11700 E Via Linda"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780087398.914_769618750.0-call_76454",
+      "audio_filename": "1795-1780087398.914_769618750.0-call_76454.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1057
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1057,
+            "transcript": "Special Call PIO3 K-Deck 8 Allergic Reaction 71 East Pearson Street PIO3 K-Deck 8",
+            "special_call": true,
+            "units": [],
+            "channel": "K-Deck 8",
+            "incident_type": "PIO3 Allergic Reaction 71",
+            "address": "East Pearson Street PIO3"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special Call PIO3 K-Deck 8 Allergic Reaction 71 East Pearson Street PIO3 K-Deck 8",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special Call PIO3 K-Deck 8 Allergic Reaction 71 East Pearson Street PIO3 K-Deck 8",
+            "special_call": true,
+            "units": [
+              "PIO 3"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Allergic Reaction",
+            "address": "71 E Pearson St"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780087456.199_769868750.0-call_76495",
+      "audio_filename": "1795-1780087456.199_769868750.0-call_76495.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1058,
+          1059
+        ],
+        "produced_dispatch_count": 2,
+        "rows": [
+          {
+            "id": 1058,
+            "transcript": "Engine 285 K-Deck 7 Service Call AOI 2040 South Alma School Road Engine 285 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 285"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Service Call AOI",
+            "address": "2040 S Alma School Rd"
+          },
+          {
+            "id": 1059,
+            "transcript": "Engine 188 K-9 Difficulty Breathing 17506 West Van Buren Street Engine 188 K-Deck 9 Engine 612 K-Deck 7 Park Problem 8759 East Bell Road Engine 612 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 188",
+              "Engine 612"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "K-9 Difficulty Breathing",
+            "address": "17506 W Van Buren St"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 285 K-Deck 7 Service Call AOI 2040 South Alma School Road Engine 285 K-Deck 7 Engine 188 K-9 Difficulty Breathing 17506 West Van Buren Street Engine 188 K-Deck 9 Engine 612 K-Deck 7 Heart Problem 8759 East Bell Road Engine 612 K-Deck 7 Engine 2 K-Deck 8 Altered Level of Consciousness 807 North First Street Engine 2 K-Deck 8",
+        "expected_dispatch_count": 4,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 285 K-Deck 7 Service Call AOI 2040 South Alma School Road Engine 285 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 285"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Service Call AOI",
+            "address": "2040 S Alma School Rd"
+          },
+          {
+            "dispatch_transcript": "Engine 188 K-9 Difficulty Breathing 17506 West Van Buren Street Engine 188 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Engine 188"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Difficulty Breathing",
+            "address": "17506 W Van Buren St"
+          },
+          {
+            "dispatch_transcript": "Engine 612 K-Deck 7 Heart Problem 8759 East Bell Road Engine 612 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 612"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Heart Problem",
+            "address": "8759 E Bell Rd"
+          },
+          {
+            "dispatch_transcript": "Engine 2 K-Deck 8 Altered Level of Consciousness 807 North First Street Engine 2 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 2"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Altered Level of Consciousness",
+            "address": "807 N 1st St"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780087598.817_769618750.0-call_76583",
+      "audio_filename": "1795-1780087598.817_769618750.0-call_76583.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1060
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1060,
+            "transcript": "Ladder Tender 37 K-Deck 8 962 3254 East Cactus Road Ladder Tender 37 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Ladder Tender 37"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "962",
+            "address": "3254 E Cactus Rd"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Ladder Tender 37 K-Deck 8 962 3254 East Cactus Road Ladder Tender 37 K-Deck 8",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Ladder Tender 37 K-Deck 8 962 3254 East Cactus Road Ladder Tender 37 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Ladder Tender 37"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "962",
+            "address": "3254 E Cactus Rd"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780087615.259_769868750.0-call_76600",
+      "audio_filename": "1795-1780087615.259_769868750.0-call_76600.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1061
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1061,
+            "transcript": "Medic 3240 and Engine 707 K-Deck 9 Internal bleeding 20104 West Broadway Road Medic 3240 and Engine 707 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Engine 707",
+              "Medic 3240"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Internal bleeding",
+            "address": "20104 W Broadway Rd"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Medic 3240 and Engine 707 K-Deck 9 Internal bleeding 20104 West Broadway Road Medic 3240 and Engine 707 K-Deck 9",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Medic 3240 and Engine 707 K-Deck 9 Internal bleeding 20104 West Broadway Road Medic 3240 and Engine 707 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Engine 707",
+              "Medic 3240"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Internal bleeding",
+            "address": "20104 W Broadway Rd"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780087756.447_772868750.0-call_76722",
+      "audio_filename": "1795-1780087756.447_772868750.0-call_76722.wav",
+      "audio_quality": "unintelligible",
+      "system_output": {
+        "produced_incident_ids": [
+          1062
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1062,
+            "transcript": "Battalion 7 Engine 36 Medic 276 Carrison K-Deck 10 12-05 South Rome Battalion 276 Engine 36 Lutheran Carrison K-Deck 10",
+            "special_call": false,
+            "units": [
+              "Battalion 7",
+              "Battalion 276",
+              "Engine 36",
+              "Medic 276"
+            ],
+            "channel": "K-Deck 10",
+            "incident_type": "Carrison 12-05",
+            "address": "South Rome   Lutheran Carrison"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Battalion 7 Engine [unintelligible] Medic 276 [unintelligible] K 7 [unintelligible] 1205 South Road Battalion [unintelligible]",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Battalion 7 Engine [unintelligible] Medic 276 [unintelligible] K 7 [unintelligible] 1205 South Road Battalion [unintelligible]",
+            "special_call": false,
+            "units": [
+              "Battalion 7",
+              "Medic 276"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "",
+            "address": ""
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780087779.559_772618750.0-call_76752",
+      "audio_filename": "1795-1780087779.559_772618750.0-call_76752.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1063
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1063,
+            "transcript": "Engine 154 K-Deck 6 Service call AOI Station 154 Engine 154 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 154"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Service call",
+            "address": "AOI Station 154"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 154 K-Deck 6 Service call AOI Station 154 Engine 154 K-Deck 6",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 154 K-Deck 6 Service call AOI Station 154 Engine 154 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 154"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Service call AOI",
+            "address": "Station 154"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780087794.966_769568750.0-call_76767",
+      "audio_filename": "1795-1780087794.966_769568750.0-call_76767.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1064
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1064,
+            "transcript": "N71 Enix 324 K-Deck 9 Altered level of consciousness 228 arrive in boat mode Engine 701 Enix 324 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Engine 701"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "N71 Enix 324 Altered level of consciousness 228 arrive in boat mode Enix 324",
+            "address": ""
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "[unintelligible] Medic 324 K-Deck 9 Altered level of consciousness [unintelligible] Engine 701 and Medic 324 K-Deck 9",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "[unintelligible] Medic 324 K-Deck 9 Altered level of consciousness [unintelligible] Engine 701 and Medic 324 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Engine 701",
+              "Medic 324"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Altered level of consciousness",
+            "address": "220th Dr and Beloit Rd"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780087814.185_772618750.0-call_76783",
+      "audio_filename": "1795-1780087814.185_772618750.0-call_76783.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1065
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1065,
+            "transcript": "Ladder Tender 157 K-Deck 6 Fall Injury 5325 Butler Drive Ladder Tender 157 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Ladder Tender 157"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Fall Injury",
+            "address": "5325 Butler Drive"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Ladder Tender 157 K-Deck 6 Fall Injury 5325 Butler Drive Ladder Tender 157 K-Deck 6",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Ladder Tender 157 K-Deck 6 Fall Injury 5325 Butler Drive Ladder Tender 157 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Ladder Tender 157"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Fall Injury",
+            "address": "5325 Butler Drive"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780087834.373_773931250.0-call_76798",
+      "audio_filename": "1795-1780087834.373_773931250.0-call_76798.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1066
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1066,
+            "transcript": "Special call Medic 275 K-Deck 7 Difficulty breathing 1500 North Priest Drive Medic 275 K-Deck 7",
+            "special_call": true,
+            "units": [
+              "Medic 275"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Difficulty breathing",
+            "address": "1500 N Priest Dr"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special call Medic 275 K-Deck 7 Difficulty breathing 1500 North Priest Drive Medic 275 K-Deck 7",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special call Medic 275 K-Deck 7 Difficulty breathing 1500 North Priest Drive Medic 275 K-Deck 7",
+            "special_call": true,
+            "units": [
+              "Medic 275"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Difficulty breathing",
+            "address": "1500 N Priest Dr"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780087924.112_770818750.0-call_76862",
+      "audio_filename": "1795-1780087924.112_770818750.0-call_76862.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1067
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1067,
+            "transcript": "Engine 60 K-Deck 8 962 I-10 at North 7th Street westbound east of Engine 60 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 60"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "962",
+            "address": "I-10 and North 7th Street westbound east of"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 60 K-Deck 8 962 I-10 at North 7th Street westbound east of Engine 60 K-Deck 8",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 60 K-Deck 8 962 I-10 at North 7th Street westbound east of Engine 60 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 60"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "962",
+            "address": "I-10 and North 7th Street westbound east of"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780087957.908_771318750.0-call_76894",
+      "audio_filename": "1795-1780087957.908_771318750.0-call_76894.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1068
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1068,
+            "transcript": "Ladder Tender 608 K-Deck 7 Difficulty breathing 14500 North Franklin Wright Boulevard Ladder Tender 68 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Ladder Tender 608",
+              "Ladder Tender 68"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Difficulty breathing",
+            "address": "14500 N Franklin Wright Blvd"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Ladder Tender 608 K-Deck 7 Difficulty breathing 14500 North Franklin Wright Boulevard Ladder Tender [unintelligible] K-Deck 7",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Ladder Tender 608 K-Deck 7 Difficulty breathing 14500 North Franklin Wright Boulevard Ladder Tender [unintelligible] K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Ladder Tender 608"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Difficulty breathing",
+            "address": "14500 N Frank Lloyd Wright Blvd"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780087979.246_772868750.0-call_76913",
+      "audio_filename": "1795-1780087979.246_772868750.0-call_76913.wav",
+      "audio_quality": "unintelligible",
+      "system_output": {
+        "produced_incident_ids": [
+          1069
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1069,
+            "transcript": "Fire OAL Fire Armageddon Norah Osk B-D-9 Fire General A-12 608 A-04 K-Deck 8 4 7000 East A-Bullard Rescue Net 6-0 K-Deck 8",
+            "special_call": false,
+            "units": [],
+            "channel": "K-Deck 8",
+            "incident_type": "Fire OAL Fire Armageddon Norah Osk B-D-9 Fire General A-12 608 A-04 4",
+            "address": "7000 E A-bullard"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "[unintelligible] fire channel A-12 K-Deck 8 [unintelligible] K-Deck 8",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "[unintelligible] fire channel A-12 K-Deck 8 [unintelligible] K-Deck 8",
+            "special_call": false,
+            "units": [],
+            "channel": "K-Deck 8",
+            "incident_type": "",
+            "address": ""
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780088027.226_771318750.0-call_76955",
+      "audio_filename": "1795-1780088027.226_771318750.0-call_76955.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1070
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1070,
+            "transcript": "Special call Rescue 184 K-Deck 9 Difficulty breathing 17506 WN Buren Street Rescue 184 K-Deck 9",
+            "special_call": true,
+            "units": [
+              "Rescue 184"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Difficulty breathing 17506 WN",
+            "address": "Buren Street"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special call Rescue 184 K-Deck 9 Difficulty breathing 17506 Van Buren Street Rescue 184 K-Deck 9",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special call Rescue 184 K-Deck 9 Difficulty breathing 17506 Van Buren Street Rescue 184 K-Deck 9",
+            "special_call": true,
+            "units": [
+              "Rescue 184"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Difficulty breathing",
+            "address": "17506 W Van Buren St"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780088044.942_769818750.0-call_76963",
+      "audio_filename": "1795-1780088044.942_769818750.0-call_76963.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1071
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1071,
+            "transcript": "Engine 50 and Rescue 48 K-Deck 6 Fall Injury 3053 West Aulia Freeway Engine 50 and Rescue 48 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 50",
+              "Rescue 48"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Fall Injury",
+            "address": "3053 W Aulia Freeway And"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 50 and Rescue 48 K-Deck 6 Fall Injury 3053 West Aulia Freeway Engine 50 and Rescue 48 K-Deck 6",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 50 and Rescue 48 K-Deck 6 Fall Injury 3053 West Aulia Freeway Engine 50 and Rescue 48 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 50",
+              "Rescue 48"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Fall Injury",
+            "address": "3053 W Aulia Freeway And"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780088062.688_770818750.0-call_76972",
+      "audio_filename": "1795-1780088062.688_770818750.0-call_76972.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1072
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1072,
+            "transcript": "Engine 151 K-Deck 9 Tech Welfare 6558 North 43rd Avenue Engine 151 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Engine 151"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Check Welfare",
+            "address": "6558 N 43rd Ave"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 151 K-Deck 9 Check Welfare 6558 North 43rd Avenue Engine 151 K-Deck 9",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 151 K-Deck 9 Check Welfare 6558 North 43rd Avenue Engine 151 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Engine 151"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Check Welfare",
+            "address": "6558 N 43rd Ave"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780088079.185_769818750.0-call_76979",
+      "audio_filename": "1795-1780088079.185_769818750.0-call_76979.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1073
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1073,
+            "transcript": "Crisis response 181 K-Deck 2 Assist PD 13319 South 1-6 Lane Crisis response 181 K-Deck 2",
+            "special_call": false,
+            "units": [
+              "Crisis Response 181"
+            ],
+            "channel": "K-Deck 2",
+            "incident_type": "Crisis response 181 Assist PD 13319 South 1-6 Lane Crisis response 181",
+            "address": ""
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Crisis response 181 K-Deck 2 Assist PD 13319 South 1-6 Lane Crisis response 181 K-Deck 2",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Crisis response 181 K-Deck 2 Assist PD 13319 South 1-6 Lane Crisis response 181 K-Deck 2",
+            "special_call": false,
+            "units": [
+              "Crisis Response 181"
+            ],
+            "channel": "K-Deck 2",
+            "incident_type": "Assist PD",
+            "address": "13319 South 1-6 Ln"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780088097.032_772868750.0-call_76989",
+      "audio_filename": "1795-1780088097.032_772868750.0-call_76989.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1074
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1074,
+            "transcript": "K-Deck 8 Conscious Person 2-1 Watson Street Ladder 1 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Ladder 1"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Conscious Person 2-1",
+            "address": "Watson Street"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "K-Deck 8 Unconscious Person 2-1 Watson Street Ladder 1 K-Deck 8",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "K-Deck 8 Unconscious Person 2-1 Watson Street Ladder 1 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Ladder 1"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Unconscious person",
+            "address": "21 Watson Street"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780088173.029_769868750.0-call_77025",
+      "audio_filename": "1795-1780088173.029_769868750.0-call_77025.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1075
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1075,
+            "transcript": "LA-601 K-Deck 7 And no medical 4613 North 74th Street LA-601 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "La-601"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "LA-601 Unknown Medical",
+            "address": "4613 N 74th St"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "LA-601 K-Deck 7 unknown medical 4613 North 74th Street LA-601 K-Deck 7",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "LA-601 K-Deck 7 unknown medical 4613 North 74th Street LA-601 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "La-601"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Unknown Medical",
+            "address": "4613 N 74th St"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780088193.156_773931250.0-call_77038",
+      "audio_filename": "1795-1780088193.156_773931250.0-call_77038.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1076
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1076,
+            "transcript": "Special call Rescue 1 K-Deck 8 Altered level of consciousness 807 North 1st Street Rescue 1 K-Deck 8",
+            "special_call": true,
+            "units": [
+              "Rescue 1"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Altered level of consciousness",
+            "address": "807 N 1st St"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special call Rescue 1 K-Deck 8 Altered level of consciousness 807 North 1st Street Rescue 1 K-Deck 8",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special call Rescue 1 K-Deck 8 Altered level of consciousness 807 North 1st Street Rescue 1 K-Deck 8",
+            "special_call": true,
+            "units": [
+              "Rescue 1"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Altered level of consciousness",
+            "address": "807 N 1st St"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780088209.568_769868750.0-call_77055",
+      "audio_filename": "1795-1780088209.568_769868750.0-call_77055.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1077
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1077,
+            "transcript": "Engine 30 K-Deck 6 Injured person 3346 West Harmont Drive Engine 30 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 30"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Injured person",
+            "address": "3346 W Harmont Dr"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 30 K-Deck 6 Injured person 3346 West Harmont Drive Engine 30 K-Deck 6",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 30 K-Deck 6 Injured person 3346 West Harmont Drive Engine 30 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 30"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Injured person",
+            "address": "3346 W Harmont Dr"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780088294.781_772056250.0-call_77098",
+      "audio_filename": "1795-1780088294.781_772056250.0-call_77098.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1078
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1078,
+            "transcript": "Engine 8 and Rescue 8 K-Deck 8 701 East Jefferson Street Engine 8 and Rescue 8 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 8",
+              "Rescue 8"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "",
+            "address": "701 E Jefferson St"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 8 and Rescue 8 K-Deck 8 Code 701 East Jefferson Street Engine 8 and Rescue 8 K-Deck 8",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 8 and Rescue 8 K-Deck 8 Code 701 East Jefferson Street Engine 8 and Rescue 8 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 8",
+              "Rescue 8"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Code",
+            "address": "701 E Jefferson St"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780088328.106_769868750.0-call_77121",
+      "audio_filename": "1795-1780088328.106_769868750.0-call_77121.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1079,
+          1080
+        ],
+        "produced_dispatch_count": 2,
+        "rows": [
+          {
+            "id": 1079,
+            "transcript": "Engine 5 K-Deck 8 Fall Injury 2316 North Mitchell Street Engine 5 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 5"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Fall Injury",
+            "address": "2316 N Mitchell St"
+          },
+          {
+            "id": 1080,
+            "transcript": "Engine 24 Fire Channel A9 Alley Fire 2606 North 49th Lane Engine 24 Fire Channel A9",
+            "special_call": false,
+            "units": [
+              "Engine 24"
+            ],
+            "channel": "A9",
+            "incident_type": "Alley Fire",
+            "address": "2606 N 49th Ln"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 5 K-Deck 8 Fall Injury 2316 North Mitchell Street Engine 5 K-Deck 8 Engine 24 Fire Channel A9 Alley Fire 2606 North 49th Lane Engine 24 Fire Channel A9",
+        "expected_dispatch_count": 2,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 5 K-Deck 8 Fall Injury 2316 North Mitchell Street Engine 5 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 5"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Fall Injury",
+            "address": "2316 N Mitchell St"
+          },
+          {
+            "dispatch_transcript": "Engine 24 Fire Channel A9 Alley Fire 2606 North 49th Lane Engine 24 Fire Channel A9",
+            "special_call": false,
+            "units": [
+              "Engine 24"
+            ],
+            "channel": "A9",
+            "incident_type": "Alley Fire",
+            "address": "2606 N 49th Ln"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780088382.276_769868750.0-call_77169",
+      "audio_filename": "1795-1780088382.276_769868750.0-call_77169.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1081
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1081,
+            "transcript": "Engine 306 K-Deck 6 Tech Welfare 17200 West Bell Road Engine 306 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 306"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Check Welfare",
+            "address": "17200 W Bell Rd"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 306 K-Deck 6 Check Welfare 17200 West Bell Road Engine 306 K-Deck 6",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 306 K-Deck 6 Check Welfare 17200 West Bell Road Engine 306 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 306"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Check Welfare",
+            "address": "17200 W Bell Rd"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780088402.870_769868750.0-call_77199",
+      "audio_filename": "1795-1780088402.870_769868750.0-call_77199.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1082,
+          1083
+        ],
+        "produced_dispatch_count": 2,
+        "rows": [
+          {
+            "id": 1082,
+            "transcript": "1400 hours Phoenix Fire Regional Dispatch Special call Rescue 3 K-Deck 8 Fall Injury 2316 North Mitchell Street Rescue 3 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Rescue 3"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "1400 hours Phoenix Fire Regional Dispatch Special call Fall Injury",
+            "address": "2316 N Mitchell St"
+          },
+          {
+            "id": 1083,
+            "transcript": "Rescue 27 and Engine 52 K-Deck 7 Ill person 16211 North 40th Street Rescue 27 and Engine 52 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 52",
+              "Rescue 27"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Ill person",
+            "address": "16211 N 40th St"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "1400 hours Phoenix Fire Regional Dispatch Special call Rescue 3 K-Deck 8 Fall Injury 2316 North Mitchell Street Rescue 3 K-Deck 8 Rescue 27 and Engine 52 K-Deck 7 Ill person 16211 North 40th Street Rescue 27 and Engine 52 K-Deck 7 Engine 614 K-Deck 7 Service Call AOI [unintelligible]213 East Desert Stream Lane Engine 614 K-Deck 7",
+        "expected_dispatch_count": 3,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special call Rescue 3 K-Deck 8 Fall Injury 2316 North Mitchell Street Rescue 3 K-Deck 8",
+            "special_call": true,
+            "units": [
+              "Rescue 3"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Fall Injury",
+            "address": "2316 N Mitchell St"
+          },
+          {
+            "dispatch_transcript": "Rescue 27 and Engine 52 K-Deck 7 Ill person 16211 North 40th Street Rescue 27 and Engine 52 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 52",
+              "Rescue 27"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Ill person",
+            "address": "16211 N 40th St"
+          },
+          {
+            "dispatch_transcript": "Engine 614 K-Deck 7 Service Call AOI [unintelligible]213 East Desert Stream Lane Engine 614 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 614"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Service Call AIO",
+            "address": "213 East Desert Stream Ln"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780088560.696_769868750.0-call_77357",
+      "audio_filename": "1795-1780088560.696_769868750.0-call_77357.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1084
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1084,
+            "transcript": "Engine 38 K-Deck 8 Hillperson 13201 South Wacky O'Loop Engine 38 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 38"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Ill Person",
+            "address": "13201 S Wacky O'loop"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 38 K-Deck 8 Ill Person 13201 South Wakial Loop Engine 38 K-Deck 8",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 38 K-Deck 8 Ill Person 13201 South Wakial Loop Engine 38 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 38"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Ill Person",
+            "address": "13201 S Wakial Loop"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780088601.265_769868750.0-call_77392",
+      "audio_filename": "1795-1780088601.265_769868750.0-call_77392.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1085
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1085,
+            "transcript": "Special call Maricopa 158 K-Deck 9 Dilverson 6558 North 43rd Avenue Maricopa 158 K-Deck 9",
+            "special_call": true,
+            "units": [
+              "Maricopa 158"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Dilverson",
+            "address": "6558 N 43rd Ave"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special call Maricopa 158 K-Deck 9 Ill Person 6558 North 43rd Avenue Maricopa 158 K-Deck 9",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special call Maricopa 158 K-Deck 9 Ill Person 6558 North 43rd Avenue Maricopa 158 K-Deck 9",
+            "special_call": true,
+            "units": [
+              "Maricopa 158"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Ill person",
+            "address": "6558 N 43rd Ave"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780088745.333_769618750.0-call_77510",
+      "audio_filename": "1795-1780088745.333_769618750.0-call_77510.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1086
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1086,
+            "transcript": "Engine 194 and Maricopa 1501 K-Deck 9 Fall Injury 9930 West Desert River Blvd Engine 194 and Maricopa 1501 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Engine 194",
+              "Maricopa 1501"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Fall Injury",
+            "address": "9930 W Desert River Blvd"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 194 and Maricopa 1501 K-Deck 9 Fall Injury 9930 West Desert River Blvd Engine 194 and Maricopa 1501 K-Deck 9",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 194 and Maricopa 1501 K-Deck 9 Fall Injury 9930 West Desert River Blvd Engine 194 and Maricopa 1501 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Engine 194",
+              "Maricopa 1501"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Fall Injury",
+            "address": "9930 W Desert River Blvd"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780088797.388_769868750.0-call_77561",
+      "audio_filename": "1795-1780088797.388_769868750.0-call_77561.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1087,
+          1088
+        ],
+        "produced_dispatch_count": 2,
+        "rows": [
+          {
+            "id": 1087,
+            "transcript": "Engine 133 K-Deck 6 Fall Injury 12039 North Cherry Hills Drive E Engine 133 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 133"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Fall Injury",
+            "address": "12039 N Cherry Hills Dr"
+          },
+          {
+            "id": 1088,
+            "transcript": "Engine 331 K-Deck 6 Minor Fall Injury 18626 North Spanish Garden Drive Engine 331 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 331"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Minor Fall Injury",
+            "address": "18626 N Spanish Garden Dr"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 133 K-Deck 6 Fall Injury 12039 North Cherry Hills Drive E Engine 133 K-Deck 6 Engine 331 K-Deck 6 Minor Fall Injury 18626 North Spanish Garden Drive Engine 331 K-Deck 6 Engine 153 Fire Channel A9 Fire Alarm Indication 7012 West Acoma Drive Engine 153 Fire Channel A9",
+        "expected_dispatch_count": 3,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 133 K-Deck 6 Fall Injury 12039 North Cherry Hills Drive E Engine 133 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 133"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Fall Injury",
+            "address": "12039 N Cherry Hills Dr"
+          },
+          {
+            "dispatch_transcript": "Engine 331 K-Deck 6 Minor Fall Injury 18626 North Spanish Garden Drive Engine 331 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 331"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Minor Fall Injury",
+            "address": "18626 N Spanish Garden Dr"
+          },
+          {
+            "dispatch_transcript": "Engine 153 Fire Channel A9 Fire Alarm Indication 7012 West Acoma Drive Engine 153 Fire Channel A9",
+            "special_call": false,
+            "units": [
+              "Engine 153"
+            ],
+            "channel": "A9",
+            "incident_type": "Fire Alarm Indication",
+            "address": "7012 W Acoma Dr."
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780088892.362_769618750.0-call_77672",
+      "audio_filename": "1795-1780088892.362_769618750.0-call_77672.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1089,
+          1090
+        ],
+        "produced_dispatch_count": 2,
+        "rows": [
+          {
+            "id": 1089,
+            "transcript": "Ladder Tender 175 K-Deck 9 Seizure 619 South 122nd Lane Ladder Tender 175 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Ladder Tender 175"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Seizure",
+            "address": "619 S 122nd Ln"
+          },
+          {
+            "id": 1090,
+            "transcript": "LA 175 K-Deck 9 Ill Person 201 West Weovista Lane LA 175 K-Deck 9",
+            "special_call": false,
+            "units": [],
+            "channel": "K-Deck 9",
+            "incident_type": "LA 175 Ill Person",
+            "address": "201 W Weovista Ln"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Ladder Tender 175 K-Deck 9 Seizure 619 South 122nd Lane Ladder Tender 175 K-Deck 9 LA 175 K-Deck 9 Ill Person 201 West Rio Vista Lane LA 175 K-Deck 9",
+        "expected_dispatch_count": 2,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Ladder Tender 175 K-Deck 9 Seizure 619 South 122nd Lane Ladder Tender 175 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Ladder Tender 175"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Seizure",
+            "address": "619 S 122nd Ln"
+          },
+          {
+            "dispatch_transcript": "LA 175 K-Deck 9 Ill Person 201 West Rio Vista Lane LA 175 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "LA 175"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Ill Person",
+            "address": "201 W Rio Vista Ln"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780088933.096_769868750.0-call_77713",
+      "audio_filename": "1795-1780088933.096_769868750.0-call_77713.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1091
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1091,
+            "transcript": "Special call Rescue 43 K-Deck 8 Ill person 13201 South Wackyoloop Rescue 43 K-Deck 8",
+            "special_call": true,
+            "units": [
+              "Rescue 43"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Ill person",
+            "address": "13201 S Wackyoloop"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special call Rescue 43 K-Deck 8 Ill person 13201 South Wakial Loop Rescue 43 K-Deck 8",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special call Rescue 43 K-Deck 8 Ill person 13201 South Wakial Loop Rescue 43 K-Deck 8",
+            "special_call": true,
+            "units": [
+              "Rescue 43"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Ill person",
+            "address": "13201 S Wakial Loop"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780088956.526_769868750.0-call_77736",
+      "audio_filename": "1795-1780088956.526_769868750.0-call_77736.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1092,
+          1093
+        ],
+        "produced_dispatch_count": 2,
+        "rows": [
+          {
+            "id": 1092,
+            "transcript": "Engine 42 K-Deck 6 Unconscious person 15645 North 35th Avenue Engine 42 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 42"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Unconscious person",
+            "address": "15645 N 35th Ave"
+          },
+          {
+            "id": 1093,
+            "transcript": "Engine 133 K-Deck 6 Still person 9206 North 109th Avenue Engine 133 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 133"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Still person",
+            "address": "9206 N 109th Ave"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 42 K-Deck 6 Unconscious person 15645 North 35th Avenue Engine 42 K-Deck 6 Engine 133 K-Deck 6 Ill person 9206 North 109th Avenue Engine 133 K-Deck 6 Ladder Tender 20 K-Deck 9 Diabetic Problem 2106 West Vista Avenue Ladder Tender 20 K-Deck 9 Engine 278 K-Deck 7 Unconscious person 1259 South Loma Lane Engine 278 K-Deck 7",
+        "expected_dispatch_count": 4,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 42 K-Deck 6 Unconscious person 15645 North 35th Avenue Engine 42 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 42"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Unconscious person",
+            "address": "15645 N 35th Ave"
+          },
+          {
+            "dispatch_transcript": "Engine 133 K-Deck 6 Ill person 9206 North 109th Avenue Engine 133 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 133"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Ill person",
+            "address": "9206 N 109th Ave"
+          },
+          {
+            "dispatch_transcript": "Ladder Tender 20 K-Deck 9 Diabetic Problem 2106 West Vista Avenue Ladder Tender 20 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Ladder Tender 20"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Diabetic problem",
+            "address": "2106 W Vista Ave"
+          },
+          {
+            "dispatch_transcript": "Engine 278 K-Deck 7 Unconscious person 1259 South Loma Lane Engine 278 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 278"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Unconscious person",
+            "address": "1259 S Loma Ln"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780089098.600_773931250.0-call_77881",
+      "audio_filename": "1795-1780089098.600_773931250.0-call_77881.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1094
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1094,
+            "transcript": "Engine 37 K-Deck 7 Park problem 3841 East Thunderbird Road Engine 37 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 37"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Heart Problem",
+            "address": "3841 E Thunderbird Rd"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 37 K-Deck 7 Heart problem 3841 East Thunderbird Road Engine 37 K-Deck 7",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 37 K-Deck 7 Heart problem 3841 East Thunderbird Road Engine 37 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 37"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Heart Problem",
+            "address": "3841 E Thunderbird Rd"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780089119.432_769618750.0-call_77906",
+      "audio_filename": "1795-1780089119.432_769618750.0-call_77906.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1095,
+          1096
+        ],
+        "produced_dispatch_count": 2,
+        "rows": [
+          {
+            "id": 1095,
+            "transcript": "Engine 191 K-Deck 6 CVA 100701 North 99th Avenue Engine 191 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 191"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "CVA 100701 North",
+            "address": "99th Avenue"
+          },
+          {
+            "id": 1096,
+            "transcript": "Ladder 571 K-Deck 7 Altered Level of Consciousness 44405 West Honeycutt Avenue Ladder 571 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Ladder 571"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Altered Level of Consciousness",
+            "address": "44405 W Honeycutt Ave"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 191 K-Deck 6 CVA 10701 North 99th Avenue Engine 191 K-Deck 6 Ladder 571 K-Deck 7 Altered Level of Consciousness 44405 West Honeycutt Avenue Ladder 571 K-Deck 7 Special Call Rescue 303 K-Deck 6 Ill Person 17200 West Bell Road Rescue 303 K-Deck 6",
+        "expected_dispatch_count": 3,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 191 K-Deck 6 CVA 10701 North 99th Avenue Engine 191 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 191"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "CVA",
+            "address": "100701 N 99th Ave "
+          },
+          {
+            "dispatch_transcript": "Ladder 571 K-Deck 7 Altered Level of Consciousness 44405 West Honeycutt Avenue Ladder 571 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Ladder 571"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Altered Level of Consciousness",
+            "address": "44405 W Honeycutt Ave"
+          },
+          {
+            "dispatch_transcript": "Special Call Rescue 303 K-Deck 6 Ill Person 17200 West Bell Road Rescue 303 K-Deck 6",
+            "special_call": true,
+            "units": [
+              "Rescue 303"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Ill person",
+            "address": "17200 W Bell Rd"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780089170.496_769868750.0-call_77965",
+      "audio_filename": "1795-1780089170.496_769868750.0-call_77965.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1097,
+          1098
+        ],
+        "produced_dispatch_count": 2,
+        "rows": [
+          {
+            "id": 1097,
+            "transcript": "Rescue 615 and Ladder 611 K-Deck 7 Fall Injury 7500 East Deer Valley Road Rescue 615 and Ladder 611 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Ladder 611",
+              "Rescue 615"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Fall Injury",
+            "address": "7500 E Deer Valley Rd"
+          },
+          {
+            "id": 1098,
+            "transcript": "BH 2 K-Deck 2 Crisis Care 3515 West Union Hills Drive BH 2 K-Deck 2",
+            "special_call": false,
+            "units": [
+              "Bh 2"
+            ],
+            "channel": "K-Deck 2",
+            "incident_type": "BH 2 Crisis Care",
+            "address": "3515 W Union Hills Dr"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Rescue 615 and Ladder 611 K-Deck 7 Fall Injury 7500 East Deer Valley Road Rescue 615 and Ladder 611 K-Deck 7 BH 2 K-Deck 2 Crisis Care 3515 West Union Hills Drive BH 2 K-Deck 2 Engine 606 K-Deck 7 Injured person 11411 North 114th Street Engine 606 K-Deck 7",
+        "expected_dispatch_count": 3,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Rescue 615 and Ladder 611 K-Deck 7 Fall Injury 7500 East Deer Valley Road Rescue 615 and Ladder 611 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Ladder 611",
+              "Rescue 615"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Fall Injury",
+            "address": "7500 E Deer Valley Rd"
+          },
+          {
+            "dispatch_transcript": "BH 2 K-Deck 2 Crisis Care 3515 West Union Hills Drive BH 2 K-Deck 2",
+            "special_call": false,
+            "units": [
+              "Bh 2"
+            ],
+            "channel": "K-Deck 2",
+            "incident_type": "Crisis Care",
+            "address": "3515 W Union Hills Dr"
+          },
+          {
+            "dispatch_transcript": "Engine 606 K-Deck 7 Injured person 11411 North 114th Street Engine 606 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 606"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Injured Person",
+            "address": "11411 N 114th St"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780089235.691_772056250.0-call_78023",
+      "audio_filename": "1795-1780089235.691_772056250.0-call_78023.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1099
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1099,
+            "transcript": "Engine 43 K-Deck 8 Minor Injury 12216 South Oneida Street Engine 43 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 43"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Minor Injury",
+            "address": "12216 S Oneida St"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 43 K-Deck 8 Minor Injury 12216 South Oneida Street Engine 43 K-Deck 8",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 43 K-Deck 8 Minor Injury 12216 South Oneida Street Engine 43 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 43"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Minor Injury",
+            "address": "12216 S Oneida St"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780089347.899_769868750.0-call_78128",
+      "audio_filename": "1795-1780089347.899_769868750.0-call_78128.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1100
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1100,
+            "transcript": "Engine 183 fire channel A9 Fire alarm indication 1560 North Litchfield Road Engine 183 fire channel A9",
+            "special_call": false,
+            "units": [
+              "Engine 183"
+            ],
+            "channel": "A9",
+            "incident_type": "Fire alarm indication",
+            "address": "1560 N Litchfield Rd"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 183 fire channel A9 Fire alarm indication 1560 North Litchfield Road Engine 183 fire channel A9",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 183 fire channel A9 Fire alarm indication 1560 North Litchfield Road Engine 183 fire channel A9",
+            "special_call": false,
+            "units": [
+              "Engine 183"
+            ],
+            "channel": "A9",
+            "incident_type": "Fire alarm indication",
+            "address": "1560 N Litchfield Rd"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780089403.654_769868750.0-call_78165",
+      "audio_filename": "1795-1780089403.654_769868750.0-call_78165.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1101
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1101,
+            "transcript": "Special call Maricopa 175 K-Deck 9 Difficulty breathing 619 South 122nd Lane Maricopa 175 K-Deck 9",
+            "special_call": true,
+            "units": [
+              "Maricopa 175"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Difficulty breathing",
+            "address": "619 S 122nd Ln"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special call Maricopa 175 K-Deck 9 Difficulty breathing 619 South 122nd Lane Maricopa 175 K-Deck 9",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special call Maricopa 175 K-Deck 9 Difficulty breathing 619 South 122nd Lane Maricopa 175 K-Deck 9",
+            "special_call": true,
+            "units": [
+              "Maricopa 175"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Difficulty breathing",
+            "address": "619 S 122nd Ln"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780089484.523_769818750.0-call_78227",
+      "audio_filename": "1795-1780089484.523_769818750.0-call_78227.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1102
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1102,
+            "transcript": "N1 Rescuing 08 and Mobile Stroke Unit 1 K-Deck 8 CVA 18 North Central L N1 Reu 908 and Mobile Stroke Unit 1 K-Deck 8",
+            "special_call": false,
+            "units": [],
+            "channel": "K-Deck 8",
+            "incident_type": "N1 Rescuing 08 ",
+            "address": "Mobile Stroke Unit 1  CVA 18 North Central L N1 Reu 908 and Mobile Stroke Unit 1"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 1 Rescue 908 and Mobile Stroke Unit 1 K-Deck 8 CVA 18 North Central [unintelligible] 908 and Mobile Stroke Unit 1 K-Deck 8",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 1 Rescue 908 and Mobile Stroke Unit 1 K-Deck 8 CVA 18 North Central [unintelligible] 908 and Mobile Stroke Unit 1 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 1",
+              "Rescue 908",
+              "Mobile Stroke Unit 1"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "CVA",
+            "address": "18 North Central"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780089524.010_769618750.0-call_78249",
+      "audio_filename": "1795-1780089524.010_769618750.0-call_78249.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1103,
+          1104
+        ],
+        "produced_dispatch_count": 2,
+        "rows": [
+          {
+            "id": 1103,
+            "transcript": "Engine 23 K-Deck 8 Minor Fall Injury 4420 South 18th Place Engine 23 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 23"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Minor Fall Injury",
+            "address": "4420 S 18th Pl"
+          },
+          {
+            "id": 1104,
+            "transcript": "Engine 930 and Rescue 48 K-Deck 7 Fall Injury 2510 West Happy Valley Road Engine 930 and Rescue 48 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 930",
+              "Rescue 48"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Fall Injury",
+            "address": "2510 W Happy Valley Rd"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 23 K-Deck 8 Minor Fall Injury 4420 South 18th Place Engine 23 K-Deck 8 Engine 930 and Rescue 48 K-Deck 7 Fall Injury 2510 West Happy Valley Road Engine 930 and Rescue 48 K-Deck 7 Special Call Rescue 31 K-Deck 7 Heart Problem 3841 East Thunderbird Road Rescue 31 K-Deck 7",
+        "expected_dispatch_count": 3,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 23 K-Deck 8 Minor Fall Injury 4420 South 18th Place Engine 23 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 23"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Minor Fall Injury",
+            "address": "4420 S 18th Pl"
+          },
+          {
+            "dispatch_transcript": "Engine 930 and Rescue 48 K-Deck 7 Fall Injury 2510 West Happy Valley Road Engine 930 and Rescue 48 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 930",
+              "Rescue 48"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Fall Injury",
+            "address": "2510 W Happy Valley Rd"
+          },
+          {
+            "dispatch_transcript": "Special Call Rescue 31 K-Deck 7 Heart Problem 3841 East Thunderbird Road Rescue 31 K-Deck 7",            "special_call": true,
+            "units": [
+              "Rescue 31"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Heart Problem",
+            "address": "3841 E Thunderbird Rd"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780089592.497_769868750.0-call_78292",
+      "audio_filename": "1795-1780089592.497_769868750.0-call_78292.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1105
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1105,
+            "transcript": "Special Call Maricopa 171 K-Deck 9 Ilverson 201 West Rio Vista Lane Maricopa 171 K-Deck 9",
+            "special_call": true,
+            "units": [
+              "Maricopa 171"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Ill Person",
+            "address": "201 W Rio Vista Ln"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special Call Maricopa 171 K-Deck 9 Ill person 201 West Rio Vista Lane Maricopa 171 K-Deck 9",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special Call Maricopa 171 K-Deck 9 Ill person 201 West Rio Vista Lane Maricopa 171 K-Deck 9",
+            "special_call": true,
+            "units": [
+              "Maricopa 171"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Ill Person",
+            "address": "201 W Rio Vista Ln"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780089684.354_769868750.0-call_78361",
+      "audio_filename": "1795-1780089684.354_769868750.0-call_78361.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1106
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1106,
+            "transcript": "Special call Maricopa 610 K-Deck 7 Injured person 11411 North 114th Street Maricopa 610 K-Deck 7",
+            "special_call": true,
+            "units": [
+              "Maricopa 610"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Injured person",
+            "address": "11411 N 114th St"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special call Maricopa 610 K-Deck 7 Injured person 11411 North 114th Street Maricopa 610 K-Deck 7",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special call Maricopa 610 K-Deck 7 Injured person 11411 North 114th Street Maricopa 610 K-Deck 7",
+            "special_call": true,
+            "units": [
+              "Maricopa 610"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Injured person",
+            "address": "11411 N 114th St"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780089755.400_769618750.0-call_78428",
+      "audio_filename": "1795-1780089755.400_769618750.0-call_78428.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1107
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1107,
+            "transcript": "Engine 612 and Engine 613 K-Deck 7 Park problem 8225 East Foothill Circle Engine 612 and Engine 613 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 612",
+              "Engine 613"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Heart Problem",
+            "address": "8225 E Foothill Circle And"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 612 and Engine 613 K-Deck 7 Heart problem 8225 East Foothill Circle Engine 612 and Engine 613 K-Deck 7",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 612 and Engine 613 K-Deck 7 Heart problem 8225 East Foothill Circle Engine 612 and Engine 613 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 612",
+              "Engine 613"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Heart Problem",
+            "address": "8225 E Foothill Circle And"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780089795.084_772868750.0-call_78461",
+      "audio_filename": "1795-1780089795.084_772868750.0-call_78461.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1108
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1108,
+            "transcript": "Engine 274 K-Deck 7 Bollinger 3534 Norton's Avenue Engine 255 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 274",
+              "Engine 255"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Bollinger",
+            "address": "3534 Norton's Avenue"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 275 K-Deck 7 Fall Injury 3534 [unintelligible] Avenue Engine 275 K-Deck 7",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 275 K-Deck 7 Fall Injury 3534 [unintelligible] Avenue Engine 275 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 275"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Fall Injury",
+            "address": ""
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780089811.494_770818750.0-call_78479",
+      "audio_filename": "1795-1780089811.494_770818750.0-call_78479.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1109
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1109,
+            "transcript": "And Rescue 605 K-Deck 7 Seizure 15147 North Scottsdale Road Engine 31 And Rescue 605 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 31",
+              "Rescue 605"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "And Seizure",
+            "address": "15147 N Scottsdale Rd"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "And Rescue 605 K-Deck 7 Seizure 15147 North Scottsdale Road Engine 31 And Rescue 605 K-Deck 7",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "And Rescue 605 K-Deck 7 Seizure 15147 North Scottsdale Road Engine 31 And Rescue 605 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 31",
+              "Rescue 605"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Seizure",
+            "address": "15147 N Scottsdale Rd"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780089874.954_769868750.0-call_78512",
+      "audio_filename": "1795-1780089874.954_769868750.0-call_78512.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1110,
+          1111
+        ],
+        "produced_dispatch_count": 2,
+        "rows": [
+          {
+            "id": 1110,
+            "transcript": "Special Call Rescue 57 K-Deck 8 Fall Injury 80-08 South Jesse Owens Parkway Rescue 57 K-Deck 8",
+            "special_call": true,
+            "units": [
+              "Rescue 57"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Fall Injury 80-08",
+            "address": "South Jesse Owens Parkway"
+          },
+          {
+            "id": 1111,
+            "transcript": "Engine 159 K-Deck 6 Maternity Problem 7645 West Bell Road Engine 159 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 159"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Maternity Problem",
+            "address": "7645 W Bell Rd"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special Call Rescue 57 K-Deck 8 Fall Injury 80-08 South Jesse Owens Parkway Rescue 57 K-Deck 8 Engine 159 K-Deck 6 Maternity Problem 7645 West Bell Road Engine 159 K-Deck 6 BH 9 K-Deck 2 Crisis Care 7th Street and Thunderbird Road BH 9 K-Deck 2",
+        "expected_dispatch_count": 3,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special Call Rescue 57 K-Deck 8 Fall Injury 80-08 South Jesse Owens Parkway Rescue 57 K-Deck 8",
+            "special_call": true,
+            "units": [
+              "Rescue 57"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Fall Injury",
+            "address": "8008 South Jesse Owens Parkway"
+          },
+          {
+            "dispatch_transcript": "Engine 159 K-Deck 6 Maternity Problem 7645 West Bell Road Engine 159 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 159"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Maternity Problem",
+            "address": "7645 W Bell Rd"
+          },
+          {
+            "dispatch_transcript": "BH 9 K-Deck 2 Crisis Care 7th Street and Thunderbird Road BH 9 K-Deck 2",
+            "special_call": false,
+            "units": [
+              "BH 9"
+            ],
+            "channel": "K-Deck 2",
+            "incident_type": "Crisis Care",
+            "address": "7th St and Thunderbird Rd"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780089926.185_769868750.0-call_78549",
+      "audio_filename": "1795-1780089926.185_769868750.0-call_78549.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1112,
+          1113
+        ],
+        "produced_dispatch_count": 2,
+        "rows": [
+          {
+            "id": 1112,
+            "transcript": "Engine 60 K-Deck 6 962 I-17 at West Southbound North of Engine 60 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 60"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "962",
+            "address": "I-17 and West Southbound North of"
+          },
+          {
+            "id": 1113,
+            "transcript": "Ladder Tender 608 K-Deck 7 Fall Injury 14696 North Frank Lloyd Wright Boulevard Ladder Tender 608 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Ladder Tender 608"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Fall Injury",
+            "address": "14696 N Frank Lloyd Wright Blvd"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 60 K-Deck 6 962 I-17 at [unintelligible] Southbound North of Engine 60 K-Deck 6 Ladder Tender 608 K-Deck 7 Fall Injury 14696 North Frank Lloyd Wright Boulevard Ladder Tender 608 K-Deck 7 Engine 22 K-Deck 8 Heart Problem [unintelligible] East Roser Road Engine 22 K-Deck 8",
+        "expected_dispatch_count": 3,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 60 K-Deck 6 962 I-17 at [unintelligible] Southbound North of Engine 60 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 60"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "962",
+            "address": "I-17 and ?? Southbound North of"
+          },
+          {
+            "dispatch_transcript": "Ladder Tender 608 K-Deck 7 Fall Injury 14696 North Frank Lloyd Wright Boulevard Ladder Tender 608 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Ladder Tender 608"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Fall Injury",
+            "address": "14696 N Frank Lloyd Wright Blvd"
+          },
+          {
+            "dispatch_transcript": "Engine 22 K-Deck 8 Heart Problem [unintelligible] East Roser Road Engine 22 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 22"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Heart Problem",
+            "address": "East Roser Ln"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780089979.466_772868750.0-call_78600",
+      "audio_filename": "1795-1780089979.466_772868750.0-call_78600.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1114
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1114,
+            "transcript": "Special Quest 194 K-Deck 6 CVA 1007-01 North 9th Avenue Res 194 K-Deck 6",
+            "special_call": false,
+            "units": [],
+            "channel": "K-Deck 6",
+            "incident_type": "Special Quest 194 CVA 1007-01 North",
+            "address": "9th Avenue Res 194"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special [unintellibible] 194 K-Deck 6 CVA 10701 North 99th Avenue Res 194 K-Deck 6",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special [unintellibible] 194 K-Deck 6 CVA 10701 North 99th Avenue Res 194 K-Deck 6",
+            "special_call": true,
+            "units": [
+              "Rescue 194"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "CVA",
+            "address": "10701 N 99th Ave"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780090009.256_769868750.0-call_78616",
+      "audio_filename": "1795-1780090009.256_769868750.0-call_78616.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1115
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1115,
+            "transcript": "Engine 39 K-Deck 9 Ilverson 1870 West Lynn Lane Engine 39 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Engine 39"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Ill Person",
+            "address": "1870 W Lynn Ln"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 39 K-Deck 9 Ill Person 1870 West Lynn Lane Engine 39 K-Deck 9",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 39 K-Deck 9 Ill Person 1870 West Lynn Lane Engine 39 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Engine 39"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Ill Person",
+            "address": "1870 W Lynn Ln"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780090026.678_769868750.0-call_78635",
+      "audio_filename": "1795-1780090026.678_769868750.0-call_78635.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1116
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1116,
+            "transcript": "Special call BH7 K-Deck 6 Unconscious person 15645 North 35th Avenue BH7 K-Deck 6",
+            "special_call": true,
+            "units": [
+              "Bh7"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "BH7 Unconscious person",
+            "address": "15645 N 35th Ave"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special call BH7 K-Deck 6 Unconscious person 15645 North 35th Avenue BH7 K-Deck 6",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special call BH7 K-Deck 6 Unconscious person 15645 North 35th Avenue BH7 K-Deck 6",
+            "special_call": true,
+            "units": [
+              "Bh7"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Unconscious person",
+            "address": "15645 N 35th Ave"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780090138.855_769618750.0-call_78705",
+      "audio_filename": "1795-1780090138.855_769618750.0-call_78705.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1117,
+          1118
+        ],
+        "produced_dispatch_count": 2,
+        "rows": [
+          {
+            "id": 1117,
+            "transcript": "Special call Rescue 57 K-Deck 9 Ill person 1870 West Lynn Lane Rescue 57 K-Deck 9",
+            "special_call": true,
+            "units": [
+              "Rescue 57"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Ill person",
+            "address": "1870 W Lynn Ln"
+          },
+          {
+            "id": 1118,
+            "transcript": "Ladder Tender 9 K-Deck 8 Altered level of consciousness 1434 East Edgemont Avenue Ladder Tender 9 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Ladder Tender 9"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Altered level of consciousness",
+            "address": "1434 E Edgemont Ave"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special call Rescue 57 K-Deck 9 Ill person 1870 West Lynn Lane Rescue 57 K-Deck 9 Ladder Tender 9 K-Deck 8 Altered level of consciousness 1434 East Edgemont Avenue Ladder Tender 9 K-Deck 8",
+        "expected_dispatch_count": 2,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special call Rescue 57 K-Deck 9 Ill person 1870 West Lynn Lane Rescue 57 K-Deck 9",
+            "special_call": true,
+            "units": [
+              "Rescue 57"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Ill person",
+            "address": "1870 W Lynn Ln"
+          },
+          {
+            "dispatch_transcript": "Ladder Tender 9 K-Deck 8 Altered level of consciousness 1434 East Edgemont Avenue Ladder Tender 9 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Ladder Tender 9"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Altered level of consciousness",
+            "address": "1434 E Edgemont Ave"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780090170.897_769868750.0-call_78732",
+      "audio_filename": "1795-1780090170.897_769868750.0-call_78732.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1119
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1119,
+            "transcript": "Engine 171 K-Deck 9 Altered level of consciousness 24 North 5th Street Engine 171 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Engine 171"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Altered level of consciousness 24 North",
+            "address": "5th Street"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 171 K-Deck 9 Altered level of consciousness 24 North 5th Street Engine 171 K-Deck 9",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 171 K-Deck 9 Altered level of consciousness 24 North 5th Street Engine 171 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Engine 171"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Altered level of consciousness",
+            "address": "24 N 5th Street"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780090202.521_769868750.0-call_78762",
+      "audio_filename": "1795-1780090202.521_769868750.0-call_78762.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1120,
+          1121
+        ],
+        "produced_dispatch_count": 2,
+        "rows": [
+          {
+            "id": 1120,
+            "transcript": "Engine 935 and Rescue 930 K-Deck 8 Allergic Reaction 17015 North 7th Street Engine 935 and Rescue 930 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 935",
+              "Rescue 930"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Allergic Reaction",
+            "address": "17015 N 7th St"
+          },
+          {
+            "id": 1121,
+            "transcript": "1430 hours Phoenix Fire Regional Dispatch Engine 307 Fire Channel Way 6 Fire Alarm Indication 16350 West Cactus Road Engine 307 Fire Channel Way 6 Engine 30 KDEC 9 Unconscious Person 3200 West Morton Avenue Engine 30 KDEC 9",
+            "special_call": false,
+            "units": [
+              "Engine 307",
+              "Engine 30"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "1430 hours Phoenix Fire Regional Dispatch Fire Channel Way 6 Fire Alarm Indication",
+            "address": "16350 W Cactus Rd"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 935 and Rescue 930 K-Deck 8 Allergic Reaction 17015 North 7th Street Engine 935 and Rescue 930 K-Deck 8 1430 hours Phoenix Fire Regional Dispatch Engine 307 Fire Channel A6 Fire Alarm Indication 16350 West Cactus Road Engine 307 Fire Channel A6 Engine 30 K-Deck 9 Unconscious Person 3200 West Morton Avenue Engine 30 K-Deck 9",
+        "expected_dispatch_count": 3,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 935 and Rescue 930 K-Deck 8 Allergic Reaction 17015 North 7th Street Engine 935 and Rescue 930 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 935",
+              "Rescue 930"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Allergic Reaction",
+            "address": "17015 N 7th St"
+          },
+          {
+            "dispatch_transcript": "Engine 307 Fire Channel A6 Fire Alarm Indication 16350 West Cactus Road Engine 307 Fire Channel A6",
+            "special_call": false,
+            "units": [
+              "Engine 307"
+            ],
+            "channel": "A6",
+            "incident_type": "Fire Alarm Indication",
+            "address": "16350 W Cactus Rd"
+          },
+          {
+            "dispatch_transcript": "Engine 30 K-Deck 9 Unconscious Person 3200 West Morton Avenue Engine 30 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Engine 30"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Unconscious person",
+            "address": "3200 W Morton Ave"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780090279.523_769868750.0-call_78802",
+      "audio_filename": "1795-1780090279.523_769868750.0-call_78802.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1122,
+          1123
+        ],
+        "produced_dispatch_count": 2,
+        "rows": [
+          {
+            "id": 1122,
+            "transcript": "Medical Response 18 K-Deck 9 Fall Injury 27th Drive and Glen Rose Avenue Medical Response 18 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Medical Response 18"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Fall Injury",
+            "address": "27th Drive and Glen Rose Avenue"
+          },
+          {
+            "id": 1123,
+            "transcript": "Engine 17 Fire Channel A5 Fire Alarm Indication 2415 East Camelback Road Engine 17 Fire Channel A5",
+            "special_call": false,
+            "units": [
+              "Engine 17"
+            ],
+            "channel": "A5",
+            "incident_type": "Fire Alarm Indication",
+            "address": "2415 E Camelback Rd"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Medical Response 18 K-Deck 9 Fall Injury 27th Drive and Glen Rose Avenue Medical Response 18 K-Deck 9 Engine 17 Fire Channel A5 Fire Alarm Indication 2415 East Camelback Road Engine 17 Fire Channel A5",
+        "expected_dispatch_count": 2,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Medical Response 18 K-Deck 9 Fall Injury 27th Drive and Glen Rose Avenue Medical Response 18 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Medical Response 18"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Fall Injury",
+            "address": "27th Drive and Glen Rose Avenue"
+          },
+          {
+            "dispatch_transcript": "Engine 17 Fire Channel A5 Fire Alarm Indication 2415 East Camelback Road Engine 17 Fire Channel A5",
+            "special_call": false,
+            "units": [
+              "Engine 17"
+            ],
+            "channel": "A5",
+            "incident_type": "Fire Alarm Indication",
+            "address": "2415 E Camelback Rd"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780090336.044_770818750.0-call_78841",
+      "audio_filename": "1795-1780090336.044_770818750.0-call_78841.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1124
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1124,
+            "transcript": "F40 K-Deck 9 Chest pain 762 West Meadowbrook Avenue Engine 40 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Engine 40"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "F40 Chest pain",
+            "address": "762 W Meadowbrook Ave"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "40 K-Deck 9 Chest pain 7062 West Meadowbrook Avenue Engine 40 K-Deck 9",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "40 K-Deck 9 Chest pain 7062 West Meadowbrook Avenue Engine 40 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Engine 40"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Chest pain",
+            "address": "7062 W Meadowbrook Ave"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780090409.051_769868750.0-call_78888",
+      "audio_filename": "1795-1780090409.051_769868750.0-call_78888.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1125
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1125,
+            "transcript": "Special call Rescue 192 K-Deck 6 Maternity problem 7645 West Bell Road Rescue 192 K-Deck 6",
+            "special_call": true,
+            "units": [
+              "Rescue 192"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Maternity problem",
+            "address": "7645 W Bell Rd"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special call Rescue 192 K-Deck 6 Maternity problem 7645 West Bell Road Rescue 192 K-Deck 6",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special call Rescue 192 K-Deck 6 Maternity problem 7645 West Bell Road Rescue 192 K-Deck 6",
+            "special_call": true,
+            "units": [
+              "Rescue 192"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Maternity problem",
+            "address": "7645 W Bell Rd"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780090472.532_769868750.0-call_78929",
+      "audio_filename": "1795-1780090472.532_769868750.0-call_78929.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1126,
+          1127
+        ],
+        "produced_dispatch_count": 2,
+        "rows": [
+          {
+            "id": 1126,
+            "transcript": "Engine 29 and Rescue 29 K-Deck 8 Heart problem 4451 East Oak Street Engine 29 and Rescue 29 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 29",
+              "Rescue 29"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Heart problem",
+            "address": "4451 E Oak St"
+          },
+          {
+            "id": 1127,
+            "transcript": "Special call Rescue 30 K-Deck 6 962 Sheen at West Northern Avenue southbound north of Rescue 30 K-Deck 6",
+            "special_call": true,
+            "units": [
+              "Rescue 30"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "962",
+            "address": "Sheen and West Northern Avenue southbound north of"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 29 and Rescue 29 K-Deck 8 Heart problem 4451 East Oak Street Engine 29 and Rescue 29 K-Deck 8  Special call Rescue 30 K-Deck 6 962 [unintelligible] at West Northern Avenue southbound north of Rescue 30 K-Deck 6",
+        "expected_dispatch_count": 2,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 29 and Rescue 29 K-Deck 8 Heart problem 4451 East Oak Street Engine 29 and Rescue 29 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 29",
+              "Rescue 29"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Heart problem",
+            "address": "4451 E Oak St"
+          },
+          {
+            "dispatch_transcript": "Special call Rescue 30 K-Deck 6 962 [unintelligible] at West Northern Avenue southbound north of Rescue 30 K-Deck 6",
+            "special_call": true,
+            "units": [
+              "Rescue 30"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "962",
+            "address": "I-17 and West Northern Avenue southbound north of"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780090522.707_769618750.0-call_78978",
+      "audio_filename": "1795-1780090522.707_769618750.0-call_78978.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1128
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1128,
+            "transcript": "Engine 152 and Maricopa 155 K-Deck 9 Altered level of consciousness 7135 West Rose Lane Engine 152 and Maricopa 155 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Engine 152",
+              "Maricopa 155"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Altered level of consciousness",
+            "address": "7135 W Rose Ln"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 152 and Maricopa 155 K-Deck 9 Altered level of consciousness 7135 West Rose Lane Engine 152 and Maricopa 155 K-Deck 9",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 152 and Maricopa 155 K-Deck 9 Altered level of consciousness 7135 West Rose Lane Engine 152 and Maricopa 155 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Engine 152",
+              "Maricopa 155"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Altered level of consciousness",
+            "address": "7135 W Rose Ln"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780090552.193_769818750.0-call_79009",
+      "audio_filename": "1795-1780090552.193_769818750.0-call_79009.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1129
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1129,
+            "transcript": "12 K-Deck 8 Payne 321 North 30th Street 12 K-Deck 8",
+            "special_call": false,
+            "units": [],
+            "channel": "K-Deck 8",
+            "incident_type": "12 Payne",
+            "address": "321 N 30th St"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "12 K-Deck 8 Payne 321 North 30th Street 12 K-Deck 8",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "12 K-Deck 8 Payne 321 North 30th Street 12 K-Deck 8",
+            "special_call": false,
+            "units": [],
+            "channel": "K-Deck 8",
+            "incident_type": "Chest Pain",
+            "address": "321 N 30th St"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780090583.810_772056250.0-call_79032",
+      "audio_filename": "1795-1780090583.810_772056250.0-call_79032.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1130
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1130,
+            "transcript": "Engine 7 K-Deck 8 Hillperson 240 East Ruth Avenue Engine 7 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 7"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Ill Person",
+            "address": "240 E Ruth Ave"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 7 K-Deck 8 Ill person 240 East Ruth Avenue Engine 7 K-Deck 8",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 7 K-Deck 8 Ill person 240 East Ruth Avenue Engine 7 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 7"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Ill Person",
+            "address": "240 E Ruth Ave"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780090631.818_772618750.0-call_79079",
+      "audio_filename": "1795-1780090631.818_772618750.0-call_79079.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1131
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1131,
+            "transcript": "Special call Maricopa 173 K-Deck 9 Altered level of consciousness 24 North 5th Street Maricopa 173 K-Deck 9",
+            "special_call": true,
+            "units": [
+              "Maricopa 173"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Altered level of consciousness 24 North",
+            "address": "5th Street"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special call Maricopa 173 K-Deck 9 Altered level of consciousness 24 North 5th Street Maricopa 173 K-Deck 9",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special call Maricopa 173 K-Deck 9 Altered level of consciousness 24 North 5th Street Maricopa 173 K-Deck 9",
+            "special_call": true,
+            "units": [
+              "Maricopa 173"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Altered level of consciousness",
+            "address": "24 N 5th Street"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780090680.039_771318750.0-call_79110",
+      "audio_filename": "1795-1780090680.039_771318750.0-call_79110.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1132
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1132,
+            "transcript": "Special call Rescue 9 K-Deck 8 Altered level of consciousness 1434 East Edgemont Avenue Rescue 9 K-Deck 8",
+            "special_call": true,
+            "units": [
+              "Rescue 9"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Altered level of consciousness",
+            "address": "1434 E Edgemont Ave"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special call Rescue 9 K-Deck 8 Altered level of consciousness 1434 East Edgemont Avenue Rescue 9 K-Deck 8",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special call Rescue 9 K-Deck 8 Altered level of consciousness 1434 East Edgemont Avenue Rescue 9 K-Deck 8",
+            "special_call": true,
+            "units": [
+              "Rescue 9"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Altered level of consciousness",
+            "address": "1434 E Edgemont Ave"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780090699.038_769868750.0-call_79115",
+      "audio_filename": "1795-1780090699.038_769868750.0-call_79115.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1133
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1133,
+            "transcript": "Ladder Tender 33 K-Deck 6 Overdose 23rd Avenue and Cactus Road Tender 33 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Ladder Tender 33"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Overdose",
+            "address": "23rd Avenue and Cactus Road Tender"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Ladder Tender 33 K-Deck 6 Overdose 23rd Avenue and Cactus Road Tender 33 K-Deck 6",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Ladder Tender 33 K-Deck 6 Overdose 23rd Avenue and Cactus Road Tender 33 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Ladder Tender 33"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Overdose",
+            "address": "23rd Avenue and Cactus Road"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780090765.088_769868750.0-call_79162",
+      "audio_filename": "1795-1780090765.088_769868750.0-call_79162.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1134,
+          1135
+        ],
+        "produced_dispatch_count": 2,
+        "rows": [
+          {
+            "id": 1134,
+            "transcript": "Special Call Rescue 918 K-Deck 9 Fall Injury 27th Drive in Glensdale Rescue 918 K-Deck 9",
+            "special_call": true,
+            "units": [
+              "Rescue 918"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Fall Injury",
+            "address": "27th Drive in Glensdale"
+          },
+          {
+            "id": 1135,
+            "transcript": "Engine 50 K-Deck 6 Injured Person 3666 West Michigan Avenue Engine 50 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 50"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Injured Person",
+            "address": "3666 W Michigan Ave"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special Call Rescue 918 K-Deck 9 Fall Injury 27th Drive and Glendale Rescue 918 K-Deck 9 Engine 50 K-Deck 6 Injured Person 3666 West Michigan Avenue Engine 50 K-Deck 6",
+        "expected_dispatch_count": 2,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special Call Rescue 918 K-Deck 9 Fall Injury 27th Drive and Glendale Rescue 918 K-Deck 9",
+            "special_call": true,
+            "units": [
+              "Rescue 918"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Fall Injury",
+            "address": "27th Drive and Glendale"
+          },
+          {
+            "dispatch_transcript": "Engine 50 K-Deck 6 Injured Person 3666 West Michigan Avenue Engine 50 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 50"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Injured Person",
+            "address": "3666 W Michigan Ave"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780090817.464_769868750.0-call_79213",
+      "audio_filename": "1795-1780090817.464_769868750.0-call_79213.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1136,
+          1137
+        ],
+        "produced_dispatch_count": 2,
+        "rows": [
+          {
+            "id": 1136,
+            "transcript": "Engine 132 K-Deck 6 Abdominal pain 180616 North 99th Avenue Engine 132 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 132"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Abdominal pain 180616 North",
+            "address": "99th Avenue"
+          },
+          {
+            "id": 1137,
+            "transcript": "Rescue 7 and Engine 20 K-Deck 8 Seizure 9609 North 5th Street Rescue 7 and Engine 20 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 20",
+              "Rescue 7"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Seizure",
+            "address": "9609 N 5th St"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 132 K-Deck 6 Abdominal pain 18616 North 99th Avenue Engine 132 K-Deck 6 Rescue 7 and Engine 20 K-Deck 8 Seizure 9609 North 5th Street Rescue 7 and Engine 20 K-Deck 8",
+        "expected_dispatch_count": 2,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 132 K-Deck 6 Abdominal pain 18616 North 99th Avenue Engine 132 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 132"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Abdominal pain",
+            "address": "18616 N 99th Ave"
+          },
+          {
+            "dispatch_transcript": "Rescue 7 and Engine 20 K-Deck 8 Seizure 9609 North 5th Street Rescue 7 and Engine 20 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 20",
+              "Rescue 7"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Seizure",
+            "address": "9609 N 5th St"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780090874.094_769868750.0-call_79246",
+      "audio_filename": "1795-1780090874.094_769868750.0-call_79246.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1138
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1138,
+            "transcript": "Engine 605 K-Deck 7 Injured person 9160 East Desert Cove Avenue Engine 605 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 605"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Injured person",
+            "address": "9160 E Desert Cove Ave"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 605 K-Deck 7 Injured person 9160 East Desert Cove Avenue Engine 605 K-Deck 7",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 605 K-Deck 7 Injured person 9160 East Desert Cove Avenue Engine 605 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 605"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Injured person",
+            "address": "9160 E Desert Cove Ave"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780090974.246_769818750.0-call_79337",
+      "audio_filename": "1795-1780090974.246_769818750.0-call_79337.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1139
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1139,
+            "transcript": "Ladder Tender 43 K-Deck 8 Fall Injury 100815 South 50th Street Ladder Tender 43 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Ladder Tender 43"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Fall Injury 100815 South",
+            "address": "50th Street"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Ladder Tender 43 K-Deck 8 Fall Injury 15815 South 50th Street Ladder Tender 43 K-Deck 8",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Ladder Tender 43 K-Deck 8 Fall Injury 15815 South 50th Street Ladder Tender 43 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Ladder Tender 43"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Fall Injury ",
+            "address": "15815 S 50th St"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780090990.471_770818750.0-call_79349",
+      "audio_filename": "1795-1780090990.471_770818750.0-call_79349.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1140
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1140,
+            "transcript": "Special call Medic 275 K-Deck 7 Fall Injury 2034 North Champion Avenue Medic 275 K-Deck 7",
+            "special_call": true,
+            "units": [
+              "Medic 275"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Fall Injury",
+            "address": "2034 N Champion Ave"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special call Medic 275 K-Deck 7 Fall Injury 2034 North Champion Avenue Medic 275 K-Deck 7",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special call Medic 275 K-Deck 7 Fall Injury 2034 North Champion Avenue Medic 275 K-Deck 7",
+            "special_call": true,
+            "units": [
+              "Medic 275"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Fall Injury",
+            "address": "2034 N Champion Ave"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780091007.115_772618750.0-call_79365",
+      "audio_filename": "1795-1780091007.115_772618750.0-call_79365.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1141
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1141,
+            "transcript": "N-930 K-Deck 1 Move up Station 45 Engine 30 K-Deck 1",
+            "special_call": false,
+            "units": [
+              "Engine 30"
+            ],
+            "channel": "K-Deck 1",
+            "incident_type": "N-930 Move",
+            "address": "up Station 45"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "[unintelligible]  K-Deck 1 Move up Station 45 Engine 30 K-Deck 1",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "[unintelligible]  K-Deck 1 Move up Station 45 Engine 30 K-Deck 1",
+            "special_call": false,
+            "units": [
+              "Engine 30"
+            ],
+            "channel": "K-Deck 1",
+            "incident_type": "Move up",
+            "address": "Station 45"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780091021.282_770818750.0-call_79383",
+      "audio_filename": "1795-1780091021.282_770818750.0-call_79383.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1142
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1142,
+            "transcript": "Engine 157 K-Deck 6 Park problem 80 20 65 minute Engine 157 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 157"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Heart Problem 80 20 65 minute",
+            "address": ""
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 157 K-Deck 6 Heart problem [unintelligible] Engine 157 K-Deck 6",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 157 K-Deck 6 Heart problem [unintelligible] Engine 157 K-Deck 6",
+            "special_call": false,
+            "units": [
+              "Engine 157"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Heart Problem",
+            "address": ""
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780091037.213_772056250.0-call_79392",
+      "audio_filename": "1795-1780091037.213_772056250.0-call_79392.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1143
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1143,
+            "transcript": "Special call Rescue 33 K-Deck 6 10831 North 42nd Avenue Rescue 33 K-Deck 6",
+            "special_call": true,
+            "units": [
+              "Rescue 33"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "",
+            "address": "10831 N 42nd Ave"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special call Rescue 33 K-Deck 6 Ill Person 10831 North 42nd Avenue Rescue 33 K-Deck 6",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special call Rescue 33 K-Deck 6 Ill Person 10831 North 42nd Avenue Rescue 33 K-Deck 6",
+            "special_call": true,
+            "units": [
+              "Rescue 33"
+            ],
+            "channel": "K-Deck 6",
+            "incident_type": "Ill Person",
+            "address": "10831 N 42nd Ave"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780091053.852_769818750.0-call_79409",
+      "audio_filename": "1795-1780091053.852_769818750.0-call_79409.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1144
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1144,
+            "transcript": "Engine 17 K-Deck 8 Allergic Reaction 7th Avenue and Missouri Avenue N-17 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 17"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Allergic Reaction",
+            "address": "7th Avenue and Missouri Avenue N-17"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 17 K-Deck 8 Allergic Reaction 7th Avenue and Missouri Avenue N-17 K-Deck 8",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 17 K-Deck 8 Allergic Reaction 7th Avenue and Missouri Avenue N-17 K-Deck 8",
+            "special_call": false,
+            "units": [
+              "Engine 17"
+            ],
+            "channel": "K-Deck 8",
+            "incident_type": "Allergic Reaction",
+            "address": "7th Ave and Missouri Ave"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780091068.855_772056250.0-call_79422",
+      "audio_filename": "1795-1780091068.855_772056250.0-call_79422.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1145
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1145,
+            "transcript": "Care 7 K-Deck 2 Crisis Care 120 East 5th Street Care 7 K-Deck 2",
+            "special_call": false,
+            "units": [],
+            "channel": "K-Deck 2",
+            "incident_type": "Care 7 Crisis Care",
+            "address": "120 E 5th St"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Care 7 K-Deck 2 Crisis Care 120 East 5th Street Care 7 K-Deck 2",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Care 7 K-Deck 2 Crisis Care 120 East 5th Street Care 7 K-Deck 2",
+            "special_call": false,
+            "units": [
+              "Care 7"
+            ],
+            "channel": "K-Deck 2",
+            "incident_type": "Crisis Care",
+            "address": "120 E 5th St"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780091083.004_771318750.0-call_79430",
+      "audio_filename": "1795-1780091083.004_771318750.0-call_79430.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1146
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1146,
+            "transcript": "Engine 15 K-Deck 9 Injured person 5735 North 48 Plain Engine 15 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Engine 15"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Injured person 5735 North 48 Plain",
+            "address": ""
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 15 K-Deck 9 Injured person 5735 North 48th Lane Engine 15 K-Deck 9",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 15 K-Deck 9 Injured person 5735 North 48th Lane Engine 15 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Engine 15"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Injured person",
+            "address": "5735 N 48th Ln"
+          }
+        ],
+        "notes": ""
+      }
+    },
+    {
+      "audio_ref": "1795-1780091098.910_769818750.0-call_79438",
+      "audio_filename": "1795-1780091098.910_769818750.0-call_79438.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          1147
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 1147,
+            "transcript": "Special call Rescue 40 K-Deck 9 Chest pain 7602 West Meadowbrook Avenue Rescue 40 K-Deck 9",
+            "special_call": true,
+            "units": [
+              "Rescue 40"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Chest pain",
+            "address": "7602 W Meadowbrook Ave"
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Special call Rescue 40 K-Deck 9 Chest pain 7602 West Meadowbrook Avenue Rescue 40 K-Deck 9",
+        "expected_dispatch_count": 1,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Special call Rescue 40 K-Deck 9 Chest pain 7602 West Meadowbrook Avenue Rescue 40 K-Deck 9",
+            "special_call": true,
+            "units": [
+              "Rescue 40"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Chest pain",
+            "address": "7602 W Meadowbrook Ave"
+          }
+        ],
+        "notes": ""
+      }
+    }
+  ]
+}

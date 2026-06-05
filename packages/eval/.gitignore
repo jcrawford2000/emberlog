@@ -1,0 +1,6 @@
+# runner scratch / tone clip working dirs
+runs/*/
+!runs/.gitkeep
+_tone_clips/
+
+# committed intentionally: baseline_metrics.json (root of eval/), corpus/corpus.json
