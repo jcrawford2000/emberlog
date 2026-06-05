@@ -58,7 +58,7 @@ _ORD_ADDR = r"\d{1,4}(?:st|nd|rd|th)\b"
 ADDR_RE = re.compile(
     rf"""
     \b
-    (?P<num>\d{{3,5}})
+    (?P<num>\d{{2,5}})
     \s+
     (?P<compass>North|South|East|West|N|S|E|W)
     \s+
@@ -204,13 +204,15 @@ def _normalize_address(text: str) -> Optional[dict[str, str]]:
     if _VOCAB.freeway_re:
         m = _VOCAB.freeway_re.search(text)
         if m:
-            rest = text[m.end():].strip()
+            rest = text[m.end() :].strip()
             cross_m = re.match(r"(?:at|and)\s+(.+)", rest, re.I)
             if cross_m:
                 cross = cross_m.group(1).strip()
-                raw_span = text[m.start():].strip()
+                raw_span = text[m.start() :].strip()
                 return {"raw": raw_span, "normalized": f"{m.group(0)} at {cross}"}
-            notes_m = re.match(r"(?:northbound|southbound|eastbound|westbound).*", rest, re.I)
+            notes_m = re.match(
+                r"(?:northbound|southbound|eastbound|westbound).*", rest, re.I
+            )
             if notes_m or not rest:
                 return {"raw": m.group(0), "normalized": m.group(0)}
 
@@ -277,7 +279,9 @@ def _extract_units_from_region(region: str, vocab: Vocab) -> list[str]:
     units: list[str] = []
     for pat, canonical_type, requires_number in vocab.unit_patterns:
         for m in pat.finditer(region):
-            unit_str = f"{canonical_type} {m.group(1)}" if requires_number else canonical_type
+            unit_str = (
+                f"{canonical_type} {m.group(1)}" if requires_number else canonical_type
+            )
             if unit_str not in seen:
                 seen.add(unit_str)
                 units.append(unit_str)
@@ -330,7 +334,9 @@ def _backward_scan_units(text: str, vocab: Vocab) -> tuple[list[str], int]:
                     break
             if best_m is not None:
                 unit_str = (
-                    f"{canonical_type} {best_m.group(1)}" if requires_number else canonical_type
+                    f"{canonical_type} {best_m.group(1)}"
+                    if requires_number
+                    else canonical_type
                 )
                 if unit_str not in seen:
                     seen.add(unit_str)
@@ -433,7 +439,7 @@ def clean_transcript(t: Transcript, vocab: Vocab = _VOCAB) -> CleanResult:
         m = pat.match(incident)
         if m:
             dispatch_action = action
-            incident = incident[m.end():].lstrip()
+            incident = incident[m.end() :].lstrip()
             logger.debug("[%s] Dispatch action: %s", ps, dispatch_action)
             break
     parsed["dispatch_action"] = dispatch_action
@@ -449,11 +455,11 @@ def clean_transcript(t: Transcript, vocab: Vocab = _VOCAB) -> CleanResult:
     # "Rescue 2425" inside "Mountain Rescue 2425 East Valley View Drive".
     logger.info("[%s] Extracting Units (bookend)", ps)
 
-    leading_units, leading_chan, leading_mutual_aid, leading_end = _scan_leading_bookend(
-        incident, vocab
+    leading_units, leading_chan, leading_mutual_aid, leading_end = (
+        _scan_leading_bookend(incident, vocab)
     )
-    trailing_units, trailing_chan, trailing_mutual_aid, trailing_start = _scan_trailing_bookend(
-        incident, leading_end, leading_units, vocab
+    trailing_units, trailing_chan, trailing_mutual_aid, trailing_start = (
+        _scan_trailing_bookend(incident, leading_end, leading_units, vocab)
     )
 
     # Merge and deduplicate units (leading order preserved, trailing adds new entries)
@@ -515,7 +521,9 @@ def clean_transcript(t: Transcript, vocab: Vocab = _VOCAB) -> CleanResult:
         consumed_qualifier = None
         for entry in vocab.incident_type_entries:
             if entry.get("code") == code_str and entry.get("is_stem"):
-                for q in sorted(entry.get("qualifiers", []), key=lambda x: -len(x["phrase"])):
+                for q in sorted(
+                    entry.get("qualifiers", []), key=lambda x: -len(x["phrase"])
+                ):
                     ph = q["phrase"].lower()
                     rl = rest_after_code.lower()
                     if rl.startswith(ph) and (
@@ -553,7 +561,7 @@ def clean_transcript(t: Transcript, vocab: Vocab = _VOCAB) -> CleanResult:
             m_anchor = STREET_ANCHOR_RE.search(incident_type)
             if m_anchor:
                 prefix = incident_type[: m_anchor.start()].rstrip()
-                address_text = incident_type[m_anchor.start():].lstrip()
+                address_text = incident_type[m_anchor.start() :].lstrip()
 
                 num_match = re.search(r"\b(\d{3,5})\s*$", prefix)
                 if num_match:

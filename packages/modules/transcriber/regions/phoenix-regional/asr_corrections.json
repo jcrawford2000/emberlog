@@ -21,12 +21,27 @@
     {"stage": "pre_extraction",  "pattern": "\\bK\\s*[-]?\\s*dec?k\\s*(\\d{1,2})\\b",      "replacement": "K-Deck \\1",      "note": "K-Deck normalization (consolidate w/ channel matcher — see channels.json)."},
     {"stage": "pre_extraction",  "pattern": "\\bC\\s*R\\s*?(\\d+)\\b",                     "replacement": "Crisis Response \\1", "note": "CR abbreviation expansion."},
     {"stage": "pre_extraction",  "pattern": "\\bStage\\s*4\\s*PD\\b",                     "replacement": "Stage For PD",    "note": "Sound-alike."},
+    {"stage": "pre_extraction", "pattern": "\\b(\\d+)-(\\d+)\\b", "replacement": "\\1\\2", "note": "Whisper inserts hyphens into spoken street numbers ('twelve thousand two sixteen' → '12002-16'). No hyphenated street numbers exist in Phoenix — safe to concatenate unconditionally."},
+    {"stage": "pre_extraction", "pattern": "\\bPrices [Rr]esponse\\b", "replacement": "Crisis Response", "note": "Whisper mishears 'Crisis Response' as 'Prices Response'."},
 
+    {"stage": "incident_type", "pattern": "\\bService Hall\\b", "replacement": "Service Call", "note": "Whisper mishears 'Service Call' as 'Service Hall'."},
     {"stage": "incident_type",   "pattern": "\\bTech Welfare\\b",                         "replacement": "Check Welfare",   "note": ""},
     {"stage": "incident_type",   "pattern": "\\bPark Problem\\b",                         "replacement": "Heart Problem",   "note": ""},
     {"stage": "incident_type",   "pattern": "\\bJust Payne\\b",                           "replacement": "Chest Pain",      "note": ""},
     {"stage": "incident_type",   "pattern": "\\b(?:Hill|Il[kv]er)son\\b",                 "replacement": "Ill Person",      "note": "Hillperson/Ilkerson/Ilverson -> Ill Person."},
     {"stage": "incident_type",   "pattern": "\\bDilverson\\b",                            "replacement": "Ill Person",      "note": ""},
-    {"stage": "incident_type",   "pattern": "\\band no medical\\b",                       "replacement": "Unknown Medical", "note": ""}
+    {"stage": "incident_type",   "pattern": "\\band no medical\\b",                       "replacement": "Unknown Medical", "note": ""},
+    {"stage": "channel", "pattern": "\\bKDAC\\s*(\\d{1,2})\\b",           "replacement": "K-Deck \\1", "note": "Whisper hallucination: KDAC N → K-Deck N. Observed in both baseline and prompt-v2 runs."},
+{"stage": "channel", "pattern": "\\bKJAC\\s*(\\d{1,2})\\b",           "replacement": "K-Deck \\1", "note": "Whisper hallucination: KJAC N → K-Deck N."},
+{"stage": "channel", "pattern": "\\bKJX\\s*(\\d{1,2})\\b",            "replacement": "K-Deck \\1", "note": "Whisper hallucination: KJX N → K-Deck N. Most frequent baseline failure (22 occurrences)."},
+{"stage": "channel", "pattern": "\\bKTAC\\s*(\\d{1,2})\\b",           "replacement": "K-Deck \\1", "note": "Whisper hallucination: KTAC N → K-Deck N. Observed in prompt-v2 run."},
+{"stage": "channel", "pattern": "\\bKDEX\\s*(\\d{1,2})\\b",           "replacement": "K-Deck \\1", "note": "Whisper hallucination: KDEX N → K-Deck N."},
+{"stage": "channel", "pattern": "\\bKDEC[-\\s](\\d{1,2})\\b",         "replacement": "K-Deck \\1", "note": "Whisper variant: KDEC-N or KDEC N (without space-only form already handled by channel_re)."},
+{"stage": "channel", "pattern": "\\bKJ[-\\s]?(\\d{1,2})\\b",          "replacement": "K-Deck \\1", "note": "Whisper hallucination family: KJ-N, KJ N, KJN → K-Deck N."},
+{"stage": "channel", "pattern": "\\bK[-\\s]?Decade\\s*(\\d{1,2})\\b", "replacement": "K-Deck \\1", "note": "Whisper literal: 'K-Decade N' or 'K Decade N' → K-Deck N."},
+{"stage": "channel", "pattern": "\\bK[-\\s]?Decade\\b",               "replacement": "K-Deck",     "note": "Whisper literal without number: 'K-Decade' → 'K-Deck' (number matched by channel_re afterward)."},
+{"stage": "channel", "pattern": "\\bPaydeck\\s*(\\d{1,2})\\b",        "replacement": "K-Deck \\1", "note": "Whisper hallucination: Paydeck N → K-Deck N."},
+{"stage": "channel", "pattern": "\\bKajak\\s*(\\d{1,2})\\b",          "replacement": "K-Deck \\1", "note": "Whisper hallucination: Kajak N → K-Deck N."},
+{"stage": "channel", "pattern": "\\bPage\\s*X\\s*(\\d{1,2})\\b",      "replacement": "K-Deck \\1", "note": "Whisper hallucination: Page X6, Page X7 → K-Deck N."}
   ]
 }
