@@ -387,9 +387,9 @@ def clean_transcript(t: Transcript) -> CleanResult:
     stats.units_after = len(units_found)
     stats.deduped_units = stats.units_before - stats.units_after
     logger.debug("[%s] Removed %d duplicates", ps, stats.deduped_units)
-    # Remove Units from string
+    # Remove Units from string (case-insensitive — ASR output casing varies)
     for unit in units_found:
-        incident = incident.replace(unit, "")
+        incident = re.sub(re.escape(unit), "", incident, flags=re.I)
     # Remove any 'and' leftover
     incident = re.sub(r"^(?:and\s+)+", "", incident)
     logger.debug("[%s] Incident: %s", ps, incident)
