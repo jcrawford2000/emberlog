@@ -1,0 +1,26 @@
+{
+  "_about": "Dispatch ACTION = what this transmission does to the incident lifecycle. Emitted as parsed.dispatch_action. The parser stays STATELESS — it only TAGS the action. A future hub-side linker uses the tag to match supplements to a prior incident and set correlation_id on the envelope, so the GUI can surface a unified incident with the full unit assignment. The parser does NOT attempt cross-incident linking (it has no state for that).",
+
+  "default_action": "initial",
+  "default_note": "If no action prefix is present, dispatch_action = 'initial' (a fresh dispatch).",
+
+  "actions": [
+    {
+      "action": "special_call",
+      "phrases": ["Special Call"],
+      "position": "prefix",
+      "is_supplement": true,
+      "legacy_bool": "special_call",
+      "note": "Adds a unit to an existing incident. Keep the existing top-level special_call bool for back-compat AND emit parsed.dispatch_action='special_call'."
+    },
+    {
+      "action": "balance_of_assignment",
+      "phrases": ["Balance of Assignment", "Balance of the Assignment"],
+      "position": "prefix",
+      "is_supplement": true,
+      "note": "Sends remaining/upgraded units to an existing incident (e.g. working-fire escalation). Currently unhandled — falls into incident_type today."
+    }
+  ],
+
+  "_extension_note": "Other escalation language likely exists (Second Alarm, Third Alarm, etc.). Add as observed live. is_supplement=true marks any action a future linker should correlate to a prior incident."
+}

@@ -1,0 +1,33 @@
+{
+  "_about": "Freeway recognition for the highway address form. Recognition is BINARY for parsing: does the address-start token match a freeway alias? -> trigger highway address form. Do NOT resolve which canonical road from an ambiguous alias ('Maricopa Freeway' maps to two roads) — that's a parsed.* nicety, not required for the address field. Named interchanges are a bare-landmark address form.",
+
+  "freeways": [
+    {"canonical": "I-10",  "aliases": ["I-10","Interstate 10","the 10","Papago Freeway","Papago","Inner Loop","Maricopa Freeway","Wild Horse Pass Corridor"]},
+    {"canonical": "I-17",  "aliases": ["I-17","Interstate 17","the 17","Black Canyon Freeway","Black Canyon","Arizona Veterans Highway","Maricopa Freeway"]},
+    {"canonical": "I-8",   "aliases": ["I-8","Interstate 8","the 8"]},
+    {"canonical": "US-60", "aliases": ["US 60","US-60","Grand Avenue","Superstition Freeway","Superstition"]},
+    {"canonical": "US-93", "aliases": ["US 93","US-93"]},
+    {"canonical": "SR-24", "aliases": ["SR 24","State Route 24","Gateway Freeway","Williams Gateway Freeway"]},
+    {"canonical": "SR-51", "aliases": ["SR 51","State Route 51","the 51","Piestewa Freeway","Piestewa","Squaw Peak Freeway"]},
+    {"canonical": "SR-74", "aliases": ["SR 74","State Route 74","Carefree Highway"]},
+    {"canonical": "SR-85", "aliases": ["SR 85","State Route 85"]},
+    {"canonical": "SR-87", "aliases": ["SR 87","State Route 87","Beeline Highway","Beeline"]},
+    {"canonical": "SR-88", "aliases": ["SR 88","State Route 88","Apache Trail"]},
+    {"canonical": "Loop 101", "aliases": ["Loop 101","the 101","SR 101","Agua Fria Freeway","Agua Fria","Pima Freeway","Pima","Price Freeway","Price"]},
+    {"canonical": "SR-143","aliases": ["SR 143","State Route 143","the 143","Hohokam Expressway","Hohokam"]},
+    {"canonical": "Loop 202", "aliases": ["Loop 202","the 202","SR 202","Red Mountain Freeway","Red Mountain","Santan Freeway","Santan","South Mountain Freeway"]},
+    {"canonical": "Loop 303", "aliases": ["Loop 303","the 303","SR 303","Estrella Freeway","Estrella","Bob Stump Memorial Parkway"]},
+    {"canonical": "SR-347", "aliases": ["SR 347","State Route 347","Maricopa Road","John Wayne Parkway"]},
+    {"canonical": "SR-587", "aliases": ["SR 587","State Route 587","Hunt Highway"]}
+  ],
+
+  "named_interchanges": [
+    {"name": "the Stack",         "refers_to": "I-10 / I-17 near 19th Ave & McDowell"},
+    {"name": "the Mini-Stack",    "refers_to": "I-10 / SR 51 / Loop 202 Red Mountain"},
+    {"name": "the North Stack",   "refers_to": "I-17 / Loop 101"},
+    {"name": "the Split",         "refers_to": "I-10 / I-17 near Sky Harbor"},
+    {"name": "the Broadway Curve","refers_to": "I-10 near Broadway Rd / SR 143"},
+    {"name": "the Durango Curve", "refers_to": "I-17 near Durango St"},
+    {"name": "SuperRedTan",       "refers_to": "US 60 Superstition / Loop 202 Red Mountain / Santan, East Mesa"}
+  ]
+}

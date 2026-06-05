@@ -1,0 +1,30 @@
+{
+  "_about": "Region adapter manifest. Declares the dispatch system this vocab targets and the grammar the parser expects. The parser is a GENERIC dispatch-grammar engine; everything region-specific lives in this directory. Swap the directory -> new region, no code change. The grammar order is DECLARED here (metadata) even though the parser may hardcode it for now — this is the seam that makes a second region a config task, not a refactor. Do NOT build a grammar interpreter until a second real region justifies it.",
+
+  "region_id": "phoenix-regional",
+  "region_name": "Phoenix Regional Dispatch",
+  "schema_version": "1.0.0",
+
+  "grammar": {
+    "_note": "Declared dispatch utterance shape. Bookend = units+channel repeat at start and end. Dispatch action is an optional prefix.",
+    "pattern": "[dispatch_action] <units> <channel> [response_modifier] <incident_type> <address> <units> <channel>",
+    "field_order": ["dispatch_action", "units", "channel", "response_modifier", "incident_type", "address"],
+    "bookend": ["units", "channel"]
+  },
+
+  "files": {
+    "incident_types": "incident_types.json",
+    "unit_types": "unit_types.json",
+    "channels": "channels.json",
+    "dispatch_actions": "dispatch_actions.json",
+    "response_modifiers": "response_modifiers.json",
+    "freeways": "freeways.json",
+    "asr_corrections": "asr_corrections.json"
+  },
+
+  "matching_rules": {
+    "_note": "Cross-cutting rules the loader/parser must honor.",
+    "longest_match": ["incident_types", "unit_types"],
+    "longest_match_note": "Prefer the longest vocabulary phrase at a slot. 'Brush Engine' before 'Brush'; '962 involving pedestrian' before '962'; 'Altered level of consciousness' before 'consciousness'."
+  }
+}

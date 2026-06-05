@@ -1,0 +1,40 @@
+{
+  "_about": "Channel vocabulary. Three letter-families only: K (K-Deck, digital fireground), A (analog fireground), B (Mesa mutual-aid). No C-J — the system goes A, B, then K. Channel recognition is family + number. Sound-alike errors (e.g. 'Way N' heard for 'A N') are NOT channels — they live in asr_corrections.json and are fixed BEFORE channel matching.",
+
+  "families": [
+    {
+      "family": "K-Deck",
+      "letter": "K",
+      "number_range": [1, 19],
+      "spoken_forms": ["K-Deck {n}", "K Deck {n}", "KDeck {n}", "K {n}", "KDEC {n}"],
+      "canonical_format": "K-Deck {n}",
+      "description": "Digital fireground channels.",
+      "special": {
+        "1": {
+          "is_dispatch_channel": true,
+          "note": "K-Deck 1 is the DISPATCH channel — no fireground ops occur here. This is the channel monitored for dispatches. A dispatch on K-Deck 1 is expected; fireground traffic on it would be anomalous."
+        }
+      }
+    },
+    {
+      "family": "A",
+      "letter": "A",
+      "number_range": [1, 19],
+      "spoken_forms": ["A{n}", "A {n}", "Fire Channel A{n}", "Fire Channel A {n}"],
+      "canonical_format": "A{n}",
+      "description": "Analog fireground channels. Optional 'Fire Channel' prefix, sometimes spoken sometimes not, always followed by an A-channel."
+    },
+    {
+      "family": "Mesa-B",
+      "letter": "B",
+      "number_range": [1, 19],
+      "spoken_forms": ["Mesa Fire Channel B{n}", "Mesa B{n}", "B{n}"],
+      "canonical_format": "Mesa Fire Channel B{n}",
+      "description": "Mesa mutual-aid channels. Mesa runs its own dispatch center, outside Phoenix Regional.",
+      "emits_parsed": {"mutual_aid": "Mesa"},
+      "emits_parsed_note": "When a B-channel matches, set parsed.mutual_aid = 'Mesa' — a B-channel signals the incident involves an external agency, not just a channel value."
+    }
+  ],
+
+  "_matching_note": "Fix the existing duplication: K-Deck normalization currently exists in BOTH a REPLACEMENTS rule and CHAN_RE. Consolidate to one path. Channel matching runs AFTER asr_corrections (so 'Way 6' -> 'A 6' is already fixed)."
+}

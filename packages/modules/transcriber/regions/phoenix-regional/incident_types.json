@@ -1,0 +1,44 @@
+{
+  "_about": "Incident type vocabulary. Matching key is the SPOKEN PHRASE (canonical_phrase + aliases), never the code — the dispatcher speaks the phrase, and corpus truth is the phrase. The code rides into parsed.incident_code when the match is unambiguous. Many codes map to one phrase (ENG/LAD/SERV/UTIL -> 'Service call'); that's expected. Longest-match wins.",
+
+  "_INCOMPLETE": "THIS IS A SEED. Justin's full ~200-code table must be transcribed into incident_types before Fix 4b ships. Below = high-frequency corpus types + the 962 stem pattern as the model. Follow this shape for the full list.",
+
+  "incident_types": [
+    {"code": "CP",     "canonical_phrase": "Chest pain",                     "aliases": []},
+    {"code": "ALOC",   "canonical_phrase": "Altered level of consciousness", "aliases": []},
+    {"code": "FALL",   "canonical_phrase": "Fall injury",                    "aliases": ["minor fall injury"]},
+    {"code": "ILL",    "canonical_phrase": "Ill person",                     "aliases": []},
+    {"code": "INJ",    "canonical_phrase": "Injured person",                "aliases": ["minor injury"]},
+    {"code": "UNC",    "canonical_phrase": "Unconscious person",            "aliases": []},
+    {"code": "DB",     "canonical_phrase": "Difficulty breathing",           "aliases": []},
+    {"code": "SEIZ",   "canonical_phrase": "Seizure",                        "aliases": []},
+    {"code": "HA",     "canonical_phrase": "Heart problem",                  "aliases": ["heart problems"]},
+    {"code": "CVA",    "canonical_phrase": "Stroke",                         "aliases": ["CVA"]},
+    {"code": "ALLRG",  "canonical_phrase": "Allergic reaction",              "aliases": []},
+    {"code": "ABD",    "canonical_phrase": "Abdominal pain",                 "aliases": []},
+    {"code": "OD",     "canonical_phrase": "Overdose",                       "aliases": []},
+    {"code": "MAT",    "canonical_phrase": "Maternity problem",              "aliases": ["maternity problems"]},
+    {"code": "INTB",   "canonical_phrase": "Internal bleeding",              "aliases": []},
+    {"code": "CKWELF", "canonical_phrase": "Check welfare",                  "aliases": []},
+    {"code": "COMCAR", "canonical_phrase": "Crisis care",                    "aliases": []},
+    {"code": "ASSPD",  "canonical_phrase": "Assist PD",                      "aliases": []},
+    {"code": "ALARM",  "canonical_phrase": "Fire alarm indication",          "aliases": []},
+    {"code": "ALLEY",  "canonical_phrase": "Alley fire",                     "aliases": []},
+    {"code": "UNKM",   "canonical_phrase": "Unknown medical",               "aliases": []},
+    {"code": "SERV",   "canonical_phrase": "Service call",                   "aliases": []},
+    {"code": "STR",    "canonical_phrase": "Structure fire",                 "aliases": []},
+
+    {"_comment": "962 family — STEM + optional qualifier. Recognize '962' as a stem, absorb trailing qualifier if present. Longest match: '962 involving pedestrian' beats bare '962'. Output the spoken phrase; record the qualifier code in parsed.incident_code.",
+     "code": "962", "canonical_phrase": "962", "is_stem": true,
+     "qualifiers": [
+       {"code": "962X",  "phrase": "extrication"},
+       {"code": "962P",  "phrase": "involving pedestrian"},
+       {"code": "962MC", "phrase": "involving motorcycle"},
+       {"code": "962BC", "phrase": "involving bicycle"},
+       {"code": "962F",  "phrase": "with fire"},
+       {"code": "962HM", "phrase": "with hazardous material"},
+       {"code": "962R",  "phrase": "rollover"},
+       {"code": "962W",  "phrase": "car into canal"}
+     ]}
+  ]
+}
