@@ -312,13 +312,20 @@ def clean_transcript(t: Transcript, vocab: Vocab = _VOCAB) -> CleanResult:
 
     units_found = [name for name, _ in unit_matches]
     logger.debug("[%s] Units found: %s", ps, units_found)
-
-    # Remove unit text from working string (case-insensitive)
-    for _, literal in unit_matches:
-        incident = re.sub(re.escape(literal), "", incident, flags=re.I)
-
-    # Strip LEADING and TRAILING "and" tokens (bookend unit/channel separators).
-    # Middle "and" connectors (intersection addresses) are intentionally preserved.
+    stats.units_before = len(
+        re.findall(
+            r"\b(Engine|Rescue|Ladder|Batt(?:alion)?|Crisis\s+Response)\s*\d{1,3}\b",
+            fixed,
+            re.I,
+        )
+    )
+    stats.units_after = len(units_found)
+    stats.deduped_units = stats.units_before - stats.units_after
+    logger.debug("[%s] Removed %d duplicates", ps, stats.deduped_units)
+    # Remove Units from string (case-insensitive — ASR output casing varies)
+    for unit in units_found:
+        incident = re.sub(re.escape(unit), "", incident, flags=re.I)
+    # Remove any 'and' leftover
     incident = re.sub(r"^(?:and\s+)+", "", incident)
     incident = re.sub(r"(?:\s+and)+$", "", incident)
     incident = re.sub(r"\s+", " ", incident).strip()
