@@ -115,8 +115,8 @@ def _lazy_imports() -> None:
 
 @dataclass
 class RunConfig:
-    mode: str = "end-to-end"          # end-to-end | parser-isolated | splitter-isolated
-    strategy: str = "text"             # text | tone
+    mode: str = "end-to-end"  # end-to-end | parser-isolated | splitter-isolated
+    strategy: str = "text"  # text | tone
     model_name: str = "large-v3"
     device: str = "cuda"
     compute_type: str = "float16"
@@ -183,7 +183,9 @@ def build_manifest(cfg: RunConfig, corpus_path: Path) -> dict:
 # ---------------------------------------------------------------------------
 
 
-def _run_parser(dispatch_text: str, audio_path: Path, transcript_text: Optional[str] = None) -> dict:
+def _run_parser(
+    dispatch_text: str, audio_path: Path, transcript_text: Optional[str] = None
+) -> dict:
     """Wrap dispatch_text in a Transcript and run clean_transcript."""
     t = Transcript(audio_path=audio_path, text=dispatch_text)
     result = clean_transcript(t)
@@ -323,7 +325,7 @@ def _run_splitter_isolated_text(corpus_rec: dict) -> dict:
     audio_ref = corpus_rec["audio_ref"]
 
     # Combine all truth transcripts as if they were one Whisper output
-    combined = " ".join(td.get("truth_transcript", "") for td in truth_dispatches)
+    combined = " ".join(td.get("dispatch_transcript", "") for td in truth_dispatches)
     audio_path = Path(f"{audio_ref}.wav")
 
     segments = [Segment(start=0.0, end=999.0, text=combined)]
@@ -464,12 +466,17 @@ async def run(
 
 
 def _parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="Run eval pipeline and emit system_output.json.")
+    p = argparse.ArgumentParser(
+        description="Run eval pipeline and emit system_output.json."
+    )
     p.add_argument("--corpus", type=Path, required=True)
     p.add_argument("--audio-dir", type=Path, required=True)
     p.add_argument("--out-dir", type=Path, required=True)
-    p.add_argument("--mode", choices=["end-to-end", "parser-isolated", "splitter-isolated"],
-                   default="end-to-end")
+    p.add_argument(
+        "--mode",
+        choices=["end-to-end", "parser-isolated", "splitter-isolated"],
+        default="end-to-end",
+    )
     p.add_argument("--strategy", choices=["text", "tone"], default="text")
     p.add_argument("--model", default="large-v3")
     p.add_argument("--device", default="cuda")
@@ -478,8 +485,12 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument("--beam-size", type=int, default=5)
     p.add_argument("--best-of", type=int, default=8)
     p.add_argument("--temperature", type=float, default=0.0)
-    p.add_argument("--workspace", type=Path, default=None,
-                   help="Scratch dir for EMBERLOG_* paths (default: system tempdir)")
+    p.add_argument(
+        "--workspace",
+        type=Path,
+        default=None,
+        help="Scratch dir for EMBERLOG_* paths (default: system tempdir)",
+    )
     return p.parse_args()
 
 

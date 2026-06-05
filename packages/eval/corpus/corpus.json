@@ -3904,6 +3904,170 @@
         ],
         "notes": ""
       }
+    },
+    {
+      "audio_ref": "1795-1780689112.112_769868750.0-call_128448",
+      "audio_filename": "1795-1780689112.112_769868750.0-call_128448.wav",
+      "audio_quality": "ok",
+      "system_output": {
+        "produced_incident_ids": [
+          50191,
+          50192
+        ],
+        "produced_dispatch_count": 1,
+        "rows": [
+          {
+            "id": 50191,
+            "transcript": "Engine 609 Engine 31 and Rescue 605 K-Deck 7 Chest pain 7661 East Gray Road Engine 609 Engine 31 and Rescue 605 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 609",
+              "Engine 31",
+              "Rescue 605"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Chest Pain",
+            "address": "7661 E Gray Rd"
+          },
+          {
+            "id": 50192,
+            "transcript": "Engine 28 Support 28 Rescue 32 Engine 32 Battalion 1 Heavy Rescue 8 Support 8 Engine 8 Car 957 South South Deputy PIO 3 Drone 1 Battalion 2 Rehab 1 Battalion 3 and Car 957 North K-Deck 11 Mountain Rescue 2425 East Valley View Drive Engine 28 Support 28 Rescue 32 Engine 32 Battalion 1 Heavy Rescue 8 Support 8 Engine 8 Car 957 South South Deputy PIO 3 Drone 1 Battalion 2 Rehab 1 Battalion 3 and Car 957 North K-Deck 11",
+            "special_call": false,
+            "units": [
+              "South Deputy",
+              "Battalion 1",
+              "Battalion 2",
+              "Battalion 3",
+              "Engine 28",
+              "Engine 32",
+              "Engine 8",
+              "Rescue 32",
+              "Rescue 8",
+              "Rescue 2425",
+              "Car 957",
+              "PIO 3"
+            ],
+            "channel": "K-Deck 11",
+            "incident_type": "Support 28 Heavy Support 8 South Drone 1 Rehab 1 North Mountain East Valley View Drive Support 28 Heavy Support 8 South Drone 1 Rehab 1 North",
+            "address": ""
+          }
+        ]
+      },
+      "verified": {
+        "transcript": "Engine 609 Engine 31 and Rescue 605 K-Deck 7 Chest pain 7661 East Gray Road Engine 609 Engine 31 and Rescue 605 K-Deck 7 Engine 28 Support 28 Rescue 32 Engine 32 Battalion 1 Heavy Rescue 8 Support 8 Engine 8 Car 957 South South Deputy PIO 3 Drone 1 Battalion 2 Rehab 1 Battalion 3 and Car 957 North K-Deck 11 Mountain Rescue 2425 East Valley View Drive Engine 28 Support 28 Rescue 32 Engine 32 Battalion 1 Heavy Rescue 8 Support 8 Engine 8 Car 957 South South Deputy PIO 3 Drone 1 Battalion 2 Rehab 1 Battalion 3 and Car 957 North K-Deck 11 Engine 150 K-Deck 9 Fall Injury 7987 North 53rd Avenue Engine 150 K-Deck 9 [unintelligible] Engine 194 Fire Channel A6 Trash Fire 95th avenue and Butler Drive Engine 194 Fire Channel A6 Rescue 31 and Ladder Tender 37 K-Deck 7 Ill Person 4760 East Thunderbird Road Rescue 31 and Ladder Tender 37 K-Deck 7 Special Call Rescue 183 K-Deck 9 Internal Bleeding 14628 West Harvard Street Rescue 183 K-Deck 9 Ladder Tender 602 K-Deck 7 Difficulty Breathing 8736 East Joshua Tree Lane Ladder Tender 602 K-Deck 7 Ladder Tender 24 K-Deck 9 Ill Person 2505 North 38th Lane Ladder Tender 24 K-Deck 9 Engine 333 Fire Channel A6 Fire Alarm Indication 13419 West Gemstone Drive Engine 333 Fire Channel A6",
+        "expected_dispatch_count": 9,
+        "dispatches": [
+          {
+            "dispatch_transcript": "Engine 609 Engine 31 and Rescue 605 K-Deck 7 Chest pain 7661 East Gray Road Engine 609 Engine 31 and Rescue 605 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Engine 609",
+              "Engine 31",
+              "Rescue 605"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Fall Injury",
+            "address": "7661 E Gray Rd"
+          },
+          {
+            "dispatch_transcript": "Engine 28 Support 28 Rescue 32 Engine 32 Battalion 1 Heavy Rescue 8 Support 8 Engine 8 Car 957 South South Deputy PIO 3 Drone 1 Battalion 2 Rehab 1 Battalion 3 and Car 957 North K-Deck 11 Mountain Rescue 2425 East Valley View Drive Engine 28 Support 28 Rescue 32 Engine 32 Battalion 1 Heavy Rescue 8 Support 8 Engine 8 Car 957 South South Deputy PIO 3 Drone 1 Battalion 2 Rehab 1 Battalion 3 and Car 957 North K-Deck 11",
+            "special_call": false,
+            "units": [
+              "Engine 28",
+              "Support 28",
+              "Rescue 32",
+              "Engine 32",
+              "Battalion 1",
+              "Heavy Rescue 8",
+              "Support 8",
+              "Engine 8",
+              "Car 957 South",
+              "South Deputy",
+              "PIO 3",
+              "Drone 1",
+              "Battalion 2",
+              "Rehab 1",
+              "Battalion 3",
+              "Car 957 North"
+            ],
+            "channel": "K-Deck 11",
+            "incident_type": "Mountain Rescue",
+            "address": "2425 E Valley View Dr"
+          },
+          {
+            "dispatch_transcript": "Engine 150 K-Deck 9 Fall Injury 7987 North 53rd Avenue Engine 150 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Engine 150"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Fall Injury",
+            "address": "7987 N 53rd Ave"
+          },
+          {
+            "dispatch_transcript": "Engine 194 Fire Channel A6 Trash Fire 95th avenue and Butler Drive Engine 194 Fire Channel A6",
+            "special_call": false,
+            "units": [
+              "Engine 194"
+            ],
+            "channel": "A6",
+            "incident_type": "Trash Fire",
+            "address": "95th Ave and Butler Dr"
+          },
+          {
+            "dispatch_transcript": "Rescue 31 and Ladder Tender 37 K-Deck 7 Ill Person 4760 East Thunderbird Road Rescue 31 and Ladder Tender 37 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Rescue 31",
+              "Ladder Tender 37"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Ill Person",
+            "address": "4760 E Thunderbird Rd"
+          },
+          {
+            "dispatch_transcript": "Special Call Rescue 183 K-Deck 9 Internal Bleeding 14628 West Harvard Street Rescue 183 K-Deck 9",
+            "special_call": true,
+            "units": [
+              "Rescue 183"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Internal bleeding",
+            "address": "14628 W Harvard St"
+          },
+          {
+            "dispatch_transcript": "Ladder Tender 602 K-Deck 7 Difficulty Breathing 8736 East Joshua Tree Lane Ladder Tender 602 K-Deck 7",
+            "special_call": false,
+            "units": [
+              "Ladder Tender 602"
+            ],
+            "channel": "K-Deck 7",
+            "incident_type": "Difficulty Breathing",
+            "address": "8736 E Joshua Tree Ln"
+          },
+          {
+            "dispatch_transcript": "Ladder Tender 24 K-Deck 9 Ill Person 2505 North 38th Lane Ladder Tender 24 K-Deck 9",
+            "special_call": false,
+            "units": [
+              "Ladder Tender 24"
+            ],
+            "channel": "K-Deck 9",
+            "incident_type": "Ill Person",
+            "address": "2505 N 38th Ln"
+          },
+          {
+            "dispatch_transcript": "Engine 333 Fire Channel A6 Fire Alarm Indication 13419 West Gemstone Drive Engine 333 Fire Channel A6",
+            "special_call": false,
+            "units": [
+              "Engine 333"
+            ],
+            "channel": "A6",
+            "incident_type": "Fire Alarm Indication",
+            "address": "13419 W Gemstone Dr"
+          }
+        ],
+        "notes": ""
+      }
     }
   ]
 }
