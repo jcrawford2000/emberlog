@@ -84,6 +84,11 @@ def split_transcript(segments: Iterable[Segment], audio_path: Path) -> List[Disp
                 "[%s] Cur_Chan:%s | Occurance:%s", ps, cur_chan, occurance.group(0)
             )
             if cur_chan != occurance.group(0):
+                if cur_chan and disp_chan_index == 0:
+                    pending = text[disp_start:occurance.start()]
+                    if pending.strip():
+                        out.append(Dispatch(audio_path=str(audio_path), text=pending))
+                        disp_start = occurance.start()
                 cur_chan = occurance.group(0)
                 log.debug("[%s] Dispatch Start, channel:%s", ps, cur_chan)
                 disp_chan_index = 0
@@ -102,4 +107,7 @@ def split_transcript(segments: Iterable[Segment], audio_path: Path) -> List[Disp
                 cur_chan = occurance.group(0)
                 log.debug("[%s] Dispatch Start, channel: %s", ps, cur_chan)
                 dispatches = dispatches + 1
+        remaining = text[disp_start:]
+        if cur_chan and remaining.strip():
+            out.append(Dispatch(audio_path=str(audio_path), text=remaining))
     return out
