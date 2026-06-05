@@ -257,6 +257,147 @@ class CleanResult:
     stats: CleanStats
 
 
+# ------------------- Bookend helpers -------------------
+
+
+def _resolve_channel_match(m: re.Match) -> tuple[Optional[str], bool]:
+    """Return (channel_string, is_mesa_mutual_aid) from a channel regex match."""
+    if m.group(1):
+        return f"K-Deck {int(m.group(1))}", False
+    if m.group(2):
+        return f"A{int(m.group(2))}", False
+    if m.group(3):
+        return f"Mesa Fire Channel B{int(m.group(3))}", True
+    return None, False
+
+
+def _extract_units_from_region(region: str, vocab: Vocab) -> list[str]:
+    """Extract all unit matches from a text region, deduped by canonical name."""
+    seen: set[str] = set()
+    units: list[str] = []
+    for pat, canonical_type, requires_number in vocab.unit_patterns:
+        for m in pat.finditer(region):
+            unit_str = f"{canonical_type} {m.group(1)}" if requires_number else canonical_type
+            if unit_str not in seen:
+                seen.add(unit_str)
+                units.append(unit_str)
+    return units
+
+
+def _scan_leading_bookend(
+    text: str, vocab: Vocab
+) -> tuple[list[str], Optional[str], bool, int]:
+    """
+    Find the first channel in `text`. Extract unit patterns from the region before it.
+    Returns (units, chan, is_mutual_aid, end_pos). end_pos == 0 if no channel found.
+    """
+    ch_m = vocab.channel_re.search(text)
+    if not ch_m:
+        return [], None, False, 0
+    chan, is_mutual_aid = _resolve_channel_match(ch_m)
+    if chan is None:
+        return [], None, False, 0
+
+    units = _extract_units_from_region(text[: ch_m.start()], vocab)
+
+    end_pos = ch_m.end()
+    ws = re.match(r"\s*", text[end_pos:])
+    if ws:
+        end_pos += ws.end()
+
+    return units, chan, is_mutual_aid, end_pos
+
+
+def _backward_scan_units(text: str, vocab: Vocab) -> tuple[list[str], int]:
+    """
+    Starting from the end of `text`, greedily consume unit tokens and 'and'
+    separators working backwards. Returns (units_in_forward_order, block_start)
+    where block_start is the index of the first character of the trailing unit block.
+    Returns ([], len(text)) if no units are found.
+    """
+    seen: set[str] = set()
+    units: list[str] = []
+    end = len(text.rstrip())
+    block_start = end
+
+    while end > 0:
+        found = False
+        for pat, canonical_type, requires_number in vocab.unit_patterns:
+            best_m = None
+            for m in pat.finditer(text, 0, end):
+                if m.end() == end:
+                    best_m = m
+                    break
+            if best_m is not None:
+                unit_str = (
+                    f"{canonical_type} {best_m.group(1)}" if requires_number else canonical_type
+                )
+                if unit_str not in seen:
+                    seen.add(unit_str)
+                    units.insert(0, unit_str)
+                block_start = best_m.start()
+                # Retract past any preceding 'and' separator
+                prefix = text[: best_m.start()].rstrip()
+                if re.search(r"\band$", prefix, re.I):
+                    prefix = re.sub(r"\s+and$", "", prefix, flags=re.I).rstrip()
+                end = len(prefix)
+                found = True
+                break
+        if not found:
+            break
+
+    if not units:
+        return [], len(text)
+    return units, block_start
+
+
+def _scan_trailing_bookend(
+    text: str, leading_end: int, leading_units: list[str], vocab: Vocab
+) -> tuple[list[str], Optional[str], bool, int]:
+    """
+    In `text[leading_end:]`, find the last channel. Returns (units, chan,
+    is_mutual_aid, trailing_start) where trailing_start marks the end of the
+    middle content in `text`. Returns len(text) if no trailing channel is found.
+
+    Trailing unit block is located by backward scan first. If the scan yields
+    nothing (e.g., a non-unit directional suffix sits at the very end of the
+    trailing region), fall back to using the earliest re-occurrence of a leading
+    unit string as the block anchor.
+    """
+    segment = text[leading_end:]
+    all_ch = list(vocab.channel_re.finditer(segment))
+    if not all_ch:
+        return [], None, False, len(text)
+
+    last_ch_m = all_ch[-1]
+    chan, is_mutual_aid = _resolve_channel_match(last_ch_m)
+    if chan is None:
+        return [], None, False, len(text)
+
+    # Content between leading bookend and the trailing channel
+    before_last_ch = segment[: last_ch_m.start()]
+
+    # Phase A: backward scan (handles the common case directly)
+    trailing_units, block_start = _backward_scan_units(before_last_ch, vocab)
+
+    # Phase B fallback: if backward scan found nothing but leading units are known,
+    # use their first re-occurrence to locate the block (handles trailing suffixes
+    # like "Car 957 North" that prevent an exact end-position match).
+    if not trailing_units and leading_units:
+        anchor = len(before_last_ch)
+        for unit_str in leading_units:
+            unit_pat = re.compile(r"\b" + re.escape(unit_str) + r"\b", re.I)
+            m = unit_pat.search(before_last_ch)
+            if m and m.start() < anchor:
+                anchor = m.start()
+        if anchor < len(before_last_ch):
+            trailing_units = _extract_units_from_region(before_last_ch[anchor:], vocab)
+            block_start = anchor
+
+    trailing_start = leading_end + block_start
+    return trailing_units, chan, is_mutual_aid, trailing_start
+
+
 # ------------------- Cleaner -------------------
 
 
@@ -279,7 +420,13 @@ def clean_transcript(t: Transcript, vocab: Vocab = _VOCAB) -> CleanResult:
     fixed = re.sub(r"\s+", " ", fixed).strip()
     logger.debug("[%s] Normalized: %s", ps, fixed)
 
-    # ---- Step 3: Dispatch action detection ----
+    # ---- Step 3: Channel-stage ASR corrections ----
+    # Run before bookend extraction so channel patterns see corrected text.
+    for pat, repl in vocab.asr_corrections.get("channel", []):
+        fixed, n = pat.subn(repl, fixed)
+        stats.replacements_applied += n
+
+    # ---- Step 4: Dispatch action detection ----
     incident = fixed
     dispatch_action = "initial"
     for pat, action, _is_supplement in vocab.dispatch_action_patterns:
@@ -293,24 +440,41 @@ def clean_transcript(t: Transcript, vocab: Vocab = _VOCAB) -> CleanResult:
     # Back-compat bool
     special_call = dispatch_action == "special_call"
 
-    # ---- Step 4: Unit extraction ----
-    logger.info("[%s] Extracting Units", ps)
-    # Track both the canonical unit name (for output) and the literal matched text
-    # (for removal). Dedup by canonical name.
-    seen_units: set[str] = set()
-    unit_matches: list[tuple[str, str]] = []  # (canonical_name, literal_matched_text)
+    # ---- Step 5: Bookend extraction (two-phase) ----
+    # Phase 1 — leading bookend: find first channel; extract units before it.
+    # Phase 2 — trailing bookend: find last channel; use leading units to locate
+    #   where the trailing unit block begins in the between-channel content.
+    # The middle remainder (between bookends) is passed to all subsequent steps;
+    # no unit pattern matching runs on it, preventing false matches like
+    # "Rescue 2425" inside "Mountain Rescue 2425 East Valley View Drive".
+    logger.info("[%s] Extracting Units (bookend)", ps)
 
-    for pat, canonical_type, requires_number in vocab.unit_patterns:
-        for m in pat.finditer(fixed):
-            if requires_number:
-                unit_str = f"{canonical_type} {m.group(1)}"
-            else:
-                unit_str = canonical_type
-            if unit_str not in seen_units:
-                seen_units.add(unit_str)
-                unit_matches.append((unit_str, m.group(0)))
+    leading_units, leading_chan, leading_mutual_aid, leading_end = _scan_leading_bookend(
+        incident, vocab
+    )
+    trailing_units, trailing_chan, trailing_mutual_aid, trailing_start = _scan_trailing_bookend(
+        incident, leading_end, leading_units, vocab
+    )
 
-    units_found = [name for name, _ in unit_matches]
+    # Merge and deduplicate units (leading order preserved, trailing adds new entries)
+    seen_units: set[str] = set(leading_units)
+    units_found: list[str] = list(leading_units)
+    for u in trailing_units:
+        if u not in seen_units:
+            seen_units.add(u)
+            units_found.append(u)
+
+    chan: Optional[str] = leading_chan or trailing_chan
+    is_mutual_aid = leading_mutual_aid or trailing_mutual_aid
+
+    if chan:
+        stats.channel_found = True
+        logger.debug("[%s] Found channel: %s", ps, chan)
+        if is_mutual_aid:
+            parsed["mutual_aid"] = "Mesa"
+    else:
+        logger.warning("[%s] Unable to determine channel.", ps)
+
     logger.debug("[%s] Units found: %s", ps, units_found)
     stats.units_before = len(
         re.findall(
@@ -322,55 +486,12 @@ def clean_transcript(t: Transcript, vocab: Vocab = _VOCAB) -> CleanResult:
     stats.units_after = len(units_found)
     stats.deduped_units = stats.units_before - stats.units_after
     logger.debug("[%s] Removed %d duplicates", ps, stats.deduped_units)
-    # Remove Units from string (case-insensitive — ASR output casing varies)
-    for unit in units_found:
-        incident = re.sub(re.escape(unit), "", incident, flags=re.I)
-    # Remove any 'and' leftover
-    incident = re.sub(r"^(?:and\s+)+", "", incident)
-    incident = re.sub(r"(?:\s+and)+$", "", incident)
-    incident = re.sub(r"\s+", " ", incident).strip()
-    logger.debug("[%s] After unit removal: %s", ps, incident)
 
-    stats.units_after = len(units_found)
+    # Middle remainder: incident_type, address (and any modifier) live here.
+    incident = incident[leading_end:trailing_start].strip()
+    logger.debug("[%s] Middle remainder: %s", ps, incident)
 
-    # ---- Step 5: Channel-stage ASR corrections ----
-    # Applied to fixed so channel matching sees the corrected text
-    for pat, repl in vocab.asr_corrections.get("channel", []):
-        fixed, n = pat.subn(repl, fixed)
-        stats.replacements_applied += n
-        # Also apply to the working incident string
-        incident, _ = pat.subn(repl, incident)
-
-    # ---- Step 6: Channel extraction ----
-    logger.info("[%s] Extracting Channel", ps)
-    chan: Optional[str] = None
-    m = vocab.channel_re.search(fixed)
-    if m:
-        if m.group(1):
-            chan = f"K-Deck {int(m.group(1))}"
-            stats.channel_found = True
-        elif m.group(2):
-            chan = f"A{int(m.group(2))}"
-            stats.channel_found = True
-        elif m.group(3):
-            chan = f"Mesa Fire Channel B{int(m.group(3))}"
-            stats.channel_found = True
-            parsed["mutual_aid"] = "Mesa"
-
-        if chan:
-            logger.debug("[%s] Found channel: %s", ps, chan)
-            incident = vocab.channel_re.sub("", incident)
-        else:
-            logger.warning("[%s] Unable to determine channel.", ps)
-    else:
-        logger.warning("[%s] Unable to determine channel.", ps)
-
-    incident = re.sub(r"^(?:and\s+)+", "", incident)
-    incident = re.sub(r"(?:\s+and)+$", "", incident)
-    incident = re.sub(r"\s+", " ", incident).strip()
-    logger.debug("[%s] After channel removal: %s", ps, incident)
-
-    # ---- Step 7: Response modifier extraction ----
+    # ---- Step 6: Response modifier extraction ----
     for pat, parsed_key, parsed_value in vocab.modifier_patterns:
         if pat.search(incident):
             parsed[parsed_key] = parsed_value
@@ -378,12 +499,12 @@ def clean_transcript(t: Transcript, vocab: Vocab = _VOCAB) -> CleanResult:
     incident = re.sub(r"\s+", " ", incident).strip()
     logger.debug("[%s] After modifier removal: %s", ps, incident)
 
-    # ---- Step 8: Address extraction (4-step cascade) ----
+    # ---- Step 7: Address extraction (4-step cascade) ----
     logger.info("[%s] Extracting Address", ps)
     incident_type = incident.strip()
     addr: dict[str, str] = {"raw": "", "normalized": ""}
 
-    # Sub-step 8a: 9xx-style incident code at front
+    # Sub-step 7a: 9xx-style incident code at front
     m = re.match(r"^(?P<code>\d{3})\b\s+(?P<rest>.+)", incident_type)
     if m:
         code_str = m.group("code")
@@ -415,7 +536,7 @@ def clean_transcript(t: Transcript, vocab: Vocab = _VOCAB) -> CleanResult:
             addr = {"raw": address_text, "normalized": address_text}
 
     else:
-        # Sub-step 8b: Numbered address anywhere
+        # Sub-step 7b: Numbered address anywhere
         m_addr = ADDR_RE.search(incident_type)
         if m_addr:
             prefix = incident_type[: m_addr.start()].strip()
@@ -428,7 +549,7 @@ def clean_transcript(t: Transcript, vocab: Vocab = _VOCAB) -> CleanResult:
                 addr = {"raw": address_text, "normalized": address_text}
 
         else:
-            # Sub-step 8c: Street anchor (intersection / freeway, no leading house number)
+            # Sub-step 7c: Street anchor (intersection / freeway, no leading house number)
             m_anchor = STREET_ANCHOR_RE.search(incident_type)
             if m_anchor:
                 prefix = incident_type[: m_anchor.start()].rstrip()
@@ -452,7 +573,7 @@ def clean_transcript(t: Transcript, vocab: Vocab = _VOCAB) -> CleanResult:
                 # If no house number and normalization failed — don't split (false positive risk)
 
             if not addr["normalized"]:
-                # Sub-step 8d: Last resort — try the full remaining string.
+                # Sub-step 7d: Last resort — try the full remaining string.
                 # Reached when anchor matched but didn't normalize, or no anchor at all.
                 addr_candidate = _normalize_address(incident_type)
                 if addr_candidate is not None:
@@ -468,7 +589,7 @@ def clean_transcript(t: Transcript, vocab: Vocab = _VOCAB) -> CleanResult:
     else:
         logger.warning("[%s] Unable to determine address", ps)
 
-    # ---- Step 9: Incident type cleanup and vocab match ----
+    # ---- Step 8: Incident type cleanup and vocab match ----
     incident = re.sub(r"\s+", " ", incident).strip()
 
     # Apply incident_type ASR corrections (sound-alike fixes on the residual)
