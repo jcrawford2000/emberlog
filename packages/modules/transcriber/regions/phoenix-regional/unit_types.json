@@ -36,10 +36,9 @@
     {"type": "East Deputy",           "pattern": "East Deputy",           "requires_number": false, "aliases": []},
     {"type": "West Deputy",           "pattern": "West Deputy",           "requires_number": false, "aliases": []},
 
-    {"_comment": "Missing types found by readout / heard live.",
+    {"_comment": "Missing types found by readout / heard live. NOTE: 'Care' intentionally omitted — it false-positives against 'Crisis Care' (incident type). Add back when a distinct negative-lookbehind pattern is available.",
      "type": "PIO",                   "pattern": "PIO",                   "requires_number": true,  "aliases": []},
     {"type": "Mobile Stroke Unit",    "pattern": "Mobile Stroke Unit",    "requires_number": true,  "aliases": []},
-    {"type": "Care",                  "pattern": "Care",                  "requires_number": true,  "aliases": []},
 
     {"_comment": "LA appears with AND without a hyphen ('LA-601' and 'LA 608'). Pattern handles the stem; loader should allow optional hyphen/space before the number.",
      "type": "LA",                    "pattern": "LA",                    "requires_number": true,  "aliases": ["LA-"]}
