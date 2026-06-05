@@ -1,0 +1,26 @@
+{
+  "splitting": {
+    "total": 0,
+    "correct": 0,
+    "correct_pct": 0.0,
+    "under": 0,
+    "over": 0
+  },
+  "transcription": {
+    "eligible_clips": 0,
+    "headline_wer": null,
+    "unintelligible_clips": 0,
+    "unintelligible_wer": null
+  },
+  "parsing": {
+    "eligible_dispatches": 111,
+    "skipped_dispatches": 0,
+    "fields": {
+      "special_call": 98.2,
+      "units": 94.59,
+      "channel": 100.0,
+      "incident_type": 72.97,
+      "address": 79.28
+    }
+  }
+}
