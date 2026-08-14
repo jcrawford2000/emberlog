@@ -5,4 +5,4 @@ resources:
   - ../../base
 images:
   - name: ghcr.io/jcrawford2000/emberlog-web
-    newTag: "0.2.0"
+    newTag: "0.2.1"
