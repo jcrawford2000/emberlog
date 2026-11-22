@@ -122,11 +122,13 @@ class Worker:
             # Single blob (your dummy Transcript)
             segments = [
                 Seg(
-                    start=float(getattr(transcript, "start", 0.0)),
+                    # Transcript fields exist but may be None (e.g. whisper.cpp
+                    # returns no segments for a key-up with no speech).
+                    start=float(getattr(transcript, "start", None) or 0.0),
                     end=float(
-                        getattr(
-                            transcript, "end", getattr(transcript, "duration_s", 0.0)
-                        )
+                        getattr(transcript, "end", None)
+                        or getattr(transcript, "duration_s", None)
+                        or 0.0
                     ),
                     text=str(transcript.text or ""),
                 )

@@ -18,11 +18,11 @@ THREE_DISPATCHES = (
 
 
 class FakeTranscriber:
-    def __init__(self, text: str):
-        self.text = text
+    def __init__(self, text: str, start: float | None = 0.0, end: float | None = 40.0):
+        self.text, self.start, self.end = text, start, end
 
     async def transcribe(self, path: Path) -> Transcript:
-        return Transcript(audio_path=path, text=self.text, start=0.0, end=40.0)
+        return Transcript(audio_path=path, text=self.text, start=self.start, end=self.end)
 
 
 class RecordingSink(Sink):
@@ -34,14 +34,16 @@ class RecordingSink(Sink):
         return SinkResult(ok=True)
 
 
-def _setup(tmp_path: Path, text: str):
+def _setup(tmp_path: Path, text: str, **timing):
     inbox, processed = tmp_path / "inbox", tmp_path / "processed"
     wav = inbox / "2026" / "11" / "22" / "1795-1795387110.805_769868750.0-call_1.wav"
     wav.parent.mkdir(parents=True)
     wav.write_bytes(b"RIFFfake")
     idx = ProcessedIndex(tmp_path / "state.sqlite", inbox_root=inbox, processed_root=processed)
     sink = RecordingSink()
-    worker = Worker(InMemoryJobQueue(), "T", transcriber=FakeTranscriber(text), sink=sink, idx=idx)
+    worker = Worker(
+        InMemoryJobQueue(), "T", transcriber=FakeTranscriber(text, **timing), sink=sink, idx=idx
+    )
     return worker, sink, wav, processed / wav.relative_to(inbox)
 
 
@@ -64,3 +66,13 @@ def test_no_dispatches_leaves_audio_in_inbox(tmp_path: Path) -> None:
     assert sink.incidents == []
     assert wav.exists()
     assert not moved.exists()
+
+
+def test_no_speech_without_timestamps_does_not_crash(tmp_path: Path) -> None:
+    # whisper.cpp returns no segments for a no-speech key-up: start/end are None.
+    worker, sink, wav, _ = _setup(tmp_path, "", start=None, end=None)
+
+    asyncio.run(worker.process(Job(path=wav)))
+
+    assert sink.incidents == []
+    assert wav.exists()
