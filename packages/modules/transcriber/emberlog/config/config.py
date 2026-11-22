@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     # Allow CSV via env like EMBERLOG_AUDIO_EXTENSIONS=.wav,.mp3
     audio_extensions: tuple[str, ...] = (".wav", ".mp3")
     api_base_url: str = "http://localhost:8080/api/v1"
+    # Post incidents to the API. Set false to run outbox-only (e.g. shadow mode).
+    api_sink_enabled: bool = True
 
     # Concurrency
     concurrency: int = 2

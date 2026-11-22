@@ -42,7 +42,7 @@ class Worker:
         transcriber: Optional[Transcriber] = None,
         sink: Optional[Sink] = None,
         idx: Optional[ProcessedIndex] = None,
-        include_api_sink: bool = True,
+        include_api_sink: bool | None = None,
     ):
         """Create a worker bound to a queue.
 
@@ -57,10 +57,14 @@ class Worker:
             json_sink = JsonFileSink(local_sink, naming="{stem}.json")
             ledger_sink = LedgerSink()
             sinks = [json_sink, ledger_sink]
+            if include_api_sink is None:
+                include_api_sink = settings.api_sink_enabled
             if include_api_sink:
                 from emberlog.io.api_sink import ApiSink
 
                 sinks.append(ApiSink())
+            else:
+                self.logger.warning("API sink disabled; writing outbox and ledger only")
             self.sink = CompositeSink(sinks)
         else:
             self.sink = sink
