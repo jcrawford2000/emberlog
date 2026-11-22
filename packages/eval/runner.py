@@ -82,10 +82,14 @@ def _lazy_imports() -> None:
         return
 
     # These imports trigger emberlog.config.config — bootstrap must have run first.
-    from emberlog.transcriber.whisper_fast import (  # noqa: PLC0415
-        FasterWhisperTranscriber as _FWT,
-        WhisperConfig as _WC,
-    )
+    try:
+        from emberlog.transcriber.whisper_fast import (  # noqa: PLC0415
+            FasterWhisperTranscriber as _FWT,
+            WhisperConfig as _WC,
+        )
+    except ImportError:
+        # faster-whisper not installed (e.g. a whisper_cpp-only host)
+        _FWT = _WC = None
     from emberlog.segmentation.splitter import (  # noqa: PLC0415
         Segment as _Seg,
         split_transcript as _st,
@@ -130,6 +134,8 @@ class RunConfig:
     log_prob_threshold: float = -1.2
     compression_ratio_threshold: float = 2.8
     tone_config: dict = field(default_factory=dict)
+    backend: str = "faster_whisper"  # faster_whisper | whisper_cpp
+    whisper_cpp_url: str = "http://127.0.0.1:8080"
 
 
 # ---------------------------------------------------------------------------
@@ -167,6 +173,8 @@ def build_manifest(cfg: RunConfig, corpus_path: Path) -> dict:
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "mode": cfg.mode,
         "splitter_strategy": cfg.strategy if cfg.mode != "parser-isolated" else None,
+        "backend": cfg.backend,
+        "whisper_cpp_url": cfg.whisper_cpp_url if cfg.backend == "whisper_cpp" else None,
         "model_name": cfg.model_name,
         "device": cfg.device,
         "compute_type": cfg.compute_type,
@@ -387,7 +395,30 @@ async def run(
     results: list[dict] = []
 
     transcriber = None
-    if cfg.mode in ("end-to-end",) and cfg.strategy in ("text", "tone"):
+    if cfg.mode == "end-to-end" and cfg.backend == "whisper_cpp":
+        # The model is whatever the whisper-server at --whisper-cpp-url loaded;
+        # --model is recorded in the manifest for attribution only.
+        from emberlog.transcriber.whisper_cpp import (  # noqa: PLC0415
+            WhisperCppConfig,
+            WhisperCppTranscriber,
+        )
+
+        transcriber = WhisperCppTranscriber(
+            WhisperCppConfig(
+                server_url=cfg.whisper_cpp_url.rstrip("/"),
+                timeout_s=300.0,
+                language=cfg.language,
+                beam_size=cfg.beam_size,
+                best_of=cfg.best_of,
+                temperature=cfg.temperature,
+                initial_prompt=cfg.initial_prompt or "",
+                no_speech_threshold=cfg.no_speech_threshold,
+                log_prob_threshold=cfg.log_prob_threshold,
+                vad=cfg.vad_filter,
+                vad_min_silence_ms=250,
+            )
+        )
+    elif cfg.mode in ("end-to-end",) and cfg.strategy in ("text", "tone"):
         whisper_cfg = WhisperConfig(
             model_name=cfg.model_name,
             device=cfg.device,
@@ -486,6 +517,17 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument("--best-of", type=int, default=8)
     p.add_argument("--temperature", type=float, default=0.0)
     p.add_argument(
+        "--backend",
+        choices=["faster_whisper", "whisper_cpp"],
+        default="faster_whisper",
+        help="Transcriber backend for end-to-end mode",
+    )
+    p.add_argument(
+        "--whisper-cpp-url",
+        default="http://127.0.0.1:8080",
+        help="whisper-server base URL (backend=whisper_cpp)",
+    )
+    p.add_argument(
         "--workspace",
         type=Path,
         default=None,
@@ -513,6 +555,8 @@ def main() -> None:
         beam_size=args.beam_size,
         best_of=args.best_of,
         temperature=args.temperature,
+        backend=args.backend,
+        whisper_cpp_url=args.whisper_cpp_url,
     )
 
     manifest = build_manifest(cfg, args.corpus)

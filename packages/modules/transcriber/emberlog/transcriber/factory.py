@@ -39,6 +39,10 @@ def create(name: str = "dummy") -> Transcriber:
         from emberlog.transcriber.whisper_fast import FasterWhisperTranscriber
 
         return FasterWhisperTranscriber()
+    if name == "whisper_cpp":
+        from emberlog.transcriber.whisper_cpp import WhisperCppTranscriber
+
+        return WhisperCppTranscriber()
     raise ValueError(f"Unknown transcriber backend: {name}")
 
 

@@ -6,8 +6,6 @@ import asyncio
 import json
 import logging
 import os
-import subprocess
-import tempfile
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -17,6 +15,7 @@ from faster_whisper import WhisperModel
 
 from emberlog.config.config import get_settings
 from emberlog.models import Transcript
+from emberlog.transcriber.audio import trim_dispatch_tones
 
 logger = logging.getLogger("emberlog.transcriber.FasterWhisperTranscriber")
 settings = get_settings()
@@ -108,30 +107,7 @@ class FasterWhisperTranscriber:
         )
 
     def _trim_dispatch_tones(self, src: Path, ms: int = 600) -> str:
-        tmp = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
-        tmp_path = tmp.name
-        tmp.close()
-        logger.debug("Trimming Dispatch Tones from %s into %s", str(src), str(tmp_path))
-        subprocess.run(
-            [
-                "ffmpeg",
-                "-y",
-                "-i",
-                str(src),
-                "-ss",
-                f"0.{ms}",
-                "-ac",
-                "1",
-                "-ar",
-                "16000",
-                tmp_path,
-            ],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            check=True,
-        )
-
-        return tmp_path
+        return str(trim_dispatch_tones(src, ms=ms))
 
     async def transcribe(self, path: Path) -> Transcript:
         # Offload CPU/GPU-bound work to a thread to avoid blocking the event loop.

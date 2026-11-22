@@ -62,6 +62,11 @@ class Settings(BaseSettings):
     whisper_compression_ratio_threshold: float = 2.8
     whisper_word_timestamps: bool = False
 
+    # whisper.cpp backend (EMBERLOG_TRANSCRIBER_BACKEND=whisper_cpp).
+    # Decoding parameters reuse the whisper_* settings above.
+    whisper_cpp_url: str = "http://127.0.0.1:8080"
+    whisper_cpp_timeout_s: float = 120.0
+
     model_config = SettingsConfigDict(
         env_file=BASE_DIR / ".env", env_prefix="EMBERLOG_", extra="ignore"
     )
