@@ -608,6 +608,8 @@ def clean_transcript(t: Transcript, vocab: Vocab = _VOCAB) -> CleanResult:
     # Strip stray "and" tokens
     incident = re.sub(r"(?:\band\s*)+", "", incident).strip()
     incident = re.sub(r"\s+", " ", incident).strip()
+    # Strip leftover sentence punctuation (whisper.cpp keeps e.g. "Fall injury:")
+    incident = incident.strip(" .,:;")
 
     # Vocab match: normalize to canonical phrase when recognized
     match = match_incident_type(incident, vocab)
