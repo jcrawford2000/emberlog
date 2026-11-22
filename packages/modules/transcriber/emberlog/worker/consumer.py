@@ -209,5 +209,17 @@ class Worker:
                 context={"cleaned_text": doc["cleaned_text"]},
             )  # write_json(relpath, doc)
             written_paths.append(out_path)
-            self.idx.mark_processed(p)
             self.logger.info("[%s] [%s] Wrote %s", self.name, p.stem, relpath)
+
+        if not dispatches:
+            # Left in the inbox (unchanged behaviour); log so it's visible.
+            self.logger.warning(
+                "[%s] [%s] No dispatches found in transcript; leaving in inbox: %r",
+                self.name,
+                p.stem,
+                str(transcript.text or "")[:200],
+            )
+            return
+        # Mark once, after every dispatch is written: marking moves the audio to
+        # processed/, so doing it per dispatch made dispatch 2 fail and dropped 3+.
+        self.idx.mark_processed(p)
