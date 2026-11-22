@@ -29,6 +29,15 @@ class Settings(BaseSettings):
     # Post incidents to the API. Set false to run outbox-only (e.g. shadow mode).
     api_sink_enabled: bool = True
 
+    # Dispatch splitting: "text" (channel bookends in the transcript) or
+    # "transmissions" (one dispatch per transmission in trunk-recorder's call
+    # JSON sidecar, falling back to "text" when the sidecar is missing).
+    split_mode: str = "text"
+    # Transmissions shorter than this are key-ups/noise and are skipped.
+    transmission_min_s: float = 1.5
+    # How long to wait for the sidecar if the WAV arrives first.
+    sidecar_wait_s: float = 10.0
+
     # Concurrency
     concurrency: int = 2
     max_workers: int = 2
