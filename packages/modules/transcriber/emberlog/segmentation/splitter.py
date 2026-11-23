@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import re
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 from typing import Iterable, List
 
@@ -48,6 +49,29 @@ TS_ANNOUNCE_RE = re.compile(
 )
 
 
+@lru_cache(maxsize=1)
+def _channel_corrections() -> tuple[tuple[re.Pattern, str], ...]:
+    """The region's channel-stage ASR corrections (e.g. 'Way 6' -> 'A6').
+
+    The cleaner applies these too, but only after splitting; without them the
+    splitter can't see misheard A channels and drops the whole dispatch.
+    """
+    from emberlog.cleaning.vocab_loader import load_vocab
+
+    return tuple(load_vocab().asr_corrections.get("channel", []))
+
+
+def correct_channels(text: str) -> str:
+    for pat, repl in _channel_corrections():
+        text = pat.sub(repl, text)
+    return text
+
+
+def _channel_key(m: re.Match) -> tuple[str, str]:
+    """Family + number, so 'A11' and 'Fire Channel A11' are the same channel."""
+    return ("K", m.group(1)) if m.group(1) is not None else ("A", m.group(2))
+
+
 def _strip_announce(s: str) -> str:
     if bool(TS_ANNOUNCE_RE.search(s)):
         stripped = TS_ANNOUNCE_RE.sub("", s)
@@ -67,14 +91,14 @@ def split_transcript(segments: Iterable[Segment], audio_path: Path) -> List[Disp
     for seg in segs:
         log.debug("[%s] Splitting Segment", ps)
         # Check if this segment is a timestamp
-        text = _strip_announce(seg.text)
+        text = correct_channels(_strip_announce(seg.text))
         if not text:
             log.debug("[%s] Stripped Timestamp Announcement, no remaining text.", ps)
             continue
         # This segment could still contain multiple dispatches if whisper didn't detect
         # We use the Channel as the boundry since it's voiced twice
         result = KDEC_RE.finditer(text)
-        cur_chan = ""
+        cur_chan: tuple[str, str] | None = None
         dispatches = 0
         disp_chan_index = 0
         disp_start = 0
@@ -83,13 +107,14 @@ def split_transcript(segments: Iterable[Segment], audio_path: Path) -> List[Disp
             log.debug(
                 "[%s] Cur_Chan:%s | Occurance:%s", ps, cur_chan, occurance.group(0)
             )
-            if cur_chan != occurance.group(0):
+            key = _channel_key(occurance)
+            if cur_chan != key:
                 if cur_chan and disp_chan_index == 0:
                     pending = text[disp_start:occurance.start()]
                     if pending.strip():
                         out.append(Dispatch(audio_path=str(audio_path), text=pending))
                         disp_start = occurance.start()
-                cur_chan = occurance.group(0)
+                cur_chan = key
                 log.debug("[%s] Dispatch Start, channel:%s", ps, cur_chan)
                 disp_chan_index = 0
                 dispatches = dispatches + 1
@@ -104,7 +129,7 @@ def split_transcript(segments: Iterable[Segment], audio_path: Path) -> List[Disp
             else:
                 log.debug("[%s] New dispatch on same channel!", ps)
                 disp_chan_index = 0
-                cur_chan = occurance.group(0)
+                cur_chan = key
                 log.debug("[%s] Dispatch Start, channel: %s", ps, cur_chan)
                 dispatches = dispatches + 1
         remaining = text[disp_start:]
