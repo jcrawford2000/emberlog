@@ -31,6 +31,7 @@
     {"stage": "incident_type", "pattern": "\\bService Hall\\b", "replacement": "Service Call", "note": "Whisper mishears 'Service Call' as 'Service Hall'."},
     {"stage": "incident_type",   "pattern": "\\bTech Welfare\\b",                         "replacement": "Check Welfare",   "note": ""},
     {"stage": "incident_type",   "pattern": "\\bPark Problem\\b",                         "replacement": "Heart Problem",   "note": ""},
+    {"stage": "incident_type",   "pattern": "\\bApart\\s*Fire\\b",                         "replacement": "Apartment Fire",  "note": "Both faster-whisper and whisper.cpp hear 'Apartment fire' as 'Apart fire' (call_227697, 2026-11-22)."},
     {"stage": "incident_type",   "pattern": "\\bJust Payne\\b",                           "replacement": "Chest Pain",      "note": ""},
     {"stage": "incident_type",   "pattern": "\\b(?:Hill|Il[kv]er)son\\b",                 "replacement": "Ill Person",      "note": "Hillson/Ilkerson/Ilverson -> Ill Person (concatenated '-son' suffix, no space)."},
     {"stage": "incident_type",   "pattern": "\\b(?:Hill|Bill)\\s*Person\\b",              "replacement": "Ill Person",      "note": "Hillperson/Hill Person/Bill Person -> Ill Person. The '-son' rule above only matches Hillson (no space, 'son' not 'person'); this covers the actual observed 'person'-suffix and spaced variants."},

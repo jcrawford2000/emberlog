@@ -84,3 +84,13 @@ def test_unit_traffic_is_still_not_a_dispatch() -> None:
     assert (
         _split("Engine 40, you're clearing on channel 1. Please switch over to your channel.") == []
     )
+
+
+def test_apart_fire_is_apartment_fire() -> None:
+    # call_227697 (2026-11-22): both backends heard "Apartment fire" as "Apart fire".
+    text = (
+        "Ladder Tender 152, Battalion 151, Engine 150. Fire Channel A6, apart fire. "
+        "6611, West Glendale Avenue, Ladder Tender 152, Battalion 151, Engine 150. Fire Channel A6"
+    )
+    result = clean_transcript(Transcript(audio_path=P, text=_split(text)[0].text))
+    assert result.incident_type.lower() == "apartment fire"
