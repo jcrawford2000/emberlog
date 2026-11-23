@@ -94,6 +94,11 @@ def test_load_transmissions_unusable(tmp_path: Path, content: str | None) -> Non
         ),
         ("Engine 19, you can stay in service.", None),
         (
+            "Engine 151, HazMat 157, Fire Channel Way 6, Carbon Monoxide Alarm Indication.",
+            "Engine 151, HazMat 157, Fire Channel Way 6, Carbon Monoxide Alarm Indication.",
+        ),
+        ("Engine 40, you're clearing on channel 1. Please switch to your channel.", None),
+        (
             "Engine 38 and Ladder 43. Fire Channel A8. Dryer fire.",
             "Engine 38 and Ladder 43. Fire Channel A8. Dryer fire.",
         ),

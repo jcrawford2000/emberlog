@@ -92,9 +92,12 @@ def cut_transmission(audio: Path, tx: Transmission, out_dir: Path | None = None)
 
 
 # Channel mentions the text splitter's KDEC_RE misses but that still mark a
-# dispatch: "K-Deck" whose number was lost ("Medic 331, K-Deck.") and
-# hyphenated fire channels ("Fire to A-10").
-_LOOSE_CHANNEL_RE = re.compile(r"\bK[- ]?De(?:ck|c)\b|\bA-\d{1,2}\b", re.IGNORECASE)
+# dispatch: "K-Deck" whose number was lost ("Medic 331, K-Deck."), hyphenated
+# fire channels ("Fire to A-10") and "Fire Channel" with a misheard channel
+# ("Fire Channel Way 6" for A6). Unit traffic says "channel", not "Fire Channel".
+_LOOSE_CHANNEL_RE = re.compile(
+    r"\bK[- ]?De(?:ck|c)\b|\bA-\d{1,2}\b|\bFire\s*Channel\b", re.IGNORECASE
+)
 
 
 def dispatch_text(text: str) -> str | None:
