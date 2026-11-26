@@ -17,3 +17,16 @@ def test_bare_k_channel_is_leading_bookend() -> None:
     assert c.channel == "K-Deck 9"
     assert c.incident_type == "Ill person"
     assert c.address == "6638 W Broadway Rd"
+
+
+def test_bare_deck_channel_is_leading_bookend() -> None:
+    # call_27097: whisper.cpp heard the leading "K-Deck 8" as "Deck 8"
+    t = Transcript(
+        audio_path=Path("/x/1795-1-call_27097.wav"),
+        text="Ladder Tender 33, Deck 8, Assault, 420 West Peoria Ave. Ladder Tender 33, K-Deck 8.",
+    )
+    c = clean_transcript(t)
+    assert c.units == ["Ladder Tender 33"]
+    assert c.channel == "K-Deck 8"
+    assert c.incident_type == "Assault"
+    assert c.address == "420 W Peoria Ave"
