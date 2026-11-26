@@ -99,7 +99,7 @@
     {"code": "GSW", "canonical_phrase": "Gunshot wound", "aliases": []},
     {"code": "GSWS", "canonical_phrase": "Gunshot wound — stage for PD", "aliases": []},
 
-    {"code": "HA", "canonical_phrase": "Heart problems", "aliases": []},
+    {"code": "HA", "canonical_phrase": "Heart problem", "aliases": ["Heart problems"]},
     {"code": "HANG", "canonical_phrase": "Hanging", "aliases": []},
     {"code": "HAZ", "canonical_phrase": "Hazardous situation", "aliases": []},
     {"code": "HAZ1A", "canonical_phrase": "Hazardous situation", "aliases": []},

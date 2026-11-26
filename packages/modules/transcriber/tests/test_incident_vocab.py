@@ -28,6 +28,8 @@ def test_incident_type_phrases_have_no_stray_whitespace() -> None:
         ("Fall Injury", "Fall injury", "FALL"),
         ("Difficulty breathing", "Difficulty breathing", "DB"),
         ("Seizure", "Seizure", "SEIZ"),
+        ("Heart Problem", "Heart problem", "HA"),
+        ("Heart problems", "Heart problem", "HA"),
     ],
 )
 def test_common_incident_types_match(residual: str, canonical: str, code: str | None) -> None:
