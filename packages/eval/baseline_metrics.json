@@ -13,14 +13,14 @@
     "unintelligible_wer": null
   },
   "parsing": {
-    "eligible_dispatches": 111,
+    "eligible_dispatches": 120,
     "skipped_dispatches": 0,
     "fields": {
-      "special_call": 98.2,
-      "units": 94.59,
+      "special_call": 98.33,
+      "units": 95.0,
       "channel": 100.0,
-      "incident_type": 72.97,
-      "address": 79.28
+      "incident_type": 92.5,
+      "address": 85.83
     }
   }
 }
