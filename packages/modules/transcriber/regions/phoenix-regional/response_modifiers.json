@@ -4,7 +4,8 @@
   "modifiers": [
     {"token": "AOI",    "aliases": ["Available On Incident"], "parsed_key": "aoi",           "parsed_value": true,  "note": "Available On Incident."},
     {"token": "Code 2", "aliases": ["Code Two"],              "parsed_key": "response_code", "parsed_value": "2",   "note": "Non-emergency response."},
-    {"token": "Code 3", "aliases": ["Code Three"],            "parsed_key": "response_code", "parsed_value": "3",   "note": "Emergency response."}
+    {"token": "Code 3", "aliases": ["Code Three"],            "parsed_key": "response_code", "parsed_value": "3",   "note": "Emergency response."},
+    {"token": "Stage for PD", "aliases": ["Staging for PD"],  "parsed_key": "stage_for_pd",  "parsed_value": true,  "note": "Hold short until police secure the scene ('Overdose, stage for PD'). 'Stage 4 PD' is fixed to this by asr_corrections."}
   ],
 
   "_extension_note": "Small closed set. Add others as observed. Recognized + removed BEFORE address extraction so they don't pollute type or address."

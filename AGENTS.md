@@ -104,6 +104,9 @@ reason the harness exists:
    `baseline_metrics.json` exists (run the relevant harness modes). If one doesn't exist
    or is stale, establish it before touching anything.
 2. **One fix per branch.** Branch off `main`, apply a SINGLE change.
+   *Tuning branches* (e.g. `cleaner-tuning`) may stack several fixes, one per commit. Measure each
+   commit against the commit before it, give one results row per fix in the PR, and merge with a
+   merge commit (no squash) so each fix stays individually revertable.
 3. **Re-run the harness, diff metrics vs baseline.** A fix is accepted only if it improves
    its target metric AND regresses nothing else (or the regression is understood and
    explicitly accepted). Put the before/after diff in the PR description.

@@ -49,6 +49,8 @@
 {"stage": "channel", "pattern": "\\bK[-\\s]?Decade\\b",               "replacement": "K-Deck",     "note": "Whisper literal without number: 'K-Decade' → 'K-Deck' (number matched by channel_re afterward)."},
 {"stage": "channel", "pattern": "\\bPaydeck\\s*(\\d{1,2})\\b",        "replacement": "K-Deck \\1", "note": "Whisper hallucination: Paydeck N → K-Deck N."},
 {"stage": "channel", "pattern": "\\bKajak\\s*(\\d{1,2})\\b",          "replacement": "K-Deck \\1", "note": "Whisper hallucination: Kajak N → K-Deck N."},
-{"stage": "channel", "pattern": "\\bPage\\s*X\\s*(\\d{1,2})\\b",      "replacement": "K-Deck \\1", "note": "Whisper hallucination: Page X6, Page X7 → K-Deck N."}
+{"stage": "channel", "pattern": "\\bPage\\s*X\\s*(\\d{1,2})\\b",      "replacement": "K-Deck \\1", "note": "Whisper hallucination: Page X6, Page X7 → K-Deck N."},
+{"stage": "channel", "pattern": "\\bK-(\\d{1,2})\\b",                "replacement": "K-Deck \\1", "note": "Whisper drops Deck: 'Engine 915, K-9, Ill person' = K-Deck 9. Without it the leading channel is missed and incident/address come out empty."},
+{"stage": "channel", "pattern": "(?<![\\w-])Deck\\s*(\\d{1,2})\\b",        "replacement": "K-Deck \\1", "note": "Whisper drops the K: 'Ladder Tender 33, Deck 8, Assault' = K-Deck 8. Lookbehind skips K-Deck, KDeck and B-Deck."}
   ]
 }

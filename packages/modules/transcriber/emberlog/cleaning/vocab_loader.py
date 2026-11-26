@@ -191,11 +191,12 @@ def _load_incident_types(vocab: Vocab, data: dict) -> None:
     for item in data.get("incident_types", []):
         if "canonical_phrase" not in item:
             continue  # skip comment-only entries
-        canonical = item["canonical_phrase"]
+        # Strip so stray whitespace in the data file can't silently stop a match.
+        canonical = item["canonical_phrase"].strip()
         code = item.get("code", "")
         is_stem = item.get("is_stem", False)
-        aliases = item.get("aliases", [])
-        qualifiers = item.get("qualifiers", [])
+        aliases = [a.strip() for a in item.get("aliases", [])]
+        qualifiers = [{**q, "phrase": q["phrase"].strip()} for q in item.get("qualifiers", [])]
 
         # Build the full list of (phrase, effective_code) pairs, longest first
         all_phrases = [(canonical, code)] + [(a, code) for a in aliases]
