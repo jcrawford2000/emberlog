@@ -17,7 +17,7 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
-from emberlog.segmentation.splitter import KDEC_RE, _strip_announce
+from emberlog.segmentation.splitter import KDEC_RE, _strip_announce, correct_channels
 
 log = logging.getLogger("emberlog.segmentation.transmissions")
 
@@ -100,6 +100,14 @@ _LOOSE_CHANNEL_RE = re.compile(
 )
 
 
+# Channel-change instructions to a unit ("Engine 302, you're on channel 1 if
+# you could go to K-6"). They name a channel but are not dispatches.
+_INSTRUCTION_RE = re.compile(
+    r"\bclearing on\b|\byou'?re on channel\b|\bswitch(?:ing)? over to\b|\bgo over to\b",
+    re.IGNORECASE,
+)
+
+
 def dispatch_text(text: str) -> str | None:
     """Return the transmission's text if it looks like a dispatch, else None.
 
@@ -111,6 +119,11 @@ def dispatch_text(text: str) -> str | None:
     cleaned = _strip_announce(text or "").strip()
     if not cleaned:
         return None
-    if not (KDEC_RE.search(cleaned) or _LOOSE_CHANNEL_RE.search(cleaned)):
+    # Check the channel after the region's channel corrections, so the gate
+    # accepts what the cleaner will read ("K-7", "Deck 8" -> K-Deck N).
+    if _INSTRUCTION_RE.search(cleaned):
+        return None
+    checked = correct_channels(cleaned)
+    if not (KDEC_RE.search(checked) or _LOOSE_CHANNEL_RE.search(checked)):
         return None
     return cleaned

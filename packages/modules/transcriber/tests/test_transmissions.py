@@ -99,8 +99,26 @@ def test_load_transmissions_unusable(tmp_path: Path, content: str | None) -> Non
         ),
         ("Engine 40, you're clearing on channel 1. Please switch to your channel.", None),
         (
+            (
+                "Engine 302, you're on channel 1 if you could go to your trail channel. "
+                "Engine 302, you're on channel 1 if you could go to K-6."
+            ),
+            None,
+        ),
+        ("If you're clearing on channel 1, if you can go over to K-7, please. Thank you.", None),
+        ("Clearing on K-1s, switch over to K-8.", None),
+        (
             "Engine 38 and Ladder 43. Fire Channel A8. Dryer fire.",
             "Engine 38 and Ladder 43. Fire Channel A8. Dryer fire.",
+        ),
+        # Channels that only read as K-Deck after the region's channel corrections
+        (
+            "Engine 31, K-7. Injured person: 15046, North 54th Street. Engine 31, K-7.",
+            "Engine 31, K-7. Injured person: 15046, North 54th Street. Engine 31, K-7.",
+        ),
+        (
+            "N-603, Rescue 602, Deck 7, Seizure, North 80th Street, Engine 603, Deck 7.",
+            "N-603, Rescue 602, Deck 7, Seizure, North 80th Street, Engine 603, Deck 7.",
         ),
     ],
 )
