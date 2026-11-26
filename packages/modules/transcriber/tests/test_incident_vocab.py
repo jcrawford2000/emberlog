@@ -36,3 +36,17 @@ def test_common_incident_types_match(residual: str, canonical: str, code: str | 
     assert match[0] == canonical
     if code:
         assert match[1] == code
+
+
+def test_stage_for_pd_is_a_modifier() -> None:
+    from emberlog.cleaning.cleaner import clean_transcript
+    from emberlog.models import Transcript
+
+    t = Transcript(
+        audio_path=Path("/x/a.wav"),
+        text="Engine 9, K-Deck 8. Overdose, stage for PD, 1702 West Pierson Street. Engine 9, K-Deck 8.",
+    )
+    c = clean_transcript(t)
+    assert c.incident_type == "Overdose"
+    assert c.address == "1702 W Pierson St"
+    assert c.parsed["stage_for_pd"] is True
