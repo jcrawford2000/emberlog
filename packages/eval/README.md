@@ -18,7 +18,7 @@ strictly `eval → components`, never the reverse.
 | `scorer.py` | Pure scorer → three tables + `metrics.json` + `failures.csv` |
 | `smoke_test.py` | No-GPU correctness test for scorer logic |
 | `corpus/corpus.json` | Frozen ground truth — never edit this to improve a number |
-| `baseline_metrics.json` | Reference metrics from the first clean baseline run |
+| `baseline_metrics.json` | Reference metrics (parser-isolated) for current `main`; re-baselined after each accepted merge |
 
 ---
 
