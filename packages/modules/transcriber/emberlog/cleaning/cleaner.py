@@ -200,6 +200,24 @@ def normalize_house_numbers(text: str) -> tuple[str, int]:
     return _HOUSE_NUM_RE.sub(repl, text), count
 
 
+_BARE_KDECK_RE = re.compile(r"\bK[- ]?De(?:ck|c)\b(?!\s*\d)", re.IGNORECASE)
+_NUMBERED_KDECK_RE = re.compile(r"\bK[- ]?De(?:ck|c)\s*(\d{1,2})\b", re.IGNORECASE)
+
+
+def fill_bare_kdeck(text: str) -> tuple[str, int]:
+    """Give a numberless "K-Deck" the number of the dispatch's other K-Deck.
+
+    A dispatch names its channel twice (bookends). When choppy audio drops the
+    number from one of them ("Ladder Tender 33, K-Deck 8 ... Ladder Tender 33,
+    K-Deck"), the other one supplies it. Only done when exactly one K-Deck
+    number appears, so a dispatch naming two channels is left alone.
+    """
+    numbers = {int(m.group(1)) for m in _NUMBERED_KDECK_RE.finditer(text)}
+    if len(numbers) != 1:
+        return text, 0
+    return _BARE_KDECK_RE.subn(f"K-Deck {numbers.pop()}", text)
+
+
 def _normalize_address(text: str) -> Optional[dict[str, str]]:
     # 1. Numbered address
     m = ADDR_RE.search(text)
@@ -475,6 +493,8 @@ def clean_transcript(t: Transcript, vocab: Vocab = _VOCAB) -> CleanResult:
     for pat, repl in vocab.asr_corrections.get("channel", []):
         fixed, n = pat.subn(repl, fixed)
         stats.replacements_applied += n
+    fixed, n = fill_bare_kdeck(fixed)
+    stats.replacements_applied += n
 
     # ---- Step 4: Dispatch action detection ----
     incident = fixed
