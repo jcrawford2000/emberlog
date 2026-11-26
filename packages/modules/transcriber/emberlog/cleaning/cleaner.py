@@ -159,6 +159,47 @@ FREEWAY_INTERSECTION_RE = re.compile(
 )
 
 
+# A house number right before a compass word. Lookbehind keeps route and unit
+# names ("I-17 North", "C-232 West") out.
+_HOUSE_NUM_RE = re.compile(
+    r"(?<![\w-])(?P<num>\d+(?:-\d+)+|\d{6,})(?=\s+(?:North|South|East|West|N|S|E|W)\b)",
+    re.IGNORECASE,
+)
+# Dispatchers read "19817" as "nineteen thousand, eight seventeen"; ASR then
+# writes the thousands with zeros: 190817, 10000701, 1800626, 20000-21.
+_ZERO_PADDED_RE = re.compile(r"([1-9]\d?)0+(\d{3})")
+
+
+def _fix_house_number(m: re.Match) -> str:
+    """Repair an ASR-mangled house number; return it unchanged if unsure.
+
+    Phoenix-area house numbers are at most 5 digits, so a longer number before
+    a compass word is always an ASR artifact. Hyphenated pieces ("48-54",
+    "1006-30") are joined first.
+    """
+    digits = m.group("num").replace("-", "")
+    if len(digits) <= 5:
+        return digits
+    z = _ZERO_PADDED_RE.fullmatch(digits)
+    if z:
+        return z.group(1) + z.group(2)
+    return m.group("num")
+
+
+def normalize_house_numbers(text: str) -> tuple[str, int]:
+    """Fix house numbers before compass words. Returns (text, replacements)."""
+    count = 0
+
+    def repl(m: re.Match) -> str:
+        nonlocal count
+        new = _fix_house_number(m)
+        if new != m.group("num"):
+            count += 1
+        return new
+
+    return _HOUSE_NUM_RE.sub(repl, text), count
+
+
 def _normalize_address(text: str) -> Optional[dict[str, str]]:
     # 1. Numbered address
     m = ADDR_RE.search(text)
@@ -424,6 +465,9 @@ def clean_transcript(t: Transcript, vocab: Vocab = _VOCAB) -> CleanResult:
     fixed = re.sub(r",+", "", fixed)
     fixed = re.sub(r"\.+", "", fixed)
     fixed = re.sub(r"\s+", " ", fixed).strip()
+    # Runs after comma removal so "19,817" is already "19817".
+    fixed, n = normalize_house_numbers(fixed)
+    stats.replacements_applied += n
     logger.debug("[%s] Normalized: %s", ps, fixed)
 
     # ---- Step 3: Channel-stage ASR corrections ----
