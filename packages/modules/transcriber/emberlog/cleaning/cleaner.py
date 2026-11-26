@@ -166,7 +166,7 @@ _HOUSE_NUM_RE = re.compile(
     re.IGNORECASE,
 )
 # Dispatchers read "19817" as "nineteen thousand, eight seventeen"; ASR then
-# writes the thousands with zeros: 190817, 10000701, 1800626, 20000-21.
+# writes the thousands with zeros: 190817, 10000701, 1800626.
 _ZERO_PADDED_RE = re.compile(r"([1-9]\d?)0+(\d{3})")
 
 
@@ -184,6 +184,24 @@ def _fix_house_number(m: re.Match) -> str:
     if z:
         return z.group(1) + z.group(2)
     return m.group("num")
+
+
+# "ten thousand two eighteen" (10218): ASR hears the "two" as "to" and writes
+# "10,000 to 18" (faster-whisper) or "10000-18" (whisper.cpp, as a range).
+_THOUSAND_TWO_RE = re.compile(
+    r"(?<![\w-])(?P<lead>[1-9]\d?),?000(?:\s+to\s+|-)(?P<tail>\d{2})"
+    r"(?=,?\s+(?:North|South|East|West|N|S|E|W)\b)",
+    re.IGNORECASE,
+)
+
+
+def fix_thousand_two(text: str) -> tuple[str, int]:
+    """Read "N,000 to NN" / "N000-NN" before a compass word as N-two-NN.
+
+    Must run on the raw transcript, before the pre_extraction rule that joins
+    hyphenated numbers erases the "-" that stood for "two".
+    """
+    return _THOUSAND_TWO_RE.subn(r"\g<lead>2\g<tail>", text)
 
 
 def normalize_house_numbers(text: str) -> tuple[str, int]:
@@ -474,7 +492,8 @@ def clean_transcript(t: Transcript, vocab: Vocab = _VOCAB) -> CleanResult:
     parsed: dict = {}
 
     # ---- Step 1: ASR corrections (pre_extraction stage) ----
-    fixed = raw
+    fixed, n = fix_thousand_two(raw)
+    stats.replacements_applied += n
     for pat, repl in vocab.asr_corrections.get("pre_extraction", []):
         fixed, n = pat.subn(repl, fixed)
         stats.replacements_applied += n
